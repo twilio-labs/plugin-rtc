@@ -7,5 +7,44 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@oclif/command": "^1.5.19",
+    "@oclif/config": "^1.14.0",
+    "@twilio-labs/serverless-api": "^1.0.3",
+    "@twilio/cli-core": "^4.4.6",
+    "moment": "^2.24.0"
+  },
+  "files": [],
+  "oclif": {
+    "name": "rtc",
+    "commands": "./src/commands",
+    "bin": "twilio",
+    "devPlugins": [
+      "@oclif/plugin-help"
+    ],
+    "topics": {
+      "rtc": {
+        "description": "A plugin which facilities deploying applications that demonstrate the Voice and Video platform"
+      },
+      "rtc:video": {
+        "description": "Commands related to Video Apps"
+      },
+      "rtc:video:list": {
+        "description": "List any deployed Ahoy Apps"
+      },
+      "rtc:video:deploy-app": {
+        "description": "Deploy an Ahoy App"
+      },
+      "rtc:video:deploy-token-server": {
+        "description": "Deploy an Ahoy App token server"
+      },
+      "rtc:video:destroy": {
+        "description": "Destroy a deployed Ahoy App"
+      },
+      "rtc:video:renew": {
+        "description": "Renew an Ahoy App Passcode"
+      }
+    }
+  }
 }
