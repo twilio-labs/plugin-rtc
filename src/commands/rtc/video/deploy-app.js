@@ -1,5 +1,5 @@
 const { flags } = require('@oclif/command');
-const { displayAppInfo, getAppInfo, getAssets, deploy } = require('./helpers/helpers');
+const { displayAppInfo, getAppInfo, getAssets, deploy } = require('../../../helpers/helpers');
 const { TwilioClientCommand } = require('@twilio/cli-core').baseCommands;
 
 class DeployAppCommand extends TwilioClientCommand {

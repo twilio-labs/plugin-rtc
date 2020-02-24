@@ -1,4 +1,4 @@
-const { getAppInfo } = require('./helpers/helpers');
+const { getAppInfo } = require('../../../helpers/helpers');
 const { TwilioClientCommand } = require('@twilio/cli-core').baseCommands;
 
 class ListCommand extends TwilioClientCommand {

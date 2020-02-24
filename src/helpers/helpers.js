@@ -1,4 +1,4 @@
-const { APP_NAME } = require('../../../../constants');
+const { APP_NAME } = require('../constants');
 const { cli } = require('cli-ux');
 const fs = require('fs');
 const { getListOfFunctionsAndAssets } = require('@twilio-labs/serverless-api/dist/utils/fs');
