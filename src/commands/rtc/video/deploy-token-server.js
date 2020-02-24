@@ -1,4 +1,4 @@
-const { displayAppInfo, getAppInfo, deploy } = require('../../../helpers/helpers');
+const { displayAppInfo, getAppInfo, deploy } = require('./helpers/helpers');
 const { TwilioClientCommand } = require('@twilio/cli-core').baseCommands;
 
 class DeployTokenServerCommand extends TwilioClientCommand {

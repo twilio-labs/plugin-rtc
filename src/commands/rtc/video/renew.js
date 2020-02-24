@@ -1,4 +1,4 @@
-const { displayAppInfo, findApp, renew } = require('../../../helpers/helpers');
+const { displayAppInfo, findApp, renew } = require('./helpers/helpers');
 const { TwilioClientCommand } = require('@twilio/cli-core').baseCommands;
 
 class RenewCommand extends TwilioClientCommand {
