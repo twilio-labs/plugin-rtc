@@ -1,7 +1,7 @@
 {
   "name": "plugin-rtc",
   "version": "0.1.0",
-  "description": "A Twilio-CLI plugin for Ahoy video apps",
+  "description": "A Twilio-CLI plugin for WebRTC apps",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -25,7 +25,7 @@
     ],
     "topics": {
       "rtc": {
-        "description": "A plugin which facilities deploying applications that demonstrate the Voice and Video platform"
+        "description": "A plugin which facilities deploying applications that demonstrate the RTC platform"
       },
       "rtc:video": {
         "description": "Commands related to Video Apps"
@@ -43,7 +43,7 @@
         "description": "Destroy a deployed Ahoy App"
       },
       "rtc:video:renew": {
-        "description": "Renew an Ahoy App Passcode"
+        "description": "Renew an Ahoy App Appcode"
       }
     }
   }
