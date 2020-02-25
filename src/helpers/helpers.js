@@ -1,4 +1,4 @@
-const { APP_NAME } = require('../constants');
+const { APP_NAME, EXPIRY_PERIOD } = require('../constants');
 const { cli } = require('cli-ux');
 const fs = require('fs');
 const { getListOfFunctionsAndAssets } = require('@twilio-labs/serverless-api/dist/utils/fs');
@@ -12,7 +12,7 @@ function getPin() {
 
 async function renew(appSid) {
   await updateVariable.call(this, appSid, 'API_SECRET', getPin());
-  await updateVariable.call(this, appSid, 'API_EXPIRY', Date.now() + 1000 * 60 * 3);
+  await updateVariable.call(this, appSid, 'API_EXPIRY', Date.now() + EXPIRY_PERIOD);
 }
 
 function getAppCode(domain, passcode) {
@@ -33,6 +33,10 @@ async function getAssets(folder) {
     assets.push({
       ...indexHTML,
       path: '/'
+    });
+    assets.push({
+      ...indexHTML,
+      path: '/login'
     });
   }
 
@@ -79,6 +83,7 @@ async function displayAppInfo() {
 
   if (!appInfo) {
     console.log('There is no deployed app');
+    return;
   }
 
   if (appInfo.hasAssets) {
@@ -106,7 +111,7 @@ async function deploy(assets) {
   });
 
   const pin = getPin();
-  const expiryTime = Date.now() + 1000 * 60 * 5;
+  const expiryTime = Date.now() + EXPIRY_PERIOD;
 
   const fn = fs.readFileSync(path.join(__dirname, '../function.js'));
 

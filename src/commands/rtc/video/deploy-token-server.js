@@ -10,7 +10,7 @@ class DeployTokenServerCommand extends TwilioClientCommand {
       console.log('There is already a deployed app.');
     }
 
-    await deploy.call(this, assets);
+    await deploy.call(this);
     await displayAppInfo.call(this);
   }
 }
