@@ -10,6 +10,7 @@ module.exports.handler = (context, event, callback) => {
   const { user_identity, room_name, passcode } = event;
 
   let response = new Twilio.Response();
+  response.appendHeader('Content-Type', 'application/json');
 
   if (Date.now() > API_EXPIRY) {
     response.setStatusCode(401);
