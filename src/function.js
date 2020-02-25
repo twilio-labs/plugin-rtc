@@ -9,13 +9,19 @@ module.exports.handler = (context, event, callback) => {
 
   const { identity, roomName, passcode } = event;
 
+  let response = new Twilio.Response();
+
   if (Date.now() > API_EXPIRY) {
-    callback('expired');
+    response.setStatusCode(401)
+    response.setBody('expired')
+    callback(null, response);
     return;
   }
 
   if (API_SECRET !== passcode) {
-    callback('unauthorized');
+    response.setStatusCode(401)
+    response.setBody('unauthorized')
+    callback(null, response);
     return;
   }
 
@@ -25,5 +31,6 @@ module.exports.handler = (context, event, callback) => {
   token.identity = identity;
   const videoGrant = new VideoGrant({ room: roomName });
   token.addGrant(videoGrant);
-  callback(null, token.toJwt());
+  response.setBody(token.toJwt())
+  callback(null, response);
 };
