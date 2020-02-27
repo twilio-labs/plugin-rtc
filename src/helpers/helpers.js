@@ -16,9 +16,8 @@ async function renew(appSid) {
 }
 
 function getPasscode(domain, passcode) {
-  const regex = new RegExp(`${APP_NAME}-(\\d*)-dev.twil.io`);
-  const urlcode = domain.match(regex)[1];
-  return `${passcode}${urlcode}`;
+  const appID = domain.match(/-(\d+)(?:-\w+)?.twil.io$/)[1];
+  return `${passcode}${appID}`;
 }
 
 async function getAssets(folder) {
@@ -115,7 +114,7 @@ async function deploy() {
   const pin = getPin();
   const expiryTime = Date.now() + EXPIRY_PERIOD;
 
-  const fn = fs.readFileSync(path.join(__dirname, '../function.js'));
+  const fn = fs.readFileSync(path.join(__dirname, '../video-token-server.js'));
 
   cli.action.start('deploying app');
 

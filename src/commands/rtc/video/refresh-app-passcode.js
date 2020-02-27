@@ -1,7 +1,7 @@
 const { displayAppInfo, findApp, renew } = require('../../../helpers/helpers');
 const { TwilioClientCommand } = require('@twilio/cli-core').baseCommands;
 
-class RenewCommand extends TwilioClientCommand {
+class RefreshAppPasscodeCommand extends TwilioClientCommand {
   async run() {
     await super.run();
     const app = await findApp.call(this);
@@ -15,6 +15,6 @@ class RenewCommand extends TwilioClientCommand {
   }
 }
 
-RenewCommand.flags = Object.assign(TwilioClientCommand.flags);
+RefreshAppPasscodeCommand.flags = Object.assign(TwilioClientCommand.flags);
 
-module.exports = RenewCommand;
+module.exports = RefreshAppPasscodeCommand;
