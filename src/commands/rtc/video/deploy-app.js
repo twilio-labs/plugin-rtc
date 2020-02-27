@@ -9,20 +9,25 @@ class DeployAppCommand extends TwilioClientCommand {
     const appInfo = await getAppInfo.call(this);
     if (appInfo) {
       console.log('There is already a deployed app.');
+      return;
     }
 
-    const assets = await getAssets.call(this, this.flags.assets);
-    await deploy.call(this, assets);
+    await deploy.call(this);
     await displayAppInfo.call(this);
   }
 }
 
 DeployAppCommand.flags = Object.assign(
   {
-    assets: flags.string({
-      description: 'Name of assets directory to use',
+    'app-directory': flags.string({
+      description: 'Name of app directory to use',
+      required: false
+    }),
+    'authentication': flags.enum({
+      options: ['passcode'],
+      description: 'Type of authentication to use',
       required: true
-    })
+    }),
   },
   TwilioClientCommand.flags
 );

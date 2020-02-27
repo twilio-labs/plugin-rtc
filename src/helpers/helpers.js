@@ -11,11 +11,11 @@ function getPin() {
 }
 
 async function renew(appSid) {
-  await updateVariable.call(this, appSid, 'API_SECRET', getPin());
-  await updateVariable.call(this, appSid, 'API_EXPIRY', Date.now() + EXPIRY_PERIOD);
+  await updateVariable.call(this, appSid, 'API_PASSCODE', getPin());
+  await updateVariable.call(this, appSid, 'API_PASSCODE_EXPIRY', Date.now() + EXPIRY_PERIOD);
 }
 
-function getAppCode(domain, passcode) {
+function getPasscode(domain, passcode) {
   const regex = new RegExp(`${APP_NAME}-(\\d*)-dev.twil.io`);
   const urlcode = domain.match(regex)[1];
   return `${passcode}${urlcode}`;
@@ -61,19 +61,19 @@ async function getAppInfo() {
 
   const assets = await appInstance.assets.list();
 
-  const passcodeVar = variables.find(v => v.key === 'API_SECRET');
-  const expiryVar = variables.find(v => v.key === 'API_EXPIRY');
+  const passcodeVar = variables.find(v => v.key === 'API_PASSCODE');
+  const expiryVar = variables.find(v => v.key === 'API_PASSCODE_EXPIRY');
 
   const passcode = passcodeVar ? passcodeVar.value : '';
   const expiry = expiryVar ? expiryVar.value : '';
 
-  const appcode = getAppCode(environment.domainName, passcode);
+  const fullPasscode = getPasscode(environment.domainName, passcode);
 
   return {
-    url: `https://${environment.domainName}?appcode=${appcode}`,
+    url: `https://${environment.domainName}?passcode=${fullPasscode}`,
     expiry: moment(Number(expiry)).toString(),
     sid: app.sid,
-    appcode,
+    passcode: fullPasscode,
     hasAssets: Boolean(assets.length)
   };
 }
@@ -89,7 +89,7 @@ async function displayAppInfo() {
   if (appInfo.hasAssets) {
     console.log(`Web App URL: ${appInfo.url}`);
   }
-  console.log(`App Code: ${appInfo.appcode}`);
+  console.log(`Passcode: ${appInfo.passcode}`);
   console.log(`Expires: ${appInfo.expiry}`);
 }
 
@@ -104,7 +104,9 @@ async function updateVariable(appSid, varName, varValue) {
     .update({ value: varValue });
 }
 
-async function deploy(assets) {
+async function deploy() {
+  const assets = this.flags['app-directory'] ? getAssets(this.flags['app-directory']) : [];
+
   const serverlessClient = new TwilioServerlessApiClient({
     accountSid: this.twilioClient.username,
     authToken: this.twilioClient.password
@@ -122,8 +124,8 @@ async function deploy(assets) {
       TWILIO_ACCOUNT_SID: this.twilioClient.accountSid,
       TWILIO_API_KEY_SID: this.twilioClient.username,
       TWILIO_API_KEY_SECRET: this.twilioClient.password,
-      API_SECRET: pin,
-      API_EXPIRY: expiryTime
+      API_PASSCODE: pin,
+      API_PASSCODE_EXPIRY: expiryTime
     },
     pkgJson: {},
     serviceName: APP_NAME,
@@ -136,7 +138,7 @@ async function deploy(assets) {
         access: 'public'
       }
     ],
-    assets: assets || []
+    assets: assets
   };
 
   try {
