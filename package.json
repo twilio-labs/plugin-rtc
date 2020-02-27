@@ -34,13 +34,13 @@
         "description": "List any deployed Video apps"
       },
       "rtc:video:deploy-app": {
-        "description": "Deploy an Video App"
+        "description": "Deploy an Video app"
       },
       "rtc:video:delete-app": {
         "description": "Delete a deployed Video app"
       },
       "rtc:video:refresh-app-passcode": {
-        "description": "Refresh a Video app passcode"
+        "description": "Refreshes the Video app passcode"
       }
     }
   }
