@@ -23,11 +23,11 @@ DeployAppCommand.flags = Object.assign(
       description: 'Name of app directory to use',
       required: false
     }),
-    'authentication': flags.enum({
+    authentication: flags.enum({
       options: ['passcode'],
       description: 'Type of authentication to use',
       required: true
-    }),
+    })
   },
   TwilioClientCommand.flags
 );

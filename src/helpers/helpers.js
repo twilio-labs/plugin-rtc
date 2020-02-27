@@ -104,7 +104,7 @@ async function updateVariable(appSid, varName, varValue) {
 }
 
 async function deploy() {
-  const assets = this.flags['app-directory'] ? getAssets(this.flags['app-directory']) : [];
+  const assets = this.flags['app-directory'] ? await getAssets(this.flags['app-directory']) : [];
 
   const serverlessClient = new TwilioServerlessApiClient({
     accountSid: this.twilioClient.username,
