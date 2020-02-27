@@ -5,9 +5,17 @@ const VideoGrant = AccessToken.VideoGrant;
 const MAX_ALLOWED_SESSION_DURATION = 14400;
 
 module.exports.handler = (context, event, callback) => {
-  const { TWILIO_ACCOUNT_SID, TWILIO_API_KEY_SID, TWILIO_API_KEY_SECRET, API_PASSCODE, API_PASSCODE_EXPIRY } = context;
+  const {
+    TWILIO_ACCOUNT_SID,
+    TWILIO_API_KEY_SID,
+    TWILIO_API_KEY_SECRET,
+    API_PASSCODE,
+    API_PASSCODE_EXPIRY,
+    DOMAIN_NAME
+  } = context;
 
   const { user_identity, room_name, passcode } = event;
+  const appID = DOMAIN_NAME.match(/-(\d+)(?:-\w+)?.twil.io$/)[1];
 
   let response = new Twilio.Response();
   response.appendHeader('Content-Type', 'application/json');
@@ -19,7 +27,7 @@ module.exports.handler = (context, event, callback) => {
     return;
   }
 
-  if (API_PASSCODE !== passcode) {
+  if (API_PASSCODE + appID !== passcode) {
     response.setStatusCode(401);
     response.setBody({ error: 'unauthorized' });
     callback(null, response);
