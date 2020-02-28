@@ -7,9 +7,10 @@ class DeployAppCommand extends TwilioClientCommand {
     await super.run();
 
     const appInfo = await getAppInfo.call(this);
+
     if (appInfo) {
-      console.log('There is already a deployed app.');
-      return;
+      await this.twilioClient.serverless.services(appInfo.sid).remove();
+      console.log(`Removed app with Passcode: ${appInfo.passcode}`);
     }
 
     await deploy.call(this);
