@@ -40,6 +40,7 @@ module.exports.handler = (context, event, callback) => {
   token.identity = user_identity;
   const videoGrant = new VideoGrant({ room: room_name });
   token.addGrant(videoGrant);
+  response.setStatusCode(200);
   response.setBody({ token: token.toJwt() });
   callback(null, response);
 };
