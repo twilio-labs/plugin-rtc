@@ -1,5 +1,5 @@
 const { flags } = require('@oclif/command');
-const { displayAppInfo, getAppInfo, getAssets, deploy } = require('../../../helpers/helpers');
+const { displayAppInfo, getAppInfo, deploy } = require('../../../helpers/helpers');
 const { TwilioClientCommand } = require('@twilio/cli-core').baseCommands;
 
 class DeployAppCommand extends TwilioClientCommand {
@@ -7,9 +7,10 @@ class DeployAppCommand extends TwilioClientCommand {
     await super.run();
 
     const appInfo = await getAppInfo.call(this);
+
     if (appInfo) {
-      console.log('There is already a deployed app.');
-      return;
+      await this.twilioClient.serverless.services(appInfo.sid).remove();
+      console.log(`Removed app with Passcode: ${appInfo.passcode}`);
     }
 
     await deploy.call(this);
