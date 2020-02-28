@@ -10,11 +10,6 @@ function getPin() {
   return Math.floor(Math.random() * 900000) + 100000;
 }
 
-async function renew(appSid) {
-  await updateVariable.call(this, appSid, 'API_PASSCODE', getPin());
-  await updateVariable.call(this, appSid, 'API_PASSCODE_EXPIRY', Date.now() + EXPIRY_PERIOD);
-}
-
 function getPasscode(domain, passcode) {
   const appID = domain.match(/-(\d+)(?:-\w+)?.twil.io$/)[1];
   return `${passcode}${appID}`;
@@ -92,17 +87,6 @@ async function displayAppInfo() {
   console.log(`Expires: ${appInfo.expiry}`);
 }
 
-async function updateVariable(appSid, varName, varValue) {
-  const appInstance = await this.twilioClient.serverless.services(appSid);
-  const [environment] = await appInstance.environments.list();
-  const variables = await appInstance.environments(environment.sid).variables.list();
-  const varSid = variables.find(v => v.key === varName).sid;
-  await appInstance
-    .environments(environment.sid)
-    .variables(varSid)
-    .update({ value: varValue });
-}
-
 async function deploy() {
   const assets = this.flags['app-directory'] ? await getAssets(this.flags['app-directory']) : [];
 
@@ -151,7 +135,6 @@ async function deploy() {
 module.exports = {
   getAppInfo,
   getPin,
-  renew,
   getAssets,
   deploy,
   displayAppInfo,

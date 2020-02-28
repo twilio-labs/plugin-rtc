@@ -8,6 +8,6 @@ class ListCommand extends TwilioClientCommand {
   }
 }
 
-ListCommand.flags = Object.assign(TwilioClientCommand.flags);
+ListCommand.flags = { ...TwilioClientCommand.flags };
 
 module.exports = ListCommand;

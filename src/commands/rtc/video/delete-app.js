@@ -15,6 +15,6 @@ class DeleteAppCommand extends TwilioClientCommand {
   }
 }
 
-DeleteAppCommand.flags = Object.assign(TwilioClientCommand.flags);
+DeleteAppCommand.flags = { ...TwilioClientCommand.flags };
 
 module.exports = DeleteAppCommand;

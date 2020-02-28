@@ -4,7 +4,10 @@
   "description": "A Twilio-CLI plugin for real-time communication apps",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --recursive"
+    "test": "mocha --recursive",
+    "postpack": "rm -f oclif.manifest.json",
+    "prepack": "oclif-dev manifest && oclif-dev readme",
+    "version": "oclif-dev readme && git add README.md"
   },
   "author": "",
   "license": "Apache-2.0",
@@ -16,9 +19,17 @@
     "moment": "^2.24.0"
   },
   "devDependencies": {
-    "mocha": "^7.1.0"
+    "mocha": "^7.1.0",
+    "@oclif/dev-cli": "^1",
+    "@oclif/plugin-help": "^2",
+    "@oclif/test": "^1",
+    "globby": "^10"
   },
-  "files": [],
+  "files": [
+    "/oclif.manifest.json",
+    "/src",
+    "/package-lock.json"
+  ],
   "oclif": {
     "name": "rtc",
     "commands": "./src/commands",
@@ -41,9 +52,6 @@
       },
       "rtc:video:delete-app": {
         "description": "Delete a deployed Video app"
-      },
-      "rtc:video:refresh-app-passcode": {
-        "description": "Refreshes the Video app passcode"
       }
     }
   }
