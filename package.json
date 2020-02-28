@@ -51,9 +51,6 @@
       },
       "rtc:video:delete-app": {
         "description": "Delete a deployed Video app"
-      },
-      "rtc:video:refresh-app-passcode": {
-        "description": "Refreshes the Video app passcode"
       }
     }
   }
