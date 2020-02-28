@@ -15,7 +15,9 @@ const mockContext = {
 describe('the video-token-server', () => {
   it('should return an "unauthorized" error when the passcode is incorrect', () => {
     Date.now = () => 5;
+
     handler(mockContext, { passcode: '9876543210' }, callback);
+    
     expect(callback).toHaveBeenCalledWith(null, {
       body: { error: 'unauthorized' },
       headers: { 'Content-Type': 'application/json' },
@@ -25,7 +27,9 @@ describe('the video-token-server', () => {
 
   it('should return an "expired" error when the current time is past the API_PASSCODE_EXPIRY time', () => {
     Date.now = () => 15;
+
     handler(mockContext, { passcode: '1234566789' }, callback);
+
     expect(callback).toHaveBeenCalledWith(null, {
       body: { error: 'expired' },
       headers: { 'Content-Type': 'application/json' },
@@ -35,12 +39,15 @@ describe('the video-token-server', () => {
 
   it('should return a token when only the passcode is supplied', () => {
     Date.now = () => 5;
+
     handler(mockContext, { passcode: '1234566789' }, callback);
+
     expect(callback).toHaveBeenCalledWith(null, {
       body: { token: expect.any(String) },
       headers: { 'Content-Type': 'application/json' },
       statusCode: 200
     });
+
     expect(jwt.decode(callback.mock.calls[0][1].body.token)).toEqual({
       exp: 14400,
       grants: {
@@ -56,11 +63,13 @@ describe('the video-token-server', () => {
   it('should return a valid token when passcode, room_name, and user_identity parameters are supplied', () => {
     Date.now = () => 5;
     handler(mockContext, { passcode: '1234566789', room_name: 'test-room', user_identity: 'test-user' }, callback);
+
     expect(callback).toHaveBeenCalledWith(null, {
       body: { token: expect.any(String) },
       headers: { 'Content-Type': 'application/json' },
       statusCode: 200
     });
+
     expect(jwt.decode(callback.mock.calls[0][1].body.token)).toEqual({
       exp: 14400,
       grants: {

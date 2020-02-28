@@ -16,7 +16,7 @@ function getPasscode(domain, passcode) {
 }
 
 async function getAssets(folder) {
-  const { assets } = await getListOfFunctionsAndAssets(process.cwd(), {
+  const { assets } = await getListOfFunctionsAndAssets(path.isAbsolute(folder) ? '/' : process.cwd(), {
     functionsFolderNames: [],
     assetsFolderNames: [folder]
   });
@@ -139,5 +139,5 @@ module.exports = {
   getAssets,
   getAppInfo,
   getPasscode,
-  getPin,
+  getPin
 };
