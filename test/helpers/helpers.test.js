@@ -61,7 +61,7 @@ describe('the findApp function', () => {
     expect(result).toEqual({ friendlyName: APP_NAME });
   });
 
-  it('should return the app when it exists', async () => {
+  it('should return undefined when it doesnt exist', async () => {
     const mockTwilioClient = {
       serverless: {
         services: {

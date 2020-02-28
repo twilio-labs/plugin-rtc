@@ -22,7 +22,7 @@ const testCLIPlugin = test
   })
   .stdout();
 
-describe('the awefpoawekf', () => {
+describe('the RTC Twilio-CLI Plugin', () => {
   beforeAll(() => {
     testCLIPlugin.command(['rtc:video:delete-app']);
   });
