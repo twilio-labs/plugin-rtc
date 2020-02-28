@@ -4,7 +4,10 @@
   "description": "A Twilio-CLI plugin for real-time communication apps",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postpack": "rm -f oclif.manifest.json",
+    "prepack": "oclif-dev manifest && oclif-dev readme",
+    "version": "oclif-dev readme && git add README.md"
   },
   "author": "",
   "license": "Apache-2.0",
@@ -15,7 +18,17 @@
     "@twilio/cli-core": "^4.4.6",
     "moment": "^2.24.0"
   },
-  "files": [],
+  "devDependencies": {
+    "@oclif/dev-cli": "^1",
+    "@oclif/plugin-help": "^2",
+    "@oclif/test": "^1",
+    "globby": "^10"
+  },
+  "files": [
+    "/oclif.manifest.json",
+    "/src",
+    "/package-lock.json"
+  ],
   "oclif": {
     "name": "rtc",
     "commands": "./src/commands",
