@@ -133,10 +133,11 @@ async function deploy() {
 }
 
 module.exports = {
-  getAppInfo,
-  getPin,
-  getAssets,
   deploy,
   displayAppInfo,
-  findApp
+  findApp,
+  getAssets,
+  getAppInfo,
+  getPasscode,
+  getPin,
 };
