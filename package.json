@@ -4,7 +4,7 @@
   "description": "A Twilio-CLI plugin for real-time communication apps",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha --recursive",
     "postpack": "rm -f oclif.manifest.json",
     "prepack": "oclif-dev manifest && oclif-dev readme",
     "version": "oclif-dev readme && git add README.md"
@@ -19,6 +19,7 @@
     "moment": "^2.24.0"
   },
   "devDependencies": {
+    "mocha": "^7.1.0",
     "@oclif/dev-cli": "^1",
     "@oclif/plugin-help": "^2",
     "@oclif/test": "^1",
