@@ -42,19 +42,19 @@
     ],
     "topics": {
       "rtc": {
-        "description": "A plugin which showcases real-time communication applications that demonstrate the Twilio platform"
+        "description": "A plugin which showcases real-time communication applications powered by Twilio"
       },
       "rtc:video": {
-        "description": "Commands related to Video apps"
+        "description": "Commands related to Programmable Video apps"
       },
       "rtc:video:list": {
-        "description": "List any deployed Video apps"
+        "description": "View a deployed Programmable Video app"
       },
       "rtc:video:deploy-app": {
-        "description": "Deploy an Video app"
+        "description": "Deploy a Programmable Video app"
       },
       "rtc:video:delete-app": {
-        "description": "Delete a deployed Video app"
+        "description": "Delete a Programmable Video app"
       }
     }
   }
