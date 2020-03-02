@@ -9,12 +9,17 @@ class DeployAppCommand extends TwilioClientCommand {
     const appInfo = await getAppInfo.call(this);
 
     if (appInfo) {
-      await this.twilioClient.serverless.services(appInfo.sid).remove();
-      console.log(`Removed app with Passcode: ${appInfo.passcode}`);
+      if (this.flags.override) {
+        await this.twilioClient.serverless.services(appInfo.sid).remove();
+        console.log(`Removed app with Passcode: ${appInfo.passcode}`);
+      } else {
+        console.log('A Video app is already deployed.');
+        await displayAppInfo.call(this);
+      }
+    } else {
+      await deploy.call(this);
+      await displayAppInfo.call(this);
     }
-
-    await deploy.call(this);
-    await displayAppInfo.call(this);
   }
 }
 
@@ -28,6 +33,11 @@ DeployAppCommand.flags = Object.assign(
       options: ['passcode'],
       description: 'Type of authentication to use',
       required: true
+    }),
+    override: flags.boolean({
+      required: true,
+      default: false,
+      description: 'Override an existing App deployment'
     })
   },
   TwilioClientCommand.flags
