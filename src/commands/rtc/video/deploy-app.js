@@ -31,7 +31,7 @@ Web App URL: https://video-app-1111-dev.twil.io?passcode=1111111111
 Passcode: 1111111111`,
     `
 # Override an existing app with a fresh deployment
-# Please note that this may remove a previously deployed web application if no
+# Please note that this will remove a previously deployed web application if no
 # app directory is provided
 $ twilio rtc:video:deploy-app --authentication passcode --override 
 Removed app with Passcode: 1111111111
