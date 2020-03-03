@@ -78,7 +78,7 @@ describe('the RTC Twilio-CLI Plugin', () => {
     });
 
     describe('the list command', () => {
-      it('sdfa', async () => {
+      it('should correctly list the deployment details', async () => {
         stdout.start();
         await ListCommand.run([]);
         stdout.stop();
@@ -147,11 +147,12 @@ describe('the RTC Twilio-CLI Plugin', () => {
     });
 
     describe('the list command', () => {
-      it('sdfa', async () => {
+      it('should correctly list the deployment details', async () => {
         stdout.start();
         await ListCommand.run([]);
         stdout.stop();
         expect(stdout.output).toMatch(/Passcode: \d{10}\nExpires: .+/);
+        expect(stdout.output).not.toMatch(/Web App URL:/)
       });
     });
 
