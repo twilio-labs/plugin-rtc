@@ -43,7 +43,7 @@ DeployAppCommand.flags = Object.assign(
   TwilioClientCommand.flags
 );
 
-DeployAppCommand.usage = 'twilio rtc:video:deploy-app --authentication <auth>';
+DeployAppCommand.usage = 'rtc:video:deploy-app --authentication <auth>';
 
 DeployAppCommand.description = `
 Deploy a Programmable Video app 
