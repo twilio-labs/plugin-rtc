@@ -9,7 +9,7 @@ const mockContext = {
   TWILIO_API_KEY_SECRET: '123456',
   API_PASSCODE: '123456',
   API_PASSCODE_EXPIRY: '10',
-  DOMAIN_NAME: 'video-app-6789-dev.twil.io'
+  DOMAIN_NAME: 'video-app-6789-dev.twil.io',
 };
 
 describe('the video-token-server', () => {
@@ -17,11 +17,11 @@ describe('the video-token-server', () => {
     Date.now = () => 5;
 
     handler(mockContext, { passcode: '9876543210' }, callback);
-    
+
     expect(callback).toHaveBeenCalledWith(null, {
       body: { error: 'unauthorized' },
       headers: { 'Content-Type': 'application/json' },
-      statusCode: 401
+      statusCode: 401,
     });
   });
 
@@ -33,7 +33,7 @@ describe('the video-token-server', () => {
     expect(callback).toHaveBeenCalledWith(null, {
       body: { error: 'expired' },
       headers: { 'Content-Type': 'application/json' },
-      statusCode: 401
+      statusCode: 401,
     });
   });
 
@@ -45,18 +45,18 @@ describe('the video-token-server', () => {
     expect(callback).toHaveBeenCalledWith(null, {
       body: { token: expect.any(String) },
       headers: { 'Content-Type': 'application/json' },
-      statusCode: 200
+      statusCode: 200,
     });
 
     expect(jwt.decode(callback.mock.calls[0][1].body.token)).toEqual({
       exp: 14400,
       grants: {
-        video: {}
+        video: {},
       },
       iat: 0,
       iss: 'SK1234',
       jti: 'SK1234-0',
-      sub: 'AC1234'
+      sub: 'AC1234',
     });
   });
 
@@ -67,7 +67,7 @@ describe('the video-token-server', () => {
     expect(callback).toHaveBeenCalledWith(null, {
       body: { token: expect.any(String) },
       headers: { 'Content-Type': 'application/json' },
-      statusCode: 200
+      statusCode: 200,
     });
 
     expect(jwt.decode(callback.mock.calls[0][1].body.token)).toEqual({
@@ -75,13 +75,13 @@ describe('the video-token-server', () => {
       grants: {
         identity: 'test-user',
         video: {
-          room: 'test-room'
-        }
+          room: 'test-room',
+        },
       },
       iat: 0,
       iss: 'SK1234',
       jti: 'SK1234-0',
-      sub: 'AC1234'
+      sub: 'AC1234',
     });
   });
 });

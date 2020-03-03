@@ -18,5 +18,5 @@ class Response {
   }
 }
 
-global.Twilio = require('twilio')
-global.Twilio.Response = Response
+global.Twilio = require('twilio');
+global.Twilio.Response = Response;

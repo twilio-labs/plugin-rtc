@@ -11,7 +11,7 @@ module.exports.handler = (context, event, callback) => {
     TWILIO_API_KEY_SECRET,
     API_PASSCODE,
     API_PASSCODE_EXPIRY,
-    DOMAIN_NAME
+    DOMAIN_NAME,
   } = context;
 
   const { user_identity, room_name, passcode } = event;
@@ -35,7 +35,7 @@ module.exports.handler = (context, event, callback) => {
   }
 
   const token = new AccessToken(TWILIO_ACCOUNT_SID, TWILIO_API_KEY_SID, TWILIO_API_KEY_SECRET, {
-    ttl: MAX_ALLOWED_SESSION_DURATION
+    ttl: MAX_ALLOWED_SESSION_DURATION,
   });
   token.identity = user_identity;
   const videoGrant = new VideoGrant({ room: room_name });
