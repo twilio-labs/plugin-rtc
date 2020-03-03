@@ -23,14 +23,21 @@ module.exports.handler = (context, event, callback) => {
 
   if (Date.now() > API_PASSCODE_EXPIRY) {
     response.setStatusCode(401);
-    response.setBody({ error: 'expired' });
+    response.setBody({
+      error: 'expired',
+      message:
+        'The passcode used to validate application users has expired. Re-deploy the application to refresh the passcode.',
+    });
     callback(null, response);
     return;
   }
 
   if (API_PASSCODE + appID !== passcode) {
     response.setStatusCode(401);
-    response.setBody({ error: 'unauthorized' });
+    response.setBody({
+      error: 'unauthorized',
+      message: 'The passcode used to validate application users is incorrect.',
+    });
     callback(null, response);
     return;
   }

@@ -19,7 +19,11 @@ describe('the video-token-server', () => {
     handler(mockContext, { passcode: '9876543210' }, callback);
 
     expect(callback).toHaveBeenCalledWith(null, {
-      body: { error: 'unauthorized' },
+      body: {
+        error: 'unauthorized',
+        message:
+          'The passcode used to validate application users is incorrect.',
+      },
       headers: { 'Content-Type': 'application/json' },
       statusCode: 401,
     });
@@ -31,7 +35,11 @@ describe('the video-token-server', () => {
     handler(mockContext, { passcode: '1234566789' }, callback);
 
     expect(callback).toHaveBeenCalledWith(null, {
-      body: { error: 'expired' },
+      body: {
+        error: 'expired',
+        message:
+          'The passcode used to validate application users has expired. Re-deploy the application to refresh the passcode.',
+      },
       headers: { 'Content-Type': 'application/json' },
       statusCode: 401,
     });
