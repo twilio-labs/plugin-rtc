@@ -4,7 +4,7 @@
   "description": "A Twilio-CLI plugin for real-time communication apps",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "TZ=utc jest",
     "postpack": "rm -f oclif.manifest.json",
     "prepack": "oclif-dev manifest && oclif-dev readme",
     "version": "oclif-dev readme && git add README.md",

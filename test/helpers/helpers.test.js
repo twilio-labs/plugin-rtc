@@ -169,7 +169,7 @@ describe('the displayAppInfo function', () => {
     });
     expect(stdout.output).toMatchInlineSnapshot(`
       "Passcode: 1234565678
-      Expires: Wed May 20 2020 12:40:00 GMT-0600
+      Expires: Wed May 20 2020 18:40:00 GMT+0000
       "
     `);
   });
@@ -181,7 +181,7 @@ describe('the displayAppInfo function', () => {
     expect(stdout.output).toMatchInlineSnapshot(`
       "Web App URL: https://video-app-5678-dev.twil.io?passcode=1234565678
       Passcode: 1234565678
-      Expires: Wed May 20 2020 12:40:00 GMT-0600
+      Expires: Wed May 20 2020 18:40:00 GMT+0000
       "
     `);
   });
