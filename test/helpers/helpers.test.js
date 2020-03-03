@@ -130,7 +130,7 @@ describe('the getAppInfo function', () => {
       twilioClient: getMockTwilioInstance({ exists: true }),
     });
     expect(result).toEqual({
-      expiry: 'Wed May 20 2020 12:40:00 GMT-0600',
+      expiry: 'Wed May 20 2020 18:40:00 GMT+0000',
       hasAssets: false,
       passcode: '1234565678',
       sid: 'appSid',
@@ -143,7 +143,7 @@ describe('the getAppInfo function', () => {
       twilioClient: getMockTwilioInstance({ exists: true, hasAssets: true }),
     });
     expect(result).toEqual({
-      expiry: 'Wed May 20 2020 12:40:00 GMT-0600',
+      expiry: 'Wed May 20 2020 18:40:00 GMT+0000',
       hasAssets: true,
       passcode: '1234565678',
       sid: 'appSid',
