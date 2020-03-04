@@ -72,7 +72,7 @@ DeployAppCommand.flags = Object.assign(
       required: true
     }),
     override: flags.boolean({
-      required: true,
+      required: false,
       default: false,
       description: 'Override an existing App deployment'
     })

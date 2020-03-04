@@ -42,7 +42,7 @@ OPTIONS
   -p, --profile=profile            Shorthand identifier for your profile.
   --app-directory=app-directory    Name of app directory to use
   --authentication=(passcode)      (required) Type of authentication to use
-  --override                       (required) Override an existing App deployment
+  --override                       (optional) Override an existing App deployment
 
 DESCRIPTION
   Deploy a Programmable Video app 
