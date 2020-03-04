@@ -20,9 +20,10 @@ describe('the video-token-server', () => {
 
     expect(callback).toHaveBeenCalledWith(null, {
       body: {
-        error: 'unauthorized',
-        message:
-          'The passcode used to validate application users is incorrect.',
+        error: {
+          message: 'passcode incorrect',
+          explanation: 'The passcode used to validate application users is incorrect.',
+        },
       },
       headers: { 'Content-Type': 'application/json' },
       statusCode: 401,
@@ -36,9 +37,11 @@ describe('the video-token-server', () => {
 
     expect(callback).toHaveBeenCalledWith(null, {
       body: {
-        error: 'expired',
-        message:
-          'The passcode used to validate application users has expired. Re-deploy the application to refresh the passcode.',
+        error: {
+          message: 'passcode expired',
+          explanation:
+            'The passcode used to validate application users has expired. Re-deploy the application to refresh the passcode.',
+        },
       },
       headers: { 'Content-Type': 'application/json' },
       statusCode: 401,
