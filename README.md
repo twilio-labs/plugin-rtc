@@ -1,9 +1,14 @@
 # @twilio-labs/plugin-rtc
+
 [![CircleCI](https://circleci.com/gh/twilio-labs/plugin-rtc/tree/master.svg?style=svg&circle-token=df6c2750596f1000c1cf13e45dc314e00f0a2204)](https://circleci.com/gh/twilio-labs/plugin-rtc/tree/master)
 
-A plugin for the [Twilio CLI](https://github.com/twilio/twilio-cli) which showcases real-time communication applications powered by Twilio.
+This plugin adds functionality to the [Twilio CLI](https://github.com/twilio/twilio-cli) which supports developing and deploying real-time communication apps.
 
-# Requirements
+* [Getting Started](#getting-started)
+* [Supported Apps](#supported-apps)
+* [Commands](#commands)
+
+# Getting Started 
 
 ## Install the Twilio CLI
 
@@ -22,11 +27,36 @@ $ brew tap twilio/brew && brew install twilio
 
 See the [Twilio CLI documentation](https://www.twilio.com/docs/twilio-cli/quickstart) for more information.
 
+##  Install the plugin
+
+```sh-session
+$ twilio plugins:install @twilio-labs/plugin-rtc
+```
+
+# Supported Apps
+
+This plugin currently supports the following applications:
+
+## Twilio Video App
+A mobile and web collaboration application built with Programmable Video. Visit the projects below for instructions on how to use this plugin to build and deploy the Twilio Video app.
+
+  * [React App](https://github.com/twilio/twilio-video-app-react)
+  * [iOS App](https://github.com/twilio/twilio-video-app-ios)
+  * [Android App](https://github.com/twilio/twilio-video-app-android)
+
+
 # Commands
   <!-- commands -->
-* [`twilio rtc:video:deploy-app --authentication <auth>`](#twilio-rtcvideodeploy-app---authentication-auth)
-* [`twilio rtc:video:list`](#twilio-rtcvideolist)
-* [`twilio rtc:video:delete-app`](#twilio-rtcvideodelete-app)
+- [@twilio-labs/plugin-rtc](#twilio-labsplugin-rtc)
+- [Getting Started](#getting-started)
+  - [Install the Twilio CLI](#install-the-twilio-cli)
+  - [Install the plugin](#install-the-plugin)
+- [Supported Apps](#supported-apps)
+  - [Twilio Video App](#twilio-video-app)
+- [Commands](#commands)
+  - [`twilio rtc:video:deploy-app --authentication <auth>`](#twilio-rtcvideodeploy-app---authentication-auth)
+  - [`twilio rtc:video:list`](#twilio-rtcvideolist)
+  - [`twilio rtc:video:delete-app`](#twilio-rtcvideodelete-app)
 
 ## `twilio rtc:video:deploy-app --authentication <auth>`
 
