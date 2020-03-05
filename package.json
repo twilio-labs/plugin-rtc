@@ -8,7 +8,8 @@
     "postpack": "rm -f oclif.manifest.json",
     "prepack": "oclif-dev manifest && oclif-dev readme",
     "version": "oclif-dev readme && git add README.md",
-    "posttest": "eslint ."
+    "lint": "eslint .",
+    "posttest": "npm run lint"
   },
   "author": "",
   "license": "Apache-2.0",
