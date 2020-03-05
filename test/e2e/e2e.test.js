@@ -52,7 +52,7 @@ describe('the RTC Twilio-CLI Plugin', () => {
       });
     });
 
-    describe.only('the deploy command', () => {
+    describe('the deploy command', () => {
       it('should display an error when the provided app-directory does not exist', async () => {
         stdout.start();
         await DeployCommand.run(['--authentication', 'passcode', '--app-directory', 'non-existant-path']);
