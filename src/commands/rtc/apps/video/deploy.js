@@ -1,8 +1,8 @@
 const { flags } = require('@oclif/command');
-const { displayAppInfo, getAppInfo, deploy } = require('../../../helpers/helpers');
+const { displayAppInfo, getAppInfo, deploy } = require('../../../../helpers');
 const { TwilioClientCommand } = require('@twilio/cli-core').baseCommands;
 
-class DeployAppCommand extends TwilioClientCommand {
+class DeployCommand extends TwilioClientCommand {
   async run() {
     await super.run();
 
@@ -23,7 +23,7 @@ class DeployAppCommand extends TwilioClientCommand {
   }
 }
 
-DeployAppCommand.flags = Object.assign(
+DeployCommand.flags = Object.assign(
   {
     'app-directory': flags.string({
       description: 'Name of app directory to use',
@@ -43,9 +43,9 @@ DeployAppCommand.flags = Object.assign(
   TwilioClientCommand.flags
 );
 
-DeployAppCommand.usage = 'rtc:video:deploy-app --authentication <auth>';
+DeployCommand.usage = 'rtc:apps:video:deploy --authentication <auth>';
 
-DeployAppCommand.description = `Deploy a Programmable Video app 
+DeployCommand.description = `Deploy a Programmable Video app 
 
 This command publishes two components as a Twilio Function: an application token server and an optional React application.
 
@@ -56,14 +56,14 @@ React Application
 The commands includes support for publishing a Programmable Video React Application. For more details using this plugin with the Programmable Video React application, please visit the project's home page. https://github.com/twilio/twilio-video-app-react
 `;
 
-DeployAppCommand.examples = [
+DeployCommand.examples = [
   `# Deploy an application token server with passcode authentication
-$ twilio rtc:video:deploy-app --authentication passcode
+$ twilio rtc:apps:video:deploy --authentication passcode
 deploying app... done
 Passcode: 1111111111`,
   `
 # Deploy an application token server with the React app
-$ twilio rtc:video:deploy-app --authentication passcode --app-directory /path/to/app
+$ twilio rtc:apps:video:deploy --authentication passcode --app-directory /path/to/app
 deploying app... done
 Web App URL: https://video-app-1111-dev.twil.io?passcode=1111111111
 Passcode: 1111111111`,
@@ -71,11 +71,11 @@ Passcode: 1111111111`,
 # Override an existing app with a fresh deployment
 # Please note that this will remove a previously deployed web application if no
 # app directory is provided
-$ twilio rtc:video:deploy-app --authentication passcode --override 
+$ twilio rtc:apps:video:deploy --authentication passcode --override 
 Removed app with Passcode: 1111111111
 deploying app... done
 Passcode: 2222222222
 Expires: Mon Mar 09 2020 16:36:23 GMT-0600`,
 ];
 
-module.exports = DeployAppCommand;
+module.exports = DeployCommand;
