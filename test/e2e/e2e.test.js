@@ -1,7 +1,7 @@
 const { APP_NAME } = require('../../src/constants');
-const DeleteAppCommand = require('../../src/commands/rtc/video/delete-app');
-const DeployAppCommand = require('../../src/commands/rtc/video/deploy-app');
-const ListCommand = require('../../src/commands/rtc/video/list');
+const DeleteCommand = require('../../src/commands/rtc/apps/video/delete');
+const DeployCommand = require('../../src/commands/rtc/apps/video/deploy');
+const ViewCommand = require('../../src/commands/rtc/apps/video/view');
 
 const jwt = require('jsonwebtoken');
 const path = require('path');
@@ -30,23 +30,23 @@ function getURL(output) {
 
 describe('the RTC Twilio-CLI Plugin', () => {
   beforeAll(async () => {
-    await DeleteAppCommand.run([]);
+    await DeleteCommand.run([]);
   });
 
   describe('with no app deployed', () => {
     describe('the list command', () => {
       it('should state that no app is deployed', async () => {
         stdout.start();
-        await ListCommand.run([]);
+        await ViewCommand.run([]);
         stdout.stop();
         expect(stdout.output).toContain('There is no deployed app');
       });
     });
 
-    describe('the delete-app command', () => {
+    describe('the delete command', () => {
       it('should state that there is no app to delete', async () => {
         stdout.start();
-        await DeleteAppCommand.run([]);
+        await DeleteCommand.run([]);
         stdout.stop();
         expect(stdout.output).toContain('There is no app to delete');
       });
@@ -60,7 +60,7 @@ describe('the RTC Twilio-CLI Plugin', () => {
 
     beforeAll(async done => {
       stdout.start();
-      await DeployAppCommand.run([
+      await DeployCommand.run([
         '--authentication',
         'passcode',
         '--app-directory',
@@ -74,19 +74,19 @@ describe('the RTC Twilio-CLI Plugin', () => {
     });
 
     afterAll(async () => {
-      await DeleteAppCommand.run([]);
+      await DeleteCommand.run([]);
     });
 
-    describe('the list command', () => {
-      it('should correctly list the deployment details', async () => {
+    describe('the view command', () => {
+      it('should correctly display the deployment details', async () => {
         stdout.start();
-        await ListCommand.run([]);
+        await ViewCommand.run([]);
         stdout.stop();
         expect(stdout.output).toMatch(/Web App URL: .+\nPasscode: \d{10}\nExpires: .+/);
       });
     });
 
-    describe('the deploy-app command', () => {
+    describe('the deploy command', () => {
       it('should return a video token when the correct passcode is provided', async () => {
         const { body } = await superagent
           .post(`${URL}/token`)
@@ -114,7 +114,7 @@ describe('the RTC Twilio-CLI Plugin', () => {
 
       it('should not redeploy the app when no --override flag is passed', async () => {
         stdout.start();
-        await DeployAppCommand.run([
+        await DeployCommand.run([
           '--authentication',
           'passcode',
           '--app-directory',
@@ -133,7 +133,7 @@ describe('the RTC Twilio-CLI Plugin', () => {
 
     beforeAll(async done => {
       stdout.start();
-      await DeployAppCommand.run(['--authentication', 'passcode']);
+      await DeployCommand.run(['--authentication', 'passcode']);
       stdout.stop();
       passcode = getPasscode(stdout.output);
       URL = getURL(stdout.output);
@@ -143,20 +143,20 @@ describe('the RTC Twilio-CLI Plugin', () => {
     });
 
     afterAll(async () => {
-      await DeleteAppCommand.run([]);
+      await DeleteCommand.run([]);
     });
 
-    describe('the list command', () => {
-      it('should correctly list the deployment details', async () => {
+    describe('the view command', () => {
+      it('should correctly display the deployment details', async () => {
         stdout.start();
-        await ListCommand.run([]);
+        await ViewCommand.run([]);
         stdout.stop();
         expect(stdout.output).toMatch(/Passcode: \d{10}\nExpires: .+/);
         expect(stdout.output).not.toMatch(/Web App URL:/)
       });
     });
 
-    describe('the deploy-app command', () => {
+    describe('the deploy command', () => {
       it('should return a video token when the correct passcode is provided', async () => {
         const { body } = await superagent
           .post(`${URL}/token`)

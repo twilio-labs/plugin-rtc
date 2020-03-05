@@ -1,7 +1,7 @@
-const { getAppInfo } = require('../../../helpers/helpers');
+const { getAppInfo } = require('../../../../helpers');
 const { TwilioClientCommand } = require('@twilio/cli-core').baseCommands;
 
-class DeleteAppCommand extends TwilioClientCommand {
+class DeleteCommand extends TwilioClientCommand {
   async run() {
     await super.run();
     const appInfo = await getAppInfo.call(this);
@@ -15,13 +15,13 @@ class DeleteAppCommand extends TwilioClientCommand {
   }
 }
 
-DeleteAppCommand.flags = { ...TwilioClientCommand.flags };
+DeleteCommand.flags = { ...TwilioClientCommand.flags };
 
-DeleteAppCommand.description = 'Delete a Programmable Video app';
+DeleteCommand.description = 'Delete a Programmable Video app';
 
-DeleteAppCommand.examples = [
-  `$ twilio rtc:video:delete-app
+DeleteCommand.examples = [
+  `$ twilio rtc:apps:video:delete
 Removed app with Passcode: 1111111111`,
 ];
 
-module.exports = DeleteAppCommand;
+module.exports = DeleteCommand;

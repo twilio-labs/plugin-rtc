@@ -1,4 +1,4 @@
-const { APP_NAME, EXPIRY_PERIOD } = require('../constants');
+const { APP_NAME, EXPIRY_PERIOD } = require('./constants');
 const { cli } = require('cli-ux');
 const fs = require('fs');
 const { getListOfFunctionsAndAssets } = require('@twilio-labs/serverless-api/dist/utils/fs');
@@ -98,7 +98,7 @@ async function deploy() {
   const pin = getPin();
   const expiryTime = Date.now() + EXPIRY_PERIOD;
 
-  const fn = fs.readFileSync(path.join(__dirname, '../video-token-server.js'));
+  const fn = fs.readFileSync(path.join(__dirname, './video-token-server.js'));
 
   cli.action.start('deploying app');
 

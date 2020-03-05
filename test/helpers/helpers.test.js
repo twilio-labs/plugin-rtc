@@ -1,5 +1,5 @@
 const { APP_NAME } = require('../../src/constants');
-const { displayAppInfo, findApp, getAppInfo, getAssets, getPasscode, getPin } = require('../../src/helpers/helpers');
+const { displayAppInfo, findApp, getAppInfo, getAssets, getPasscode, getPin } = require('../../src/helpers');
 const { getListOfFunctionsAndAssets } = require('@twilio-labs/serverless-api/dist/utils/fs');
 const { stdout } = require('stdout-stderr');
 
