@@ -146,7 +146,7 @@ describe('the RTC Twilio-CLI Plugin', () => {
           path.join(__dirname, '../test-assets'),
         ]);
         stdout.stop();
-        expect(stdout.output).toEqual('A Video app is already deployed. Use the --override flag to override the existing deployment.');
+        expect(stdout.output).toContain('A Video app is already deployed. Use the --override flag to override the existing deployment.');
       });
     });
   });
