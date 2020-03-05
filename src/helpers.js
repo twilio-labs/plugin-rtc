@@ -1,4 +1,4 @@
-const { APP_NAME, EXPIRY_PERIOD } = require('../constants');
+const { APP_NAME, EXPIRY_PERIOD } = require('./constants');
 const { cli } = require('cli-ux');
 const fs = require('fs');
 const { getListOfFunctionsAndAssets } = require('@twilio-labs/serverless-api/dist/utils/fs');
@@ -16,9 +16,9 @@ function getPasscode(domain, passcode) {
 }
 
 async function getAssets(folder) {
-  const { assets } = await getListOfFunctionsAndAssets(process.cwd(), {
+  const { assets } = await getListOfFunctionsAndAssets(path.isAbsolute(folder) ? '/' : process.cwd(), {
     functionsFolderNames: [],
-    assetsFolderNames: [folder]
+    assetsFolderNames: [folder],
   });
 
   const indexHTML = assets.find(asset => asset.name.includes('index.html'));
@@ -26,11 +26,11 @@ async function getAssets(folder) {
   if (indexHTML) {
     assets.push({
       ...indexHTML,
-      path: '/'
+      path: '/',
     });
     assets.push({
       ...indexHTML,
-      path: '/login'
+      path: '/login',
     });
   }
 
@@ -68,7 +68,7 @@ async function getAppInfo() {
     expiry: moment(Number(expiry)).toString(),
     sid: app.sid,
     passcode: fullPasscode,
-    hasAssets: Boolean(assets.length)
+    hasAssets: Boolean(assets.length),
   };
 }
 
@@ -92,13 +92,13 @@ async function deploy() {
 
   const serverlessClient = new TwilioServerlessApiClient({
     accountSid: this.twilioClient.username,
-    authToken: this.twilioClient.password
+    authToken: this.twilioClient.password,
   });
 
   const pin = getPin();
   const expiryTime = Date.now() + EXPIRY_PERIOD;
 
-  const fn = fs.readFileSync(path.join(__dirname, '../video-token-server.js'));
+  const fn = fs.readFileSync(path.join(__dirname, './video-token-server.js'));
 
   cli.action.start('deploying app');
 
@@ -108,7 +108,7 @@ async function deploy() {
       TWILIO_API_KEY_SID: this.twilioClient.username,
       TWILIO_API_KEY_SECRET: this.twilioClient.password,
       API_PASSCODE: pin,
-      API_PASSCODE_EXPIRY: expiryTime
+      API_PASSCODE_EXPIRY: expiryTime,
     },
     pkgJson: {},
     serviceName: APP_NAME,
@@ -118,10 +118,10 @@ async function deploy() {
         name: 'token',
         path: '/token',
         content: fn,
-        access: 'public'
-      }
+        access: 'public',
+      },
     ],
-    assets: assets
+    assets: assets,
   };
 
   try {
@@ -133,10 +133,11 @@ async function deploy() {
 }
 
 module.exports = {
-  getAppInfo,
-  getPin,
-  getAssets,
   deploy,
   displayAppInfo,
-  findApp
+  findApp,
+  getAssets,
+  getAppInfo,
+  getPasscode,
+  getPin,
 };

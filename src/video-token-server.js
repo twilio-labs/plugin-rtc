@@ -1,3 +1,4 @@
+/* global Twilio */
 'use strict';
 
 const AccessToken = Twilio.jwt.AccessToken;
@@ -11,7 +12,7 @@ module.exports.handler = (context, event, callback) => {
     TWILIO_API_KEY_SECRET,
     API_PASSCODE,
     API_PASSCODE_EXPIRY,
-    DOMAIN_NAME
+    DOMAIN_NAME,
   } = context;
 
   const { user_identity, room_name, passcode } = event;
@@ -22,24 +23,36 @@ module.exports.handler = (context, event, callback) => {
 
   if (Date.now() > API_PASSCODE_EXPIRY) {
     response.setStatusCode(401);
-    response.setBody({ error: 'expired' });
+    response.setBody({
+      error: {
+        message: 'passcode expired',
+        explanation:
+          'The passcode used to validate application users has expired. Re-deploy the application to refresh the passcode.',
+      },
+    });
     callback(null, response);
     return;
   }
 
   if (API_PASSCODE + appID !== passcode) {
     response.setStatusCode(401);
-    response.setBody({ error: 'unauthorized' });
+    response.setBody({
+      error: {
+        message: 'passcode incorrect',
+        explanation: 'The passcode used to validate application users is incorrect.',
+      },
+    });
     callback(null, response);
     return;
   }
 
   const token = new AccessToken(TWILIO_ACCOUNT_SID, TWILIO_API_KEY_SID, TWILIO_API_KEY_SECRET, {
-    ttl: MAX_ALLOWED_SESSION_DURATION
+    ttl: MAX_ALLOWED_SESSION_DURATION,
   });
   token.identity = user_identity;
   const videoGrant = new VideoGrant({ room: room_name });
   token.addGrant(videoGrant);
+  response.setStatusCode(200);
   response.setBody({ token: token.toJwt() });
   callback(null, response);
 };

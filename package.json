@@ -4,10 +4,12 @@
   "description": "A Twilio-CLI plugin for real-time communication apps",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --recursive",
+    "test": "TZ=utc jest",
     "postpack": "rm -f oclif.manifest.json",
     "prepack": "oclif-dev manifest && oclif-dev readme",
-    "version": "oclif-dev readme && git add README.md"
+    "version": "oclif-dev readme && git add README.md",
+    "lint": "eslint .",
+    "posttest": "npm run lint"
   },
   "author": "",
   "license": "Apache-2.0",
@@ -19,11 +21,41 @@
     "moment": "^2.24.0"
   },
   "devDependencies": {
-    "mocha": "^7.1.0",
     "@oclif/dev-cli": "^1",
     "@oclif/plugin-help": "^2",
     "@oclif/test": "^1",
-    "globby": "^10"
+    "@types/jest": "^25.1.3",
+    "chai": "^4.2.0",
+    "eslint": "^6.8.0",
+    "globby": "^10",
+    "husky": "^4.2.3",
+    "jest": "^25.1.0",
+    "lint-staged": "^10.0.8",
+    "prettier": "^1.19.1",
+    "superagent": "^5.2.2"
+  },
+  "eslintConfig": {
+    "extends": "eslint:recommended",
+    "env": {
+      "jest": true,
+      "node": true,
+      "es6": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 2018,
+      "sourceType": "module"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "files": [
     "/oclif.manifest.json",
@@ -41,16 +73,16 @@
       "rtc": {
         "description": "A plugin which showcases real-time communication applications powered by Twilio"
       },
-      "rtc:video": {
+      "rtc:apps:video": {
         "description": "Commands related to Programmable Video apps"
       },
-      "rtc:video:list": {
+      "rtc:apps:video:view": {
         "description": "View a deployed Programmable Video app"
       },
-      "rtc:video:deploy-app": {
+      "rtc:apps:video:deploy": {
         "description": "Deploy a Programmable Video app"
       },
-      "rtc:video:delete-app": {
+      "rtc:apps:video:delete": {
         "description": "Delete a Programmable Video app"
       }
     }
