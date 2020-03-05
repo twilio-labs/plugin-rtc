@@ -20,8 +20,7 @@ DeleteAppCommand.flags = { ...TwilioClientCommand.flags };
 DeleteAppCommand.description = 'Delete a Programmable Video app';
 
 DeleteAppCommand.examples = [
-  `
-$ twilio rtc:video:delete-app
+  `$ twilio rtc:video:delete-app
 Removed app with Passcode: 1111111111`,
 ];
 

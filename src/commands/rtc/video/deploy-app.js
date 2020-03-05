@@ -45,8 +45,7 @@ DeployAppCommand.flags = Object.assign(
 
 DeployAppCommand.usage = 'rtc:video:deploy-app --authentication <auth>';
 
-DeployAppCommand.description = `
-Deploy a Programmable Video app 
+DeployAppCommand.description = `Deploy a Programmable Video app 
 
 This command publishes two components as a Twilio Function: an application token server and an optional React application.
 
@@ -58,8 +57,7 @@ The commands includes support for publishing a Programmable Video React Applicat
 `;
 
 DeployAppCommand.examples = [
-  `
-# Deploy an application token server with passcode authentication
+  `# Deploy an application token server with passcode authentication
 $ twilio rtc:video:deploy-app --authentication passcode
 deploying app... done
 Passcode: 1111111111`,
