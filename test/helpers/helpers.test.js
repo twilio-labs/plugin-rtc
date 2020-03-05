@@ -1,6 +1,7 @@
 const { APP_NAME } = require('../../src/constants');
-const { displayAppInfo, findApp, getAppInfo, getAssets, getPasscode, getPin } = require('../../src/helpers');
+const { displayAppInfo, findApp, getAppInfo, getAssets, getPasscode, getPin, verifyAppDirectory } = require('../../src/helpers');
 const { getListOfFunctionsAndAssets } = require('@twilio-labs/serverless-api/dist/utils/fs');
+const path = require('path')
 const { stdout } = require('stdout-stderr');
 
 jest.mock('@twilio-labs/serverless-api/dist/utils/fs', () => ({
@@ -57,6 +58,24 @@ describe('the getPasscode function', () => {
   it('should get the "appID" from the domain name and return a passcode', () => {
     expect(getPasscode('https://video-app-1234-dev.twil.io', '123456')).toEqual('1234561234');
     expect(getPasscode('https://video-app-1234.twil.io', '123456')).toEqual('1234561234');
+  });
+});
+
+describe('the verifyAppDirectory function', () => {
+  it('should throw an error when the provided path does not exist', async() => {
+    await expect(verifyAppDirectory('non-existant-path')).rejects.toBe("The provided app-directory does not exist.")
+  });
+
+  it('should throw an error when the provided path does is not a directory', async() => {
+    await expect(verifyAppDirectory(__filename)).rejects.toBe("The provided app-directory is not a directory.")
+  });
+
+  it('should throw an error when the provided path does not contain index.html', async() => {
+    await expect(verifyAppDirectory(__dirname)).rejects.toBe('The provided app-directory does not appear to be a valid app. There is no index.html found in the app-directory.')
+  });
+
+  it('should not an error when the provided path is a directory that contains index.html', async() => {
+    await expect(verifyAppDirectory(path.join(__dirname,'../test-assets'))).resolves.toBe(undefined)
   });
 });
 
