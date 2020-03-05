@@ -47,24 +47,35 @@ A mobile and web collaboration application built with Programmable Video. Visit 
 
 # Commands
   <!-- commands -->
-- [@twilio-labs/plugin-rtc](#twilio-labsplugin-rtc)
-- [Getting Started](#getting-started)
-  - [Install the Twilio CLI](#install-the-twilio-cli)
-  - [Install the plugin](#install-the-plugin)
-- [Supported Apps](#supported-apps)
-  - [Twilio Video App](#twilio-video-app)
-- [Commands](#commands)
-  - [`twilio rtc:video:deploy-app --authentication <auth>`](#twilio-rtcvideodeploy-app---authentication-auth)
-  - [`twilio rtc:video:list`](#twilio-rtcvideolist)
-  - [`twilio rtc:video:delete-app`](#twilio-rtcvideodelete-app)
+* [`twilio rtc:apps:video:delete`](#twilio-rtcappsvideodelete)
+* [`twilio rtc:apps:video:deploy --authentication <auth>`](#twilio-rtcappsvideodeploy---authentication-auth)
+* [`twilio rtc:apps:video:view`](#twilio-rtcappsvideoview)
 
-## `twilio rtc:video:deploy-app --authentication <auth>`
+## `twilio rtc:apps:video:delete`
+
+Delete a Programmable Video app
+
+```
+USAGE
+  $ twilio rtc:apps:video:delete
+
+OPTIONS
+  -l=(debug|info|warn|error|none)  [default: info] Level of logging messages.
+  -o=(columns|json|tsv)            [default: columns] Format of command output.
+  -p, --profile=profile            Shorthand identifier for your profile.
+
+EXAMPLE
+  $ twilio rtc:apps:video:delete
+  Removed app with Passcode: 1111111111
+```
+
+## `twilio rtc:apps:video:deploy --authentication <auth>`
 
 Deploy a Programmable Video app 
 
 ```
 USAGE
-  $ twilio rtc:video:deploy-app --authentication <auth>
+  $ twilio rtc:apps:video:deploy --authentication <auth>
 
 OPTIONS
   -l=(debug|info|warn|error|none)  [default: info] Level of logging messages.
@@ -72,11 +83,9 @@ OPTIONS
   -p, --profile=profile            Shorthand identifier for your profile.
   --app-directory=app-directory    Name of app directory to use
   --authentication=(passcode)      (required) Type of authentication to use
-  --override                       (optional) Override an existing App deployment
+  --override                       Override an existing App deployment
 
 DESCRIPTION
-  Deploy a Programmable Video app 
-
   This command publishes two components as a Twilio Function: an application token server and an optional React 
   application.
 
@@ -90,14 +99,13 @@ DESCRIPTION
   https://github.com/twilio/twilio-video-app-react
 
 EXAMPLES
-
   # Deploy an application token server with passcode authentication
-  $ twilio rtc:video:deploy-app --authentication passcode
+  $ twilio rtc:apps:video:deploy --authentication passcode
   deploying app... done
   Passcode: 1111111111
 
   # Deploy an application token server with the React app
-  $ twilio rtc:video:deploy-app --authentication passcode --app-directory /path/to/app
+  $ twilio rtc:apps:video:deploy --authentication passcode --app-directory /path/to/app
   deploying app... done
   Web App URL: https://video-app-1111-dev.twil.io?passcode=1111111111
   Passcode: 1111111111
@@ -105,20 +113,20 @@ EXAMPLES
   # Override an existing app with a fresh deployment
   # Please note that this will remove a previously deployed web application if no
   # app directory is provided
-  $ twilio rtc:video:deploy-app --authentication passcode --override 
+  $ twilio rtc:apps:video:deploy --authentication passcode --override 
   Removed app with Passcode: 1111111111
   deploying app... done
   Passcode: 2222222222
   Expires: Mon Mar 09 2020 16:36:23 GMT-0600
 ```
 
-## `twilio rtc:video:list`
+## `twilio rtc:apps:video:view`
 
 View a Programmable Video app
 
 ```
 USAGE
-  $ twilio rtc:video:list
+  $ twilio rtc:apps:video:view
 
 OPTIONS
   -l=(debug|info|warn|error|none)  [default: info] Level of logging messages.
@@ -126,28 +134,8 @@ OPTIONS
   -p, --profile=profile            Shorthand identifier for your profile.
 
 EXAMPLE
-
-  $ twilio rtc:video:list
+  $ twilio rtc:apps:video:view
   Web App URL: https://video-app-1111-dev.twil.io?passcode=1111111111
   Passcode: 1111111111
-```
-
-## `twilio rtc:video:delete-app`
-
-Delete a Programmable Video app
-
-```
-USAGE
-  $ twilio rtc:video:delete-app
-
-OPTIONS
-  -l=(debug|info|warn|error|none)  [default: info] Level of logging messages.
-  -o=(columns|json|tsv)            [default: columns] Format of command output.
-  -p, --profile=profile            Shorthand identifier for your profile.
-
-EXAMPLE
-
-  $ twilio rtc:video:delete-app
-  Removed app with Passcode: 1111111111
 ```
 <!-- commandsstop -->
