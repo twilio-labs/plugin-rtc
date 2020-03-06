@@ -86,16 +86,17 @@ OPTIONS
   --override                       Override an existing App deployment
 
 DESCRIPTION
-  This command publishes two components as a Twilio Function: an application token server and an optional React 
-  application.
+  This command publishes two components as a Twilio Function: an application token
+  server and an optional React application.
 
   Token Server
-  The token server provides Programmable Video access tokens and authorizes requests with the specified authentication 
-  mechanism.
+  The token server provides Programmable Video access tokens and authorizes
+  requests with the specified authentication mechanism.
 
   React Application
-  The commands includes support for publishing a Programmable Video React Application. For more details using this 
-  plugin with the Programmable Video React application, please visit the project's home page. 
+  The commands includes support for publishing a Programmable Video React
+  Application. For more details using this plugin with the Programmable Video
+  React application, please visit the project's home page.
   https://github.com/twilio/twilio-video-app-react
 
 EXAMPLES
