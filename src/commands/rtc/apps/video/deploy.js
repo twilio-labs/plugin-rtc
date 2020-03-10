@@ -1,10 +1,19 @@
 const { flags } = require('@oclif/command');
-const { displayAppInfo, getAppInfo, deploy } = require('../../../../helpers');
+const { displayAppInfo, getAppInfo, deploy, verifyAppDirectory } = require('../../../../helpers');
 const { TwilioClientCommand } = require('@twilio/cli-core').baseCommands;
 
 class DeployCommand extends TwilioClientCommand {
   async run() {
     await super.run();
+
+    if (this.flags['app-directory']) {
+      try {
+        verifyAppDirectory(this.flags['app-directory']);
+      } catch (err) {
+        console.log(err.message);
+        return;
+      }
+    }
 
     const appInfo = await getAppInfo.call(this);
 
@@ -13,7 +22,7 @@ class DeployCommand extends TwilioClientCommand {
         await this.twilioClient.serverless.services(appInfo.sid).remove();
         console.log(`Removed app with Passcode: ${appInfo.passcode}`);
       } else {
-        console.log('A Video app is already deployed.');
+        console.log('A Video app is already deployed. Use the --override flag to override the existing deployment.');
         await displayAppInfo.call(this);
       }
     } else {

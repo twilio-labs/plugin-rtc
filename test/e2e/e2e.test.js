@@ -51,6 +51,31 @@ describe('the RTC Twilio-CLI Plugin', () => {
         expect(stdout.output).toContain('There is no app to delete');
       });
     });
+
+    describe('the deploy command', () => {
+      it('should display an error when the provided app-directory does not exist', async () => {
+        stdout.start();
+        await DeployCommand.run(['--authentication', 'passcode', '--app-directory', 'non-existant-path']);
+        stdout.stop();
+        expect(stdout.output).toEqual('The provided app-directory does not exist.\n');
+      });
+
+      it('should display an error when the provided app-directory is not a directory', async () => {
+        stdout.start();
+        await DeployCommand.run(['--authentication', 'passcode', '--app-directory', __filename]);
+        stdout.stop();
+        expect(stdout.output).toEqual('The provided app-directory is not a directory.\n');
+      });
+
+      it('should display an error when the provided app-directory does not contain an index.html file', async () => {
+        stdout.start();
+        await DeployCommand.run(['--authentication', 'passcode', '--app-directory', __dirname]);
+        stdout.stop();
+        expect(stdout.output).toEqual(
+          'The provided app-directory does not appear to be a valid app. There is no index.html found in the app-directory.\n'
+        );
+      });
+    });
   });
 
   describe('after deploying a video app', () => {
@@ -64,7 +89,7 @@ describe('the RTC Twilio-CLI Plugin', () => {
         '--authentication',
         'passcode',
         '--app-directory',
-        path.join(__dirname, 'test-assets'),
+        path.join(__dirname, '../test-assets'),
       ]);
       stdout.stop();
       passcode = getPasscode(stdout.output);
@@ -118,10 +143,10 @@ describe('the RTC Twilio-CLI Plugin', () => {
           '--authentication',
           'passcode',
           '--app-directory',
-          path.join(__dirname, 'test-assets'),
+          path.join(__dirname, '../test-assets'),
         ]);
         stdout.stop();
-        expect(stdout.output).toContain('A Video app is already deployed.');
+        expect(stdout.output).toContain('A Video app is already deployed. Use the --override flag to override the existing deployment.');
       });
     });
   });

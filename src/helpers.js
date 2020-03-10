@@ -15,6 +15,28 @@ function getPasscode(domain, passcode) {
   return `${passcode}${appID}`;
 }
 
+function verifyAppDirectory(dirpath) {
+  try {
+    const dir = fs.readdirSync(dirpath);
+    const hasIndexHTML = [...dir].includes('index.html');
+
+    if (!hasIndexHTML) {
+      throw new Error(
+        'The provided app-directory does not appear to be a valid app. There is no index.html found in the app-directory.'
+      );
+    }
+  } catch (err) {
+    switch (err.code) {
+      case 'ENOENT':
+        throw new Error('The provided app-directory does not exist.');
+      case 'ENOTDIR':
+        throw new Error('The provided app-directory is not a directory.');
+      default:
+        throw new Error(err.message);
+    }
+  }
+}
+
 async function getAssets(folder) {
   const { assets } = await getListOfFunctionsAndAssets(path.isAbsolute(folder) ? '/' : process.cwd(), {
     functionsFolderNames: [],
@@ -23,16 +45,14 @@ async function getAssets(folder) {
 
   const indexHTML = assets.find(asset => asset.name.includes('index.html'));
 
-  if (indexHTML) {
-    assets.push({
-      ...indexHTML,
-      path: '/',
-    });
-    assets.push({
-      ...indexHTML,
-      path: '/login',
-    });
-  }
+  assets.push({
+    ...indexHTML,
+    path: '/',
+  });
+  assets.push({
+    ...indexHTML,
+    path: '/login',
+  });
 
   return assets;
 }
@@ -140,4 +160,5 @@ module.exports = {
   getAppInfo,
   getPasscode,
   getPin,
+  verifyAppDirectory,
 };
