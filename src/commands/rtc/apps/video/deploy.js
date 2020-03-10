@@ -8,9 +8,9 @@ class DeployCommand extends TwilioClientCommand {
 
     if (this.flags['app-directory']) {
       try {
-        await verifyAppDirectory(this.flags['app-directory']);
+        verifyAppDirectory(this.flags['app-directory']);
       } catch (err) {
-        console.log(err);
+        console.log(err.message);
         return;
       }
     }

@@ -16,34 +16,25 @@ function getPasscode(domain, passcode) {
 }
 
 function verifyAppDirectory(dirpath) {
-  return new Promise((resolve, reject) => {
-    fs.readdir(dirpath, (err, dir) => {
-      if (err) {
-        switch (err.code) {
-          case 'ENOENT':
-            reject('The provided app-directory does not exist.');
-            break;
-          case 'ENOTDIR':
-            reject('The provided app-directory is not a directory.');
-            break;
-          default:
-            reject(err.message);
-        }
-        return;
-      }
+  try {
+    const dir = fs.readdirSync(dirpath);
+    const hasIndexHTML = [...dir].includes('index.html');
 
-      const hasIndexHTML = [...dir].includes('index.html');
-
-      if (!hasIndexHTML) {
-        reject(
-          'The provided app-directory does not appear to be a valid app. There is no index.html found in the app-directory.'
-        );
-        return;
-      }
-
-      resolve();
-    });
-  });
+    if (!hasIndexHTML) {
+      throw new Error(
+        'The provided app-directory does not appear to be a valid app. There is no index.html found in the app-directory.'
+      );
+    }
+  } catch (err) {
+    switch (err.code) {
+      case 'ENOENT':
+        throw new Error('The provided app-directory does not exist.');
+      case 'ENOTDIR':
+        throw new Error('The provided app-directory is not a directory.');
+      default:
+        throw new Error(err.message);
+    }
+  }
 }
 
 async function getAssets(folder) {
