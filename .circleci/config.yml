@@ -32,7 +32,8 @@ workflows:
 
     publish-release:
       jobs:
-        - publish-release 
+        - build-and-test
+        - publish-release:
             requires: 
               - build-and-test
             filters:
