@@ -32,12 +32,12 @@ workflows:
 
     publish-release:
       jobs:
-        - build-and-test
-        - publish-release:
-            requires: 
-              - build-and-test
+        - build-and-test:
             filters:
               tags:
                 only: /^v.*/
               branches:
                 ignore: /.*/
+        - publish-release:
+            requires: 
+              - build-and-test
