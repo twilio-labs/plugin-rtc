@@ -3,7 +3,14 @@ node-defaults: &node-defaults
   executor:
     name: node/default
     tag: 13.10.1
-    
+
+release-filter: &release-filter
+  filters:
+    tags:
+      only: /^v.*/
+    branches:
+      ignore: /.*/
+
 orbs:
   node: circleci/node@1.1.6
 
@@ -33,11 +40,8 @@ workflows:
     publish-release:
       jobs:
         - build-and-test:
-            filters:
-              tags:
-                only: /^v.*/
-              branches:
-                ignore: /.*/
+            <<: *release-filter
         - publish-release:
+            <<: *release-filter
             requires: 
               - build-and-test
