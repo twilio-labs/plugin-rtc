@@ -39,7 +39,9 @@ jobs:
           at: *workspace
       - node/with-cache:
           steps:
-            - run: echo "publishing!"
+            - run: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/plugin-rtc/.npmrc
+            - run: npm publish 
+            - run: npm --no-git-tag-version version patch -m "Bump version after %s release"
 
 workflows:
     build-and-test:
