@@ -1,5 +1,10 @@
 version: 2.1
+
+workspace: &workspace
+  ~/plugin-rtc
+
 node-defaults: &node-defaults
+  working_directory: *workspace
   executor:
     name: node/default
     tag: 13.10.1
