@@ -11,7 +11,7 @@
     "test": "TZ=utc jest",
     "postpack": "rm -f oclif.manifest.json",
     "prepack": "oclif-dev manifest && oclif-dev readme",
-    "version": "git add package.json package-lock.json && git commit -m 'Bump version after release'",
+    "version": "git add package.json package-lock.json",
     "lint": "eslint .",
     "posttest": "npm run lint"
   },
