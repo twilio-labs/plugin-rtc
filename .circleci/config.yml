@@ -5,6 +5,7 @@ jobs:
   build-and-test:
     executor:
       name: node/default
+      tag: 13.10.1
     steps:
       - checkout
       - node/with-cache:
