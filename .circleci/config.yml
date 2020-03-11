@@ -41,7 +41,12 @@ jobs:
           steps:
             - run: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/plugin-rtc/.npmrc
             - run: npm publish 
-            - run: npm --no-git-tag-version version patch -m "Bump version after %s release"
+            # TODO: Get default git branch
+            - run: git checkout $DEFAULT_BRANCH
+            - run: npm --no-git-tag-version version patch
+            - run: git add package.json package-lock.json
+            - run: git commit -m "Bump version after release"
+            - run: git push origin $DEFAULT_BRANCH
 
 workflows:
     build-and-test:
