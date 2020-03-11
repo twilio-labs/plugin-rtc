@@ -1,18 +1,42 @@
 version: 2.1
+node-defaults: &node-defaults
+  executor:
+    name: node/default
+    tag: 13.10.1
+    
 orbs:
   node: circleci/node@1.1.6
+
 jobs:
   build-and-test:
-    executor:
-      name: node/default
-      tag: 13.10.1
+    <<: *node-defaults
     steps:
       - checkout
       - node/with-cache:
           steps:
             - run: npm install
             - run: npm test -- -i --verbose
+
+  publish-release:
+    <<: *node-defaults
+    steps:
+      - checkout
+      - node/with-cache:
+          steps:
+            - run: echo "publishing!"
+
 workflows:
     build-and-test:
       jobs:
         - build-and-test
+
+    publish-release:
+      jobs:
+        - publish-release 
+          requires: 
+            - build-and-test
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
