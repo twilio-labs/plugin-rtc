@@ -35,13 +35,14 @@ jobs:
   publish-release:
     <<: *node-defaults
     steps:
+      - checkout
       - attach_workspace:
           at: *workspace
       - node/with-cache:
           steps:
-            - run: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/plugin-rtc/.npmrc
+            - run: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > $PWD/.npmrc
             - run: npm publish 
-            # TODO: Get default git branch
+            - run: echo 'export DEFAULT_BRANCH=$(git remote show origin | grep HEAD | cut -d ":" -f2- | xargs)' >> $BASH_ENV
             - run: git checkout $DEFAULT_BRANCH
             - run: npm --no-git-tag-version version patch
             - run: git add package.json package-lock.json
