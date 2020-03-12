@@ -1,5 +1,6 @@
 # @twilio-labs/plugin-rtc
 
+![npm](https://img.shields.io/npm/v/@twilio-labs/plugin-rtc)
 [![CircleCI](https://circleci.com/gh/twilio-labs/plugin-rtc.svg?style=svg)](https://circleci.com/gh/twilio-labs/plugin-rtc)
 
 This plugin adds functionality to the [Twilio CLI](https://github.com/twilio/twilio-cli) which supports developing and deploying real-time communication apps.
@@ -111,6 +112,22 @@ POST /token
 <table>
 <tr>
 <td> <b>Status</b> </td> <td> <b>Response</b> </td>
+</tr>
+
+<tr>
+<td> 400 </td>
+<td>
+
+```json
+{
+    "error": {
+      "message": "missing user_identity",
+      "explanation": "The user_identity parameter is missing."
+    }
+}
+```
+
+</td>
 </tr>
 
 <tr>

@@ -46,6 +46,18 @@ module.exports.handler = (context, event, callback) => {
     return;
   }
 
+  if (!user_identity) {
+    response.setStatusCode(400);
+    response.setBody({
+      error: {
+        message: 'missing user_identity',
+        explanation: 'The user_identity parameter is missing.',
+      },
+    });
+    callback(null, response);
+    return;
+  }
+
   const token = new AccessToken(TWILIO_ACCOUNT_SID, TWILIO_API_KEY_SID, TWILIO_API_KEY_SECRET, {
     ttl: MAX_ALLOWED_SESSION_DURATION,
   });
