@@ -77,6 +77,9 @@
       "rtc": {
         "description": "A plugin which showcases real-time communication applications powered by Twilio"
       },
+      "rtc:apps": {
+        "description": "Commands related to Programmable Voice and Video apps"
+      },
       "rtc:apps:video": {
         "description": "Commands related to Programmable Video apps"
       },
