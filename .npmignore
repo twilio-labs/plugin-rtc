@@ -1,0 +1,8 @@
+node_modules/
+.prettierrc
+test/
+.vscode
+.circleci
+.github
+npm-debug.log
+jest.config.js

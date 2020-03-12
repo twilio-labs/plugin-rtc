@@ -1,17 +1,75 @@
 version: 2.1
+
+workspace: &workspace
+  ~/plugin-rtc
+
+node-defaults: &node-defaults
+  working_directory: *workspace
+  executor:
+    name: node/default
+    tag: 13.10.1
+
+release-filter: &release-filter
+  filters:
+    tags:
+      only: /^v.*/
+    branches:
+      ignore: /.*/
+
 orbs:
   node: circleci/node@1.1.6
+
 jobs:
   build-and-test:
-    executor:
-      name: node/default
+    <<: *node-defaults
     steps:
       - checkout
       - node/with-cache:
           steps:
             - run: npm install
             - run: npm test -- -i --verbose
+      - persist_to_workspace:
+          root: .
+          paths: .
+
+  publish-release:
+    <<: *node-defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: *workspace
+      - node/with-cache:
+          steps:
+            - run:
+                name: Validate release version
+                command: |
+                  TAG=${CIRCLE_TAG:1}
+                  CURRENT_VERSION=$(node -p "require('./package.json').version")
+                  if [ "$TAG" == "$CURRENT_VERSION" ]; then
+                    echo "Release tag matches current version"
+                  else
+                    echo "Release tag does not match current version"
+                    exit 1
+                  fi
+            - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > $PWD/.npmrc
+            - run: npm publish 
+            - run: echo 'export DEFAULT_BRANCH=$(git remote show origin | grep HEAD | cut -d ":" -f2- | xargs)' >> $BASH_ENV
+            - run: git checkout $DEFAULT_BRANCH
+            - run: npm --no-git-tag-version version patch
+            - run: git add package.json package-lock.json
+            - run: git commit -m "Bump version after release"
+            - run: git push origin $DEFAULT_BRANCH
+
 workflows:
     build-and-test:
       jobs:
         - build-and-test
+
+    publish-release:
+      jobs:
+        - build-and-test:
+            <<: *release-filter
+        - publish-release:
+            <<: *release-filter
+            requires: 
+              - build-and-test
