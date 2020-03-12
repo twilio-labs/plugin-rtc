@@ -89,28 +89,18 @@ POST /token
 
 <table>
 <tr>
-<th>
-Status
-</th>
-<th>
-Response
-</th>
+<td> <b>Status</b> </td> <td> <b>Response</b> </td>
 </tr>
-
-<!-- Rows -->
 <tr>
+<td> 200 </td>
 <td>
-<pre style="background-color: transparent; border: none;">
-200
-</pre>
-</td>
 
-<td>
-<pre style="background-color: transparent; border: none;">
+```json
 {
     "token": "0000000000000000.0000000000000000000000.00000000000000000"
 }
-</pre>
+```
+
 </td>
 </tr>
 
@@ -120,50 +110,38 @@ Response
 
 <table>
 <tr>
-<th>
-Status
-</th>
-<th>
-Response
-</th>
+<td> <b>Status</b> </td> <td> <b>Response</b> </td>
 </tr>
 
-<!-- Rows -->
 <tr>
+<td> 401 </td>
 <td>
-<pre style="background-color: transparent; border: none;">
-401
-</pre>
-</td>
 
-<td>
-<pre style="background-color: transparent; border: none;">
+```json
 {
     "error": {
       "message": "passcode expired",
       "explanation": "The passcode used to validate application users has expired. Re-deploy the application to refresh the passcode."
     }
 }
-</pre>
+```
+
 </td>
 </tr>
 
 <tr>
+<td> 401 </td>
 <td>
-<pre style="background-color: transparent; border: none;">
-401
-</pre>
-</td>
 
-<td>
-<pre style="background-color: transparent; border: none;">
+```json
 {
     "error": {
       "message": "passcode incorrect",
       "explanation": "The passcode used to validate application users is incorrect."
     }
 }
-</pre>
+```
+
 </td>
 </tr>
 
