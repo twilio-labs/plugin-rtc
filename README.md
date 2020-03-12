@@ -1,6 +1,6 @@
 # @twilio-labs/plugin-rtc
 
-[![CircleCI](https://circleci.com/gh/twilio-labs/plugin-rtc/tree/master.svg?style=svg&circle-token=df6c2750596f1000c1cf13e45dc314e00f0a2204)](https://circleci.com/gh/twilio-labs/plugin-rtc/tree/master)
+[![CircleCI](https://circleci.com/gh/twilio-labs/plugin-rtc.svg?style=svg)](https://circleci.com/gh/twilio-labs/plugin-rtc)
 
 This plugin adds functionality to the [Twilio CLI](https://github.com/twilio/twilio-cli) which supports developing and deploying real-time communication apps.
 
