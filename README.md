@@ -55,7 +55,7 @@ The following section documents the application [token server](/src/video-token-
 
 ### Authentication
 
-The application token server requires an [authentication mechanism](twilio-rtcappsvideodeploy---authentication-auth) to be specified when deploying. The following section documents each support authentication mechanism.
+The application token server requires an [authentication mechanism](#twilio-rtcappsvideodeploy---authentication-auth) to be specified when deploying. The following section documents each support authentication mechanism.
 
 #### Passcode
 
