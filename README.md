@@ -39,7 +39,7 @@ This plugin currently supports the following applications:
 
 ## Twilio Video App
 
-A mobile and web collaboration application built with Programmable Video. Visit the projects below for instructions on how to use this plugin to build and deploy the Twilio Video app.
+A mobile and web collaboration application built with Twilio Programmable Video. Visit the projects below for instructions on how to use this plugin to build and deploy the Twilio Video app.
 
   * [React App](https://github.com/twilio/twilio-video-app-react)
   * [iOS App](https://github.com/twilio/twilio-video-app-ios)
