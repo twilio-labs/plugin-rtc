@@ -54,6 +54,11 @@ jobs:
             - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > $PWD/.npmrc
             - run: npm publish 
             - run: echo 'export DEFAULT_BRANCH=$(git remote show origin | grep HEAD | cut -d ":" -f2- | xargs)' >> $BASH_ENV
+            - run:
+                name: Set git information
+                command: |
+                  git config --global user.email "twilio-sdk-build@twilio.com"
+                  git config --global user.name "twilio-sdk-build"
             - run: git checkout $DEFAULT_BRANCH
             - run: npm --no-git-tag-version version patch
             - run: git add package.json package-lock.json
