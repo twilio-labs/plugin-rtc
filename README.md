@@ -8,9 +8,9 @@ This plugin adds functionality to the [Twilio CLI](https://github.com/twilio/twi
 * [Supported Apps](#supported-apps)
 * [Commands](#commands)
 
-# Getting Started
+## Getting Started
 
-## Install the Twilio CLI
+### Install the Twilio CLI
 
 Via `npm` or `yarn`:
 
@@ -27,17 +27,17 @@ $ brew tap twilio/brew && brew install twilio
 
 See the [Twilio CLI documentation](https://www.twilio.com/docs/twilio-cli/quickstart) for more information.
 
-## Install the plugin
+### Install the plugin
 
 ```sh-session
 $ twilio plugins:install @twilio-labs/plugin-rtc
 ```
 
-# Supported Apps
+## Supported Apps
 
 This plugin currently supports the following applications:
 
-## Twilio Video App
+### Twilio Video App
 
 A mobile and web collaboration application built with Twilio Programmable Video. Visit the projects below for instructions on how to use this plugin to build and deploy the Twilio Video app.
 
@@ -45,7 +45,7 @@ A mobile and web collaboration application built with Twilio Programmable Video.
   * [iOS App](https://github.com/twilio/twilio-video-app-ios)
   * [Android App](https://github.com/twilio/twilio-video-app-android)
 
-## Token Server API Documentation
+#### Token Server API Documentation
 
 The following section documents the application [token server](/src/video-token-server.js) used to provide [Programable Video access tokens](https://www.twilio.com/docs/video/tutorials/user-identity-access-tokens) to supported Twilio Video applications. The token server is deployed as a [Twilio Function](https://www.twilio.com/docs/runtime/functions).
 
@@ -53,13 +53,13 @@ The following section documents the application [token server](/src/video-token-
 | --- | --- |
 | POST | [`/token`](#token) |
 
-### Authentication
+##### Authentication
 
 The application token server requires an [authentication mechanism](#twilio-rtcappsvideodeploy---authentication-auth) to be specified when deploying. The following section documents each support authentication mechanism.
 
-#### Passcode
+###### Passcode
 
-Each request is verified using a passcode generated at deploy time. By default, passcodes remain valid for one week. After the passcode expires, users can redeploy an application and a new passcode will be generated. The snippet below provides an example request body made by a supported application.
+Each request is verified using a passcode generated at deploy time. Passcodes remain valid for one week. After the passcode expires, users can redeploy an application and a new passcode will be generated. The snippet below provides an example request body used by a supported application.
 
 ```
 {
@@ -69,43 +69,54 @@ Each request is verified using a passcode generated at deploy time. By default, 
 }
 ```
 
-#### Token
+##### Token
 
 Returns a Programmable Video Access token.
 
-##### URL
-
-`/token`
-
-##### Method
-
-`POST`
-
-##### Body Params
-
-###### Required
-
-   - `passcode=[string]`
-   - `user_identity=[string]`
-   - `room_name=[string]`
-
-##### Success Response
-
-###### Status
-
-200
-
-###### Body
-
-```json
-{
-  "token": "0000000000000000.0000000000000000000000.00000000000000000"
-}
+```shell
+POST /token
 ```
 
-##### Error Responses
+###### Parameters
 
-The following table provides a summary all the possible error responses for this route.
+| Name | Type | Description |
+| --- | --- | --- |
+| `passcode` | `string` | **Required**. The application passcode. |
+| `user_identity` | `string` | **Required**. The user's identity. |
+| `room_name` | `string` | A room name that will be used to create a token scoped to connecting to only one room.  |
+
+###### Success Responses
+
+<table>
+<tr>
+<th>
+Status
+</th>
+<th>
+Response
+</th>
+</tr>
+
+<!-- Rows -->
+<tr>
+<td>
+<pre>
+200
+</pre>
+</td>
+
+<td>
+<pre>
+{
+    "token": "0000000000000000.0000000000000000000000.00000000000000000"
+}
+</pre>
+</td>
+</tr>
+
+</table>
+
+###### Error Responses
 
 <table>
 <tr>
@@ -158,7 +169,7 @@ Response
 
 </table>
 
-# Commands
+## Commands
   <!-- commands -->
 * [`twilio rtc:apps:video:delete`](#twilio-rtcappsvideodelete)
 * [`twilio rtc:apps:video:deploy --authentication <auth>`](#twilio-rtcappsvideodeploy---authentication-auth)
