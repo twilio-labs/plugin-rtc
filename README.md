@@ -64,8 +64,8 @@ Each request is verified using a passcode generated at deploy time. By default, 
 ```
 {
   "passcode": "1234564321",
-  "user_identity:: "User",
-  "room_name:: "Demo",
+  "user_identity": "User",
+  "room_name": "Demo",
 }
 ```
 
