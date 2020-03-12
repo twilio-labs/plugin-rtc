@@ -114,6 +114,22 @@ POST /token
 </tr>
 
 <tr>
+<td> 400 </td>
+<td>
+
+```json
+{
+    "error": {
+      "message": "missing user_identity",
+      "explanation": "The user_identity parameter is missing."
+    }
+}
+```
+
+</td>
+</tr>
+
+<tr>
 <td> 401 </td>
 <td>
 
