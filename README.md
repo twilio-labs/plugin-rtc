@@ -100,13 +100,13 @@ Response
 <!-- Rows -->
 <tr>
 <td>
-<pre>
+<pre style="background-color: transparent; border: none;">
 200
 </pre>
 </td>
 
 <td>
-<pre>
+<pre style="background-color: transparent; border: none;">
 {
     "token": "0000000000000000.0000000000000000000000.00000000000000000"
 }
@@ -131,13 +131,13 @@ Response
 <!-- Rows -->
 <tr>
 <td>
-<pre>
+<pre style="background-color: transparent; border: none;">
 401
 </pre>
 </td>
 
 <td>
-<pre>
+<pre style="background-color: transparent; border: none;">
 {
     "error": {
       "message": "passcode expired",
@@ -150,13 +150,13 @@ Response
 
 <tr>
 <td>
-<pre>
+<pre style="background-color: transparent; border: none;">
 401
 </pre>
 </td>
 
 <td>
-<pre>
+<pre style="background-color: transparent; border: none;">
 {
     "error": {
       "message": "passcode incorrect",
