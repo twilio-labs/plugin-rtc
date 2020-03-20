@@ -109,7 +109,7 @@ async function displayAppInfo() {
 
 async function deploy() {
   const assets = this.flags['app-directory'] ? await getAssets(this.flags['app-directory']) : [];
-  const expiryPeriod = this.flags['passcode-expiry'] ? this.flags['passcode-expiry'] : DEFAULT_EXPIRY_PERIOD;
+  const expiryPeriod = this.flags['passcode-expiry'] ? this.flags['passcode-expiry'] * 1000 : DEFAULT_EXPIRY_PERIOD;
 
   const serverlessClient = new TwilioServerlessApiClient({
     accountSid: this.twilioClient.username,

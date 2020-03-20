@@ -45,7 +45,7 @@ DeployCommand.flags = Object.assign(
       required: true,
     }),
     'passcode-expiry': flags.integer({
-      description: 'The expiration period of the passcode in milliseconds',
+      description: 'The expiration period of the passcode in seconds',
       default: DEFAULT_EXPIRY_PERIOD,
       required: false,
     }),
