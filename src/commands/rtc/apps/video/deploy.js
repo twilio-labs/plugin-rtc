@@ -1,6 +1,7 @@
 const { flags } = require('@oclif/command');
 const { displayAppInfo, getAppInfo, deploy, verifyAppDirectory } = require('../../../../helpers');
 const { TwilioClientCommand } = require('@twilio/cli-core').baseCommands;
+const { DEFAULT_EXPIRY_PERIOD } = require('../../../../constants');
 
 class DeployCommand extends TwilioClientCommand {
   async run() {
@@ -42,6 +43,11 @@ DeployCommand.flags = Object.assign(
       options: ['passcode'],
       description: 'Type of authentication to use',
       required: true,
+    }),
+    'passcode-expiry': flags.integer({
+      description: 'The expiration period of the passcode in milliseconds',
+      default: DEFAULT_EXPIRY_PERIOD,
+      required: false,
     }),
     override: flags.boolean({
       required: false,
