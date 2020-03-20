@@ -60,7 +60,7 @@ The application token server requires an [authentication mechanism](#twilio-rtca
 
 ###### Passcode
 
-Each request is verified using a passcode generated at deploy time. Passcodes remain valid for one week. After the passcode expires, users can redeploy an application and a new passcode will be generated. The snippet below provides an example request body used by a supported application.
+Each request is verified using a passcode generated at deploy time. By default, passcodes remain valid for one week. After the passcode expires, users can redeploy an application and a new passcode will be generated. The snippet below provides an example request body used by a supported application.
 
 ```
 {
@@ -69,6 +69,10 @@ Each request is verified using a passcode generated at deploy time. Passcodes re
   "room_name": "Demo",
 }
 ```
+
+A custom passcode expiration period can be set with the `--passcode-expiry` flag. For example, use the following command to set the passcode so that it expires in 30 days (2,592,000 seconds).
+
+`twilio rtc:apps:video:deploy --authentication passcode --passcode-expiry 2592000`
 
 ##### Token
 
@@ -202,6 +206,7 @@ OPTIONS
   -p, --profile=profile            Shorthand identifier for your profile.
   --app-directory=app-directory    Name of app directory to use
   --authentication=(passcode)      (required) Type of authentication to use
+  --passcode-expiry=(seconds)      The expiration period of the passcode in seconds
   --override                       Override an existing App deployment
 
 DESCRIPTION
