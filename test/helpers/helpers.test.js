@@ -1,5 +1,6 @@
-const { APP_NAME } = require('../../src/constants');
+const { APP_NAME, DEFAULT_EXPIRY_PERIOD } = require('../../src/constants');
 const {
+  deploy,
   displayAppInfo,
   findApp,
   getAppInfo,
@@ -11,6 +12,16 @@ const {
 const { getListOfFunctionsAndAssets } = require('@twilio-labs/serverless-api/dist/utils/fs');
 const path = require('path');
 const { stdout } = require('stdout-stderr');
+
+const mockDeployProject = jest.fn(() => Promise.resolve());
+
+jest.mock('@twilio-labs/serverless-api', () => ({
+  TwilioServerlessApiClient: function() {
+    return {
+      deployProject: mockDeployProject,
+    };
+  },
+}));
 
 jest.mock('@twilio-labs/serverless-api/dist/utils/fs', () => ({
   getListOfFunctionsAndAssets: jest.fn(() => ({
@@ -55,6 +66,8 @@ function getMockTwilioInstance(options) {
 
   return mockTwilioClient;
 }
+
+Date.now = () => 1584730423443
 
 describe('the getPin function', () => {
   it('should return a 6 digit number', () => {
@@ -223,5 +236,39 @@ describe('the displayAppInfo function', () => {
 "There is no deployed app
 "
 `);
+  });
+});
+
+describe('the deploy function', () => {
+  it('should use the DEFAULT_EXPIRY_PERIOD when none is supplied', async () => {
+    await deploy.call({
+      twilioClient: {
+        username: '',
+        password: '',
+      },
+      flags: {},
+    });
+
+    const API_PASSCODE_EXPIRY = mockDeployProject.mock.calls[0][0].env.API_PASSCODE_EXPIRY;
+    const expectedExpiry = DEFAULT_EXPIRY_PERIOD + Date.now();
+
+    expect(API_PASSCODE_EXPIRY).toBe(expectedExpiry)
+  });
+
+  it('should use the passcode-expiry flag when it is supplied', async () => {
+    const CUSTOM_EXPIRY = 60 * 60 * 24; // one day
+
+    await deploy.call({
+      twilioClient: {
+        username: '',
+        password: '',
+      },
+      flags: {'passcode-expiry': CUSTOM_EXPIRY},
+    });
+
+    const API_PASSCODE_EXPIRY = mockDeployProject.mock.calls[0][0].env.API_PASSCODE_EXPIRY;
+    const expectedExpiry = CUSTOM_EXPIRY * 1000 + Date.now();
+    
+    expect(API_PASSCODE_EXPIRY).toBe(expectedExpiry)
   });
 });
