@@ -1,4 +1,4 @@
-const { APP_NAME, DEFAULT_EXPIRY_PERIOD } = require('./constants');
+const { APP_NAME } = require('./constants');
 const { cli } = require('cli-ux');
 const fs = require('fs');
 const { getListOfFunctionsAndAssets } = require('@twilio-labs/serverless-api/dist/utils/fs');
@@ -109,7 +109,6 @@ async function displayAppInfo() {
 
 async function deploy() {
   const assets = this.flags['app-directory'] ? await getAssets(this.flags['app-directory']) : [];
-  const expiryPeriod = this.flags['passcode-expiry'] ? this.flags['passcode-expiry'] * 1000 : DEFAULT_EXPIRY_PERIOD;
 
   const serverlessClient = new TwilioServerlessApiClient({
     accountSid: this.twilioClient.username,
@@ -117,7 +116,7 @@ async function deploy() {
   });
 
   const pin = getPin();
-  const expiryTime = Date.now() + expiryPeriod;
+  const expiryTime = Date.now() + this.flags['passcode-expiry'] * 1000;
 
   const fn = fs.readFileSync(path.join(__dirname, './video-token-server.js'));
 

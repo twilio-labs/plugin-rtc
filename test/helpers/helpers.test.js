@@ -1,4 +1,4 @@
-const { APP_NAME, DEFAULT_EXPIRY_PERIOD } = require('../../src/constants');
+const { APP_NAME } = require('../../src/constants');
 const {
   deploy,
   displayAppInfo,
@@ -240,21 +240,6 @@ describe('the displayAppInfo function', () => {
 });
 
 describe('the deploy function', () => {
-  it('should use the DEFAULT_EXPIRY_PERIOD when none is supplied', async () => {
-    await deploy.call({
-      twilioClient: {
-        username: '',
-        password: '',
-      },
-      flags: {},
-    });
-
-    const API_PASSCODE_EXPIRY = mockDeployProject.mock.calls[0][0].env.API_PASSCODE_EXPIRY;
-    const expectedExpiry = DEFAULT_EXPIRY_PERIOD + Date.now();
-
-    expect(API_PASSCODE_EXPIRY).toBe(expectedExpiry)
-  });
-
   it('should use the passcode-expiry flag when it is supplied', async () => {
     const CUSTOM_EXPIRY = 60 * 60 * 24; // one day
 
