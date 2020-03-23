@@ -148,6 +148,25 @@ describe('the RTC Twilio-CLI Plugin', () => {
         stdout.stop();
         expect(stdout.output).toContain('A Video app is already deployed. Use the --override flag to override the existing deployment.');
       });
+
+      it('should redeploy the app when --override flag is passed', async () => {
+        stdout.start();
+        await DeployCommand.run([
+          '--authentication',
+          'passcode',
+          '--override',
+          '--app-directory',
+          path.join(__dirname, '../test-assets'),
+        ]);
+        stdout.stop();
+        const updatedPasscode = getPasscode(stdout.output);
+        const testURL = getURL(stdout.output);
+        const testWebAppURL = getWebAppURL(stdout.output);
+        expect(updatedPasscode).not.toEqual(passcode)
+        expect(testURL).toEqual(URL)
+        const { text } = await superagent.get(testWebAppURL + '/login');
+        expect(text).toEqual('<html>test</html>');
+      });
     });
   });
 
@@ -213,13 +232,11 @@ describe('the RTC Twilio-CLI Plugin', () => {
         ]);
         stdout.stop();
 
-        // Validate the passcode changed but the URL did not
         const updatedPasscode = getPasscode(stdout.output);
         const testURL = getURL(stdout.output);
         expect(updatedPasscode).not.toEqual(passcode)
         expect(testURL).toEqual(URL)
 
-        // Validate the new passcode can be used to get a token
         const { body } = await superagent
           .post(`${testURL}/token`)
           .send({ passcode: updatedPasscode, room_name: 'test-room', user_identity: 'test user' });

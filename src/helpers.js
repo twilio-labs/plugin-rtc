@@ -37,7 +37,7 @@ function verifyAppDirectory(dirpath) {
   }
 }
 
-async function getAssets(folder) {
+async function getAssets(folder, appInfo) {
   const { assets } = await getListOfFunctionsAndAssets(path.isAbsolute(folder) ? '/' : process.cwd(), {
     functionsFolderNames: [],
     assetsFolderNames: [folder],
@@ -48,11 +48,21 @@ async function getAssets(folder) {
   assets.push({
     ...indexHTML,
     path: '/',
+    name: '/',
   });
   assets.push({
     ...indexHTML,
     path: '/login',
+    name: '/login',
   });
+
+  // Add Asset SIDs to ensure that current assets are updated
+  if (appInfo && appInfo.hasAssets) {
+    for (const newAsset of assets) {
+      const currentAsset = appInfo.assets.find(currentAsset => currentAsset.friendlyName === newAsset.name);
+      newAsset.sid = currentAsset.sid;
+    }
+  }
 
   return assets;
 }
@@ -89,6 +99,7 @@ async function getAppInfo() {
     sid: app.sid,
     passcode: fullPasscode,
     hasAssets: Boolean(assets.length),
+    assets: assets,
   };
 }
 
@@ -108,7 +119,7 @@ async function displayAppInfo() {
 }
 
 async function deploy() {
-  const assets = this.flags['app-directory'] ? await getAssets(this.flags['app-directory']) : [];
+  const assets = this.flags['app-directory'] ? await getAssets(this.flags['app-directory'], this.appInfo) : [];
 
   const serverlessClient = new TwilioServerlessApiClient({
     accountSid: this.twilioClient.username,
