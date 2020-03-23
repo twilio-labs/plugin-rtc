@@ -167,6 +167,22 @@ describe('the RTC Twilio-CLI Plugin', () => {
         const { text } = await superagent.get(testWebAppURL + '/login');
         expect(text).toEqual('<html>test</html>');
       });
+
+      it('should redeploy the token server when no app-directory is set and when --override flag is true', async () => {
+        stdout.start();
+        await DeployCommand.run([
+          '--authentication',
+          'passcode',
+          '--override',
+        ]);
+        stdout.stop();
+        const updatedPasscode = getPasscode(stdout.output);
+        const testURL = getURL(stdout.output);
+        const testWebAppURL = getWebAppURL(stdout.output);
+        expect(updatedPasscode).not.toEqual(passcode)
+        expect(testURL).toEqual(URL)
+        superagent.get(`${testWebAppURL}`).catch(e => expect(e.status).toBe(404));
+      });
     });
   });
 
