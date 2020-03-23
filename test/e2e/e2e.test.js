@@ -203,6 +203,28 @@ describe('the RTC Twilio-CLI Plugin', () => {
       it('should return a 404 from "/"', () => {
         superagent.get(`${URL}`).catch(e => expect(e.status).toBe(404));
       });
+
+      it('should redeploy the token server when --override flag is passed', async () => {
+        stdout.start();
+        await DeployCommand.run([
+          '--authentication',
+          'passcode',
+          '--override',
+        ]);
+        stdout.stop();
+
+        // Validate the passcode changed but the URL did not
+        const updatedPasscode = getPasscode(stdout.output);
+        const testURL = getURL(stdout.output);
+        expect(updatedPasscode).not.toEqual(passcode)
+        expect(testURL).toEqual(URL)
+
+        // Validate the new passcode can be used to get a token
+        const { body } = await superagent
+          .post(`${testURL}/token`)
+          .send({ passcode: updatedPasscode, room_name: 'test-room', user_identity: 'test user' });
+        expect(jwt.decode(body.token).grants).toEqual({ identity: 'test user', video: { room: 'test-room' } });
+      });
     });
   });
 });

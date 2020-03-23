@@ -122,7 +122,7 @@ async function deploy() {
 
   cli.action.start('deploying app');
 
-  const deployOptions = {
+  const baseDeployOptions = {
     env: {
       TWILIO_ACCOUNT_SID: this.twilioClient.accountSid,
       TWILIO_API_KEY_SID: this.twilioClient.username,
@@ -131,7 +131,6 @@ async function deploy() {
       API_PASSCODE_EXPIRY: expiryTime,
     },
     pkgJson: {},
-    serviceName: APP_NAME,
     functionsEnv: 'dev',
     functions: [
       {
@@ -143,6 +142,11 @@ async function deploy() {
     ],
     assets: assets,
   };
+
+  const deployOptionsConfig =
+    this.appInfo && this.appInfo.sid ? { serviceSid: this.appInfo.sid } : { serviceName: APP_NAME };
+
+  const deployOptions = Object.assign({}, baseDeployOptions, deployOptionsConfig);
 
   try {
     await serverlessClient.deployProject(deployOptions);
