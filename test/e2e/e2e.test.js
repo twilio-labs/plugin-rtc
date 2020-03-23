@@ -163,7 +163,6 @@ describe('the RTC Twilio-CLI Plugin', () => {
       passcode = getPasscode(stdout.output);
       URL = getURL(stdout.output);
       webAppURL = getWebAppURL(stdout.output);
-      console.log(stdout.output);
       done();
     });
 

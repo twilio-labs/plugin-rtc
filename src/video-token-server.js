@@ -7,7 +7,7 @@ const MAX_ALLOWED_SESSION_DURATION = 14400;
 
 module.exports.handler = (context, event, callback) => {
   const {
-    TWILIO_ACCOUNT_SID,
+    ACCOUNT_SID,
     TWILIO_API_KEY_SID,
     TWILIO_API_KEY_SECRET,
     API_PASSCODE,
@@ -58,7 +58,7 @@ module.exports.handler = (context, event, callback) => {
     return;
   }
 
-  const token = new AccessToken(TWILIO_ACCOUNT_SID, TWILIO_API_KEY_SID, TWILIO_API_KEY_SECRET, {
+  const token = new AccessToken(ACCOUNT_SID, TWILIO_API_KEY_SID, TWILIO_API_KEY_SECRET, {
     ttl: MAX_ALLOWED_SESSION_DURATION,
   });
   token.identity = user_identity;

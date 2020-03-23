@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const callback = jest.fn();
 
 const mockContext = {
-  TWILIO_ACCOUNT_SID: 'AC1234',
+  ACCOUNT_SID: 'AC1234',
   TWILIO_API_KEY_SID: 'SK1234',
   TWILIO_API_KEY_SECRET: '123456',
   API_PASSCODE: '123456',
