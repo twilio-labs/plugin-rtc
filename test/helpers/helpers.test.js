@@ -1,5 +1,6 @@
 const { APP_NAME } = require('../../src/constants');
 const {
+  deploy,
   displayAppInfo,
   findApp,
   getAppInfo,
@@ -11,6 +12,16 @@ const {
 const { getListOfFunctionsAndAssets } = require('@twilio-labs/serverless-api/dist/utils/fs');
 const path = require('path');
 const { stdout } = require('stdout-stderr');
+
+const mockDeployProject = jest.fn(() => Promise.resolve());
+
+jest.mock('@twilio-labs/serverless-api', () => ({
+  TwilioServerlessApiClient: function() {
+    return {
+      deployProject: mockDeployProject,
+    };
+  },
+}));
 
 jest.mock('@twilio-labs/serverless-api/dist/utils/fs', () => ({
   getListOfFunctionsAndAssets: jest.fn(() => ({
@@ -223,5 +234,35 @@ describe('the displayAppInfo function', () => {
 "There is no deployed app
 "
 `);
+  });
+});
+
+describe('the deploy function', () => {
+  it('should set serviceSid when appInfo exists', async () => {
+    await deploy.call({
+      twilioClient: {
+        username: '',
+        password: '',
+      },
+      appInfo: {
+        sid: '1234',
+      },
+      flags: {},
+    });
+
+    expect(mockDeployProject.mock.calls[0][0].serviceSid).toBe('1234');
+    expect(mockDeployProject.mock.calls[0][0].serviceName).toBe(undefined);
+  });
+
+  it('should set serviceName when appInfo doesnt exist', async () => {
+    await deploy.call({
+      twilioClient: {
+        username: '',
+        password: '',
+      },
+      flags: {},
+    });
+    expect(mockDeployProject.mock.calls[0][0].serviceSid).toBe(undefined);
+    expect(mockDeployProject.mock.calls[0][0].serviceName).toBe(APP_NAME);
   });
 });
