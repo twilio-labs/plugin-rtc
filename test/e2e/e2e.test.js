@@ -148,6 +148,41 @@ describe('the RTC Twilio-CLI Plugin', () => {
         stdout.stop();
         expect(stdout.output).toContain('A Video app is already deployed. Use the --override flag to override the existing deployment.');
       });
+
+      it('should redeploy the app when --override flag is passed', async () => {
+        stdout.start();
+        await DeployCommand.run([
+          '--authentication',
+          'passcode',
+          '--override',
+          '--app-directory',
+          path.join(__dirname, '../test-assets'),
+        ]);
+        stdout.stop();
+        const updatedPasscode = getPasscode(stdout.output);
+        const testURL = getURL(stdout.output);
+        const testWebAppURL = getWebAppURL(stdout.output);
+        expect(updatedPasscode).not.toEqual(passcode)
+        expect(testURL).toEqual(URL)
+        const { text } = await superagent.get(testWebAppURL + '/login');
+        expect(text).toEqual('<html>test</html>');
+      });
+
+      it('should redeploy the token server when no app-directory is set and when --override flag is true', async () => {
+        stdout.start();
+        await DeployCommand.run([
+          '--authentication',
+          'passcode',
+          '--override',
+        ]);
+        stdout.stop();
+        const updatedPasscode = getPasscode(stdout.output);
+        const testURL = getURL(stdout.output);
+        const testWebAppURL = getWebAppURL(stdout.output);
+        expect(updatedPasscode).not.toEqual(passcode)
+        expect(testURL).toEqual(URL)
+        superagent.get(`${testWebAppURL}`).catch(e => expect(e.status).toBe(404));
+      });
     });
   });
 
@@ -201,6 +236,26 @@ describe('the RTC Twilio-CLI Plugin', () => {
 
       it('should return a 404 from "/"', () => {
         superagent.get(`${URL}`).catch(e => expect(e.status).toBe(404));
+      });
+
+      it('should redeploy the token server when --override flag is passed', async () => {
+        stdout.start();
+        await DeployCommand.run([
+          '--authentication',
+          'passcode',
+          '--override',
+        ]);
+        stdout.stop();
+
+        const updatedPasscode = getPasscode(stdout.output);
+        const testURL = getURL(stdout.output);
+        expect(updatedPasscode).not.toEqual(passcode)
+        expect(testURL).toEqual(URL)
+
+        const { body } = await superagent
+          .post(`${testURL}/token`)
+          .send({ passcode: updatedPasscode, room_name: 'test-room', user_identity: 'test user' });
+        expect(jwt.decode(body.token).grants).toEqual({ identity: 'test user', video: { room: 'test-room' } });
       });
     });
   });

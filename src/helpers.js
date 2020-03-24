@@ -48,10 +48,12 @@ async function getAssets(folder) {
   assets.push({
     ...indexHTML,
     path: '/',
+    name: '/',
   });
   assets.push({
     ...indexHTML,
     path: '/login',
+    name: '/login',
   });
 
   return assets;
@@ -130,7 +132,6 @@ async function deploy() {
       API_PASSCODE_EXPIRY: expiryTime,
     },
     pkgJson: {},
-    serviceName: APP_NAME,
     functionsEnv: 'dev',
     functions: [
       {
@@ -142,6 +143,12 @@ async function deploy() {
     ],
     assets: assets,
   };
+
+  if (this.appInfo && this.appInfo.sid) {
+    deployOptions.serviceSid = this.appInfo.sid;
+  } else {
+    deployOptions.serviceName = APP_NAME;
+  }
 
   try {
     await serverlessClient.deployProject(deployOptions);

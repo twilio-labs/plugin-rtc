@@ -15,23 +15,17 @@ class DeployCommand extends TwilioClientCommand {
       }
     }
 
-    const appInfo = await getAppInfo.call(this);
+    this.appInfo = await getAppInfo.call(this);
 
-    if (appInfo) {
-      if (this.flags.override) {
-        await this.twilioClient.serverless.services(appInfo.sid).remove();
-        console.log(`Removed app with Passcode: ${appInfo.passcode}`);
-      } else {
-        console.log('A Video app is already deployed. Use the --override flag to override the existing deployment.');
-        await displayAppInfo.call(this);
-        return;
-      }
+    if (this.appInfo && !this.flags.override) {
+      console.log('A Video app is already deployed. Use the --override flag to override the existing deployment.');
+      await displayAppInfo.call(this);
+      return;
     }
     await deploy.call(this);
     await displayAppInfo.call(this);
   }
 }
-
 DeployCommand.flags = Object.assign(
   {
     'app-directory': flags.string({
