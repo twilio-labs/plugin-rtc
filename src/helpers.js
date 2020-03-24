@@ -145,9 +145,6 @@ async function deploy() {
     assets: assets,
   };
 
-  const deployOptionsConfig =
-    this.appInfo && this.appInfo.sid ? { serviceSid: this.appInfo.sid } : { serviceName: APP_NAME };
-
   if (this.appInfo && this.appInfo.sid) {
     deployOptions.serviceSid = this.appInfo.sid;
   } else {
