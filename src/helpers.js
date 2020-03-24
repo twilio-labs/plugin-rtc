@@ -37,7 +37,7 @@ function verifyAppDirectory(dirpath) {
   }
 }
 
-async function getAssets(folder, appInfo) {
+async function getAssets(folder) {
   const { assets } = await getListOfFunctionsAndAssets(path.isAbsolute(folder) ? '/' : process.cwd(), {
     functionsFolderNames: [],
     assetsFolderNames: [folder],
@@ -55,14 +55,6 @@ async function getAssets(folder, appInfo) {
     path: '/login',
     name: '/login',
   });
-
-  // Add Asset SIDs to ensure that current assets are updated
-  if (appInfo && appInfo.hasAssets) {
-    for (const newAsset of assets) {
-      const currentAsset = appInfo.assets.find(currentAsset => currentAsset.friendlyName === newAsset.name);
-      newAsset.sid = currentAsset.sid;
-    }
-  }
 
   return assets;
 }
@@ -99,7 +91,6 @@ async function getAppInfo() {
     sid: app.sid,
     passcode: fullPasscode,
     hasAssets: Boolean(assets.length),
-    assets: assets,
   };
 }
 
@@ -119,7 +110,7 @@ async function displayAppInfo() {
 }
 
 async function deploy() {
-  const assets = this.flags['app-directory'] ? await getAssets(this.flags['app-directory'], this.appInfo) : [];
+  const assets = this.flags['app-directory'] ? await getAssets(this.flags['app-directory']) : [];
 
   const serverlessClient = new TwilioServerlessApiClient({
     accountSid: this.twilioClient.username,
@@ -133,7 +124,7 @@ async function deploy() {
 
   cli.action.start('deploying app');
 
-  const baseDeployOptions = {
+  const deployOptions = {
     env: {
       TWILIO_ACCOUNT_SID: this.twilioClient.accountSid,
       TWILIO_API_KEY_SID: this.twilioClient.username,
@@ -157,7 +148,11 @@ async function deploy() {
   const deployOptionsConfig =
     this.appInfo && this.appInfo.sid ? { serviceSid: this.appInfo.sid } : { serviceName: APP_NAME };
 
-  const deployOptions = Object.assign({}, baseDeployOptions, deployOptionsConfig);
+  if (this.appInfo && this.appInfo.sid) {
+    deployOptions.serviceSid = this.appInfo.sid;
+  } else {
+    deployOptions.serviceName = APP_NAME;
+  }
 
   try {
     await serverlessClient.deployProject(deployOptions);

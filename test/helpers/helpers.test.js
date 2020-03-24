@@ -161,7 +161,6 @@ describe('the getAppInfo function', () => {
     expect(result).toEqual({
       expiry: 'Wed May 20 2020 18:40:00 GMT+0000',
       hasAssets: false,
-      assets: [],
       passcode: '1234565678',
       sid: 'appSid',
       url: 'https://video-app-5678-dev.twil.io?passcode=1234565678',
@@ -175,7 +174,6 @@ describe('the getAppInfo function', () => {
     expect(result).toEqual({
       expiry: 'Wed May 20 2020 18:40:00 GMT+0000',
       hasAssets: true,
-      assets: [{}],
       passcode: '1234565678',
       sid: 'appSid',
       url: 'https://video-app-5678-dev.twil.io?passcode=1234565678',

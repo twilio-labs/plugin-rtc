@@ -26,7 +26,6 @@ class DeployCommand extends TwilioClientCommand {
     await displayAppInfo.call(this);
   }
 }
-DeployCommand.appInfo = null;
 DeployCommand.flags = Object.assign(
   {
     'app-directory': flags.string({
