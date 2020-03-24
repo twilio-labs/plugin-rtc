@@ -124,7 +124,6 @@ async function deploy() {
 
   const deployOptions = {
     env: {
-      TWILIO_ACCOUNT_SID: this.twilioClient.accountSid,
       TWILIO_API_KEY_SID: this.twilioClient.username,
       TWILIO_API_KEY_SECRET: this.twilioClient.password,
       API_PASSCODE: pin,
