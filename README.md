@@ -28,10 +28,20 @@ $ brew tap twilio/brew && brew install twilio
 
 See the [Twilio CLI documentation](https://www.twilio.com/docs/twilio-cli/quickstart) for more information.
 
-### Install the plugin
+### Install the plugin for general use
+
+The following step will install the plugin from [NPM](https://www.npmjs.com/package/@twilio-labs/plugin-rtc) and is recommended if you are interested in trying out the [commands](#commands) in the latest release.
 
 ```sh-session
 $ twilio plugins:install @twilio-labs/plugin-rtc
+```
+
+### Install the plugin for local development
+
+The following step will install the plugin from a local directory. Use this option if you are interested in modifying the plugin and testing it out from the Twilio CLI.
+
+```sh-session
+$ twilio plugins:link /path/to/plugin-rtc
 ```
 
 ## Supported Apps
