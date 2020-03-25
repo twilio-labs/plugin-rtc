@@ -38,7 +38,7 @@ $ twilio plugins:install @twilio-labs/plugin-rtc
 
 ### Install the plugin for local development
 
-The following step will install the plugin from a local checkout. Use this option if you are interested in modifying the plugin and testing it out from the Twilio CLI.
+The following step will install the plugin from a local directory. Use this option if you are interested in modifying the plugin and testing it out from the Twilio CLI.
 
 ```sh-session
 $ twilio plugins:link /path/to/plugin-rtc
