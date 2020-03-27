@@ -1,16 +1,16 @@
-const { getAppInfo } = require('../../../../helpers');
+const { findApp } = require('../../../../helpers');
 const { TwilioClientCommand } = require('@twilio/cli-core').baseCommands;
 
 class DeleteCommand extends TwilioClientCommand {
   async run() {
     await super.run();
-    const appInfo = await getAppInfo.call(this);
+    const appInfo = await findApp.call(this);
 
     if (appInfo) {
       await this.twilioClient.serverless.services(appInfo.sid).remove();
-      console.log(`Removed app with Passcode: ${appInfo.passcode}`);
+      console.log('Successfully deleted app.');
     } else {
-      console.log('There is no app to delete');
+      console.log('There is no app to delete.');
     }
   }
 }
