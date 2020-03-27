@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.4
+
+### Maintenance
+
+* Updated `twilio rtc:apps:video:delete` command so that it doesn't check for serverless environments before deleting the app. This allows the command to delete the app even when no environments exist.
+
 ## 0.1.3
 
 ### Features
