@@ -265,4 +265,29 @@ describe('the deploy function', () => {
     expect(mockDeployProject.mock.calls[0][0].serviceSid).toBe(undefined);
     expect(mockDeployProject.mock.calls[0][0].serviceName).toBe(APP_NAME);
   });
+
+  it('display an error when the and API key is not provided', () => {
+    return expect(
+      deploy.call({
+        twilioClient: {
+          username: 'testAccountSid',
+          password: 'testAuthToken',
+          accountSid: 'testAccountSid',
+        },
+        flags: {},
+      })
+    ).rejects.toMatchInlineSnapshot(`
+[Error: No API Key found.
+
+Please login to the Twilio CLI to create an API key:
+
+twilio login
+
+Alternatively, the Twilio CLI can use credentials stored in these environment variables:
+
+TWILIO_ACCOUNT_SID = your Account SID from twil.io/console
+TWILIO_API_KEY = an API Key created at twil.io/get-api-key
+TWILIO_API_SECRET = the secret for the API Key]
+`);
+  });
 });
