@@ -1,5 +1,6 @@
 const { APP_NAME, EXPIRY_PERIOD } = require('./constants');
 const { cli } = require('cli-ux');
+const { CLIError } = require('@oclif/errors');
 const fs = require('fs');
 const { getListOfFunctionsAndAssets } = require('@twilio-labs/serverless-api/dist/utils/fs');
 const moment = require('moment');
@@ -21,18 +22,18 @@ function verifyAppDirectory(dirpath) {
     const hasIndexHTML = [...dir].includes('index.html');
 
     if (!hasIndexHTML) {
-      throw new Error(
+      throw new CLIError(
         'The provided app-directory does not appear to be a valid app. There is no index.html found in the app-directory.'
       );
     }
   } catch (err) {
     switch (err.code) {
       case 'ENOENT':
-        throw new Error('The provided app-directory does not exist.');
+        throw new CLIError('The provided app-directory does not exist.');
       case 'ENOTDIR':
-        throw new Error('The provided app-directory is not a directory.');
+        throw new CLIError('The provided app-directory is not a directory.');
       default:
-        throw new Error(err.message);
+        throw new CLIError(err.message);
     }
   }
 }
@@ -111,6 +112,25 @@ async function displayAppInfo() {
 
 async function deploy() {
   const assets = this.flags['app-directory'] ? await getAssets(this.flags['app-directory']) : [];
+
+  if (this.twilioClient.username === this.twilioClient.accountSid) {
+    // When twilioClient.username equals twilioClient.accountSid, it means that the user
+    // authenticated with the Twilio CLI by providing their Account SID and Auth Token
+    // as environment variables. When this happens, the CLI does not create the required API
+    // key that is needed by the token server.
+
+    throw new CLIError(`No API Key found.
+
+Please login to the Twilio CLI to create an API key:
+
+twilio login
+
+Alternatively, the Twilio CLI can use credentials stored in these environment variables:
+
+TWILIO_ACCOUNT_SID = your Account SID from twil.io/console
+TWILIO_API_KEY = an API Key created at twil.io/get-api-key
+TWILIO_API_SECRET = the secret for the API Key`);
+  }
 
   const serverlessClient = new TwilioServerlessApiClient({
     accountSid: this.twilioClient.username,
