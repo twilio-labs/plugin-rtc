@@ -266,7 +266,7 @@ describe('the deploy function', () => {
     expect(mockDeployProject.mock.calls[0][0].serviceName).toBe(APP_NAME);
   });
 
-  it('display an error when the and API key is not provided', () => {
+  it('should display an error when the API key is not provided', () => {
     return expect(
       deploy.call({
         twilioClient: {
