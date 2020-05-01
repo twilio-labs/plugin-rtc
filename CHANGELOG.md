@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.5
+
+### Maintenance
+
+* Updated `twilio rtc:apps:video:deploy` command so that it checks for the existence of a necessary Twilio API Key before deploying the video token server.
+
 ## 0.1.4
 
 ### Maintenance
