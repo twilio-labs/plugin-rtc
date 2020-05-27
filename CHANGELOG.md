@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.6
+
+### Maintenance
+
+* Move @oclif/plugin-help from devDependencies to dependencies to resolve NPM warning.
+
 ## 0.1.5
 
 ### Maintenance
