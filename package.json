@@ -17,7 +17,7 @@
   "author": "Twilio",
   "license": "Apache-2.0",
   "dependencies": {
-    "@oclif/command": "^1.5.19",
+    "@oclif/command": "^1.6.1",
     "@oclif/config": "^1.14.0",
     "@oclif/plugin-help": "^2",
     "@twilio-labs/serverless-api": "^1.0.3",
