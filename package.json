@@ -21,7 +21,7 @@
     "@oclif/config": "^1.14.0",
     "@oclif/plugin-help": "^2",
     "@twilio-labs/serverless-api": "^1.0.3",
-    "@twilio/cli-core": "^4.4.6",
+    "@twilio/cli-core": "^5.5.0",
     "moment": "^2.24.0"
   },
   "devDependencies": {
