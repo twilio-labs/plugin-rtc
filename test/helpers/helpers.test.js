@@ -6,7 +6,7 @@ const {
   getAppInfo,
   getAssets,
   getPasscode,
-  getPin,
+  getRandomInt,
   verifyAppDirectory,
 } = require('../../src/helpers');
 const { getListOfFunctionsAndAssets } = require('@twilio-labs/serverless-api/dist/utils/fs');
@@ -67,9 +67,10 @@ function getMockTwilioInstance(options) {
   return mockTwilioClient;
 }
 
-describe('the getPin function', () => {
-  it('should return a 6 digit number', () => {
-    expect(getPin().toString()).toMatch(/^\d{6}$/);
+describe('the getRandomInt function', () => {
+  it('should return an N digit number', () => {
+    expect(getRandomInt(4).toString()).toMatch(/^\d{4}$/);
+    expect(getRandomInt(6).toString()).toMatch(/^\d{6}$/);
   });
 });
 
