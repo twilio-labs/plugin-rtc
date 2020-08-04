@@ -9,7 +9,7 @@ const mockContext = {
   TWILIO_API_KEY_SECRET: '123456',
   API_PASSCODE: '123456',
   API_PASSCODE_EXPIRY: '10',
-  DOMAIN_NAME: 'video-app-6789-dev.twil.io',
+  DOMAIN_NAME: 'video-app-1234-5678-dev.twil.io',
 };
 
 describe('the video-token-server', () => {
@@ -33,7 +33,7 @@ describe('the video-token-server', () => {
   it('should return an "expired" error when the current time is past the API_PASSCODE_EXPIRY time', () => {
     Date.now = () => 15;
 
-    handler(mockContext, { passcode: '1234566789', user_identity: 'test identity'}, callback);
+    handler(mockContext, { passcode: '12345612345678', user_identity: 'test identity' }, callback);
 
     expect(callback).toHaveBeenCalledWith(null, {
       body: {
@@ -51,14 +51,13 @@ describe('the video-token-server', () => {
   it('should return a "missing user_identity" error when the "user_identity" parameter is not supplied', () => {
     Date.now = () => 5;
 
-    handler(mockContext, { passcode: '1234566789' }, callback);
+    handler(mockContext, { passcode: '12345612345678' }, callback);
 
     expect(callback).toHaveBeenCalledWith(null, {
       body: {
         error: {
           message: 'missing user_identity',
-          explanation:
-            'The user_identity parameter is missing.',
+          explanation: 'The user_identity parameter is missing.',
         },
       },
       headers: { 'Content-Type': 'application/json' },
@@ -69,7 +68,7 @@ describe('the video-token-server', () => {
   it('should return a token when no room_name is supplied', () => {
     Date.now = () => 5;
 
-    handler(mockContext, { passcode: '1234566789',  user_identity: 'test identity' }, callback);
+    handler(mockContext, { passcode: '12345612345678', user_identity: 'test identity' }, callback);
 
     expect(callback).toHaveBeenCalledWith(null, {
       body: { token: expect.any(String) },
@@ -80,7 +79,7 @@ describe('the video-token-server', () => {
     expect(jwt.decode(callback.mock.calls[0][1].body.token)).toEqual({
       exp: 14400,
       grants: {
-        identity: "test identity",
+        identity: 'test identity',
         video: {},
       },
       iat: 0,
@@ -92,7 +91,7 @@ describe('the video-token-server', () => {
 
   it('should return a valid token when passcode, room_name, and user_identity parameters are supplied', () => {
     Date.now = () => 5;
-    handler(mockContext, { passcode: '1234566789', room_name: 'test-room', user_identity: 'test-user' }, callback);
+    handler(mockContext, { passcode: '12345612345678', room_name: 'test-room', user_identity: 'test-user' }, callback);
 
     expect(callback).toHaveBeenCalledWith(null, {
       body: { token: expect.any(String) },

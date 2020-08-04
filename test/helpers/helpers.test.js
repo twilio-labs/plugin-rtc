@@ -54,7 +54,7 @@ function getMockTwilioInstance(options) {
     },
   }));
   mockAppInstance.environments.list = () =>
-    Promise.resolve([{ sid: 'env', domainName: `${APP_NAME}-5678-dev.twil.io` }]);
+    Promise.resolve([{ sid: 'env', domainName: `${APP_NAME}-1234-5678-dev.twil.io` }]);
   mockTwilioClient.serverless.services = jest.fn(() => Promise.resolve(mockAppInstance));
   mockTwilioClient.serverless.services.list = () =>
     Promise.resolve([
@@ -75,9 +75,14 @@ describe('the getRandomInt function', () => {
 });
 
 describe('the getPasscode function', () => {
-  it('should get the "appID" from the domain name and return a passcode', () => {
+  it('should get the "appID" from the old-format domain name and return a passcode', () => {
     expect(getPasscode('https://video-app-1234-dev.twil.io', '123456')).toEqual('1234561234');
     expect(getPasscode('https://video-app-1234.twil.io', '123456')).toEqual('1234561234');
+  });
+
+  it('should get the "appID" from the new-format domain name and return a passcode', () => {
+    expect(getPasscode('https://video-app-1234-5678-dev.twil.io', '123456')).toEqual('12345612345678');
+    expect(getPasscode('https://video-app-1234-5678.twil.io', '123456')).toEqual('12345612345678');
   });
 });
 
@@ -173,9 +178,9 @@ describe('the getAppInfo function', () => {
     expect(result).toEqual({
       expiry: 'Wed May 20 2020 18:40:00 GMT+0000',
       hasAssets: false,
-      passcode: '1234565678',
+      passcode: '12345612345678',
       sid: 'appSid',
-      url: 'https://video-app-5678-dev.twil.io?passcode=1234565678',
+      url: 'https://video-app-1234-5678-dev.twil.io?passcode=12345612345678',
     });
   });
 
@@ -186,9 +191,9 @@ describe('the getAppInfo function', () => {
     expect(result).toEqual({
       expiry: 'Wed May 20 2020 18:40:00 GMT+0000',
       hasAssets: true,
-      passcode: '1234565678',
+      passcode: '12345612345678',
       sid: 'appSid',
-      url: 'https://video-app-5678-dev.twil.io?passcode=1234565678',
+      url: 'https://video-app-1234-5678-dev.twil.io?passcode=12345612345678',
     });
   });
 
@@ -209,7 +214,7 @@ describe('the displayAppInfo function', () => {
       twilioClient: getMockTwilioInstance({ exists: true }),
     });
     expect(stdout.output).toMatchInlineSnapshot(`
-      "Passcode: 1234565678
+      "Passcode: 123456 1234 5678
       Expires: Wed May 20 2020 18:40:00 GMT+0000
       "
     `);
@@ -220,8 +225,8 @@ describe('the displayAppInfo function', () => {
       twilioClient: getMockTwilioInstance({ exists: true, hasAssets: true }),
     });
     expect(stdout.output).toMatchInlineSnapshot(`
-      "Web App URL: https://video-app-5678-dev.twil.io?passcode=1234565678
-      Passcode: 1234565678
+      "Web App URL: https://video-app-1234-5678-dev.twil.io?passcode=12345612345678
+      Passcode: 123456 1234 5678
       Expires: Wed May 20 2020 18:40:00 GMT+0000
       "
     `);
@@ -264,7 +269,7 @@ describe('the deploy function', () => {
       flags: {},
     });
     expect(mockDeployProject.mock.calls[0][0].serviceSid).toBe(undefined);
-    expect(mockDeployProject.mock.calls[0][0].serviceName).toBe(APP_NAME);
+    expect(mockDeployProject.mock.calls[0][0].serviceName).toMatch(new RegExp(`${APP_NAME}-(\\d{4})`));
   });
 
   it('should display an error when the API key is not provided', () => {
