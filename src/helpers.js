@@ -13,8 +13,12 @@ function getRandomInt(length) {
 }
 
 function getPasscode(domain, passcode) {
-  const [_, appID, serverlessID] = domain.match(/-(\d+)-(\d+)(?:-\w+)?.twil.io$/);
-  return `${passcode} ${appID} ${serverlessID}`;
+  const [, appID, serverlessID] = domain.match(/(?:-(\d+))?-(\d+)(?:-\w+)?.twil.io$/);
+  if (appID) {
+    return `${passcode}${appID}${serverlessID}`;
+  } else {
+    return `${passcode}${serverlessID}`;
+  }
 }
 
 function verifyAppDirectory(dirpath) {
@@ -107,7 +111,7 @@ async function displayAppInfo() {
   if (appInfo.hasAssets) {
     console.log(`Web App URL: ${appInfo.url}`);
   }
-  console.log(`Passcode: ${appInfo.passcode}`);
+  console.log(`Passcode: ${appInfo.passcode.replace(/(\d{6})(\d{4})(\d{4})/, '$1 $2 $3')}`);
   console.log(`Expires: ${appInfo.expiry}`);
 }
 
