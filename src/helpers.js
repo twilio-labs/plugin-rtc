@@ -111,7 +111,7 @@ async function displayAppInfo() {
   if (appInfo.hasAssets) {
     console.log(`Web App URL: ${appInfo.url}`);
   }
-  console.log(`Passcode: ${appInfo.passcode.replace(/(\d{6})(\d{4})(\d{4})/, '$1 $2 $3')}`);
+  console.log(`Passcode: ${appInfo.passcode.replace(/(\d{3})(\d{3})(\d{4})(\d{4})/, '$1 $2 $3 $4')}`);
   console.log(`Expires: ${appInfo.expiry}`);
 }
 

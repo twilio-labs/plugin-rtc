@@ -22,7 +22,7 @@ function delay(ms) {
 }
 
 function getPasscode(output) {
-  const match = output.match(/Passcode: ([\d\s]{16})/);
+  const match = output.match(/Passcode: ([\d\s]+)\n/);
   return match ? match[1].replace(/\s+/g, '') : null;
 }
 
@@ -116,7 +116,7 @@ describe('the RTC Twilio-CLI Plugin', () => {
         stdout.start();
         await ViewCommand.run([]);
         stdout.stop();
-        expect(stdout.output).toMatch(/Web App URL: .+\nPasscode: \d{6} \d{4} \d{4}\nExpires: .+/);
+        expect(stdout.output).toMatch(/Web App URL: .+\nPasscode: \d{3} \d{3} \d{4} \d{4}\nExpires: .+/);
       });
     });
 
@@ -218,7 +218,7 @@ describe('the RTC Twilio-CLI Plugin', () => {
         stdout.start();
         await ViewCommand.run([]);
         stdout.stop();
-        expect(stdout.output).toMatch(/Passcode: \d{6} \d{4} \d{4}\nExpires: .+/);
+        expect(stdout.output).toMatch(/Passcode: \d{3} \d{3} \d{4} \d{4}\nExpires: .+/);
         expect(stdout.output).not.toMatch(/Web App URL:/);
       });
     });

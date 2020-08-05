@@ -180,7 +180,7 @@ describe('the getAppInfo function', () => {
       hasAssets: false,
       passcode: '12345612345678',
       sid: 'appSid',
-      url: 'https://video-app-1234-5678-dev.twil.io?passcode=12345612345678',
+      url: `https://${APP_NAME}-1234-5678-dev.twil.io?passcode=12345612345678`,
     });
   });
 
@@ -193,7 +193,7 @@ describe('the getAppInfo function', () => {
       hasAssets: true,
       passcode: '12345612345678',
       sid: 'appSid',
-      url: 'https://video-app-1234-5678-dev.twil.io?passcode=12345612345678',
+      url: `https://${APP_NAME}-1234-5678-dev.twil.io?passcode=12345612345678`,
     });
   });
 
@@ -214,7 +214,7 @@ describe('the displayAppInfo function', () => {
       twilioClient: getMockTwilioInstance({ exists: true }),
     });
     expect(stdout.output).toMatchInlineSnapshot(`
-      "Passcode: 123456 1234 5678
+      "Passcode: 123 456 1234 5678
       Expires: Wed May 20 2020 18:40:00 GMT+0000
       "
     `);
@@ -225,8 +225,8 @@ describe('the displayAppInfo function', () => {
       twilioClient: getMockTwilioInstance({ exists: true, hasAssets: true }),
     });
     expect(stdout.output).toMatchInlineSnapshot(`
-      "Web App URL: https://video-app-1234-5678-dev.twil.io?passcode=12345612345678
-      Passcode: 123456 1234 5678
+      "Web App URL: https://${APP_NAME}-1234-5678-dev.twil.io?passcode=12345612345678
+      Passcode: 123 456 1234 5678
       Expires: Wed May 20 2020 18:40:00 GMT+0000
       "
     `);
