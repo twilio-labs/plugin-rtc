@@ -1,7 +1,6 @@
 version: 2.1
 
-workspace: &workspace
-  ~/plugin-rtc
+workspace: &workspace ~/plugin-rtc
 
 node-defaults: &node-defaults
   working_directory: *workspace
@@ -27,7 +26,7 @@ jobs:
       - node/with-cache:
           steps:
             - run: npm install
-            - run: npm test -- -i --verbose
+            - run: npm test -- --verbose
       - persist_to_workspace:
           root: .
           paths: .
@@ -52,7 +51,7 @@ jobs:
                     exit 1
                   fi
             - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > $PWD/.npmrc
-            - run: npm publish 
+            - run: npm publish
             - run: echo 'export DEFAULT_BRANCH=$(git remote show origin | grep HEAD | cut -d ":" -f2- | xargs)' >> $BASH_ENV
             - run:
                 name: Set git information
@@ -66,15 +65,15 @@ jobs:
             - run: git push origin $DEFAULT_BRANCH
 
 workflows:
-    build-and-test:
-      jobs:
-        - build-and-test
+  build-and-test:
+    jobs:
+      - build-and-test
 
-    publish-release:
-      jobs:
-        - build-and-test:
-            <<: *release-filter
-        - publish-release:
-            <<: *release-filter
-            requires: 
-              - build-and-test
+  publish-release:
+    jobs:
+      - build-and-test:
+          <<: *release-filter
+      - publish-release:
+          <<: *release-filter
+          requires:
+            - build-and-test
