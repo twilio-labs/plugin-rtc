@@ -138,8 +138,8 @@ TWILIO_API_SECRET = the secret for the API Key`);
   }
 
   const serverlessClient = new TwilioServerlessApiClient({
-    accountSid: this.twilioClient.username,
-    authToken: this.twilioClient.password,
+    username: this.twilioClient.username,
+    password: this.twilioClient.password,
   });
 
   const pin = getRandomInt(6);
