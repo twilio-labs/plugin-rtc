@@ -6,7 +6,7 @@ const callback = jest.fn();
 const mockContext = {
   ACCOUNT_SID: 'AC1234',
   TWILIO_API_KEY_SID: 'SK1234',
-  TWILIO_API_KEY_SECRET: '123456',
+  TWILIO_API_KEY_SECRET: 'api_secret',
   API_PASSCODE: '123456',
   API_PASSCODE_EXPIRY: '10',
   DOMAIN_NAME: 'video-app-1234-5678-dev.twil.io',
@@ -99,7 +99,7 @@ describe('the video-token-server', () => {
       statusCode: 200,
     });
 
-    expect(jwt.decode(callback.mock.calls[0][1].body.token)).toEqual({
+    expect(jwt.verify(callback.mock.calls[0][1].body.token, 'api_secret')).toEqual({
       exp: 14400,
       grants: {
         identity: 'test-user',
@@ -111,6 +111,25 @@ describe('the video-token-server', () => {
       iss: 'SK1234',
       jti: 'SK1234-0',
       sub: 'AC1234',
+    });
+  });
+
+  describe('when using an old form URL "video-app-XXXX-dev.twil.io', () => {
+    it('should return a valid token when passcode, room_name, and user_identity parameters are supplied', () => {
+      Date.now = () => 5;
+      handler(
+        { ...mockContext, DOMAIN_NAME: 'video-app-1234-dev.twil.io' },
+        { passcode: '1234561234', room_name: 'test-room', user_identity: 'test-user' },
+        callback
+      );
+
+      expect(callback).toHaveBeenCalledWith(null, {
+        body: { token: expect.any(String) },
+        headers: { 'Content-Type': 'application/json' },
+        statusCode: 200,
+      });
+
+      expect(jwt.verify(callback.mock.calls[0][1].body.token, 'api_secret')).toBeTruthy();
     });
   });
 });
