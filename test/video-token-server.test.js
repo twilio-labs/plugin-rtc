@@ -114,6 +114,23 @@ describe('the video-token-server', () => {
     });
   });
 
+  it('should ignore spaces in the passcode', () => {
+    Date.now = () => 5;
+    handler(
+      mockContext,
+      { passcode: '123 456 1234 5678', room_name: 'test-room', user_identity: 'test-user' },
+      callback
+    );
+
+    expect(callback).toHaveBeenCalledWith(null, {
+      body: { token: expect.any(String) },
+      headers: { 'Content-Type': 'application/json' },
+      statusCode: 200,
+    });
+
+    expect(jwt.verify(callback.mock.calls[0][1].body.token, 'api_secret')).toBeTruthy();
+  });
+
   describe('when using an old form URL "video-app-XXXX-dev.twil.io', () => {
     it('should return a valid token when passcode, room_name, and user_identity parameters are supplied', () => {
       Date.now = () => 5;
