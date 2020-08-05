@@ -11,11 +11,19 @@ const superagent = require('superagent');
 // Uncomment to see output from CLI
 // stdout.print = true;
 
-jest.setTimeout(30000);
+jest.setTimeout(80000);
+
+jest.mock('../../src/constants', () => ({
+  APP_NAME: 'video-app-e2e-tests',
+}));
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 function getPasscode(output) {
-  const match = output.match(/Passcode: (\d{10})/);
-  return match ? match[1] : null;
+  const match = output.match(/Passcode: ([\d\s]{16})/);
+  return match ? match[1].replace(/\s+/g, '') : null;
 }
 
 function getWebAppURL(output) {
@@ -25,7 +33,7 @@ function getWebAppURL(output) {
 
 function getURL(output) {
   const passcode = getPasscode(output);
-  return `https://${APP_NAME}-${passcode.slice(6)}-dev.twil.io`;
+  return `https://${APP_NAME}-${passcode.slice(6, 10)}-${passcode.slice(10)}-dev.twil.io`;
 }
 
 describe('the RTC Twilio-CLI Plugin', () => {
@@ -99,7 +107,8 @@ describe('the RTC Twilio-CLI Plugin', () => {
     });
 
     afterAll(async () => {
-      await DeleteCommand.run([]);
+      await delay(60000);
+      return await DeleteCommand.run([]);
     });
 
     describe('the view command', () => {
@@ -107,7 +116,7 @@ describe('the RTC Twilio-CLI Plugin', () => {
         stdout.start();
         await ViewCommand.run([]);
         stdout.stop();
-        expect(stdout.output).toMatch(/Web App URL: .+\nPasscode: \d{10}\nExpires: .+/);
+        expect(stdout.output).toMatch(/Web App URL: .+\nPasscode: \d{6} \d{4} \d{4}\nExpires: .+/);
       });
     });
 
@@ -146,7 +155,9 @@ describe('the RTC Twilio-CLI Plugin', () => {
           path.join(__dirname, '../test-assets'),
         ]);
         stdout.stop();
-        expect(stdout.output).toContain('A Video app is already deployed. Use the --override flag to override the existing deployment.');
+        expect(stdout.output).toContain(
+          'A Video app is already deployed. Use the --override flag to override the existing deployment.'
+        );
       });
 
       it('should redeploy the app when --override flag is passed', async () => {
@@ -162,25 +173,21 @@ describe('the RTC Twilio-CLI Plugin', () => {
         const updatedPasscode = getPasscode(stdout.output);
         const testURL = getURL(stdout.output);
         const testWebAppURL = getWebAppURL(stdout.output);
-        expect(updatedPasscode).not.toEqual(passcode)
-        expect(testURL).toEqual(URL)
+        expect(updatedPasscode).not.toEqual(passcode);
+        expect(testURL).toEqual(URL);
         const { text } = await superagent.get(testWebAppURL + '/login');
         expect(text).toEqual('<html>test</html>');
       });
 
       it('should redeploy the token server when no app-directory is set and when --override flag is true', async () => {
         stdout.start();
-        await DeployCommand.run([
-          '--authentication',
-          'passcode',
-          '--override',
-        ]);
+        await DeployCommand.run(['--authentication', 'passcode', '--override']);
         stdout.stop();
         const updatedPasscode = getPasscode(stdout.output);
         const testURL = getURL(stdout.output);
         const testWebAppURL = getWebAppURL(stdout.output);
-        expect(updatedPasscode).not.toEqual(passcode)
-        expect(testURL).toEqual(URL)
+        expect(updatedPasscode).not.toEqual(passcode);
+        expect(testURL).toEqual(URL);
         superagent.get(`${testWebAppURL}`).catch(e => expect(e.status).toBe(404));
       });
     });
@@ -202,7 +209,8 @@ describe('the RTC Twilio-CLI Plugin', () => {
     });
 
     afterAll(async () => {
-      await DeleteCommand.run([]);
+      await delay(60000);
+      return await DeleteCommand.run([]);
     });
 
     describe('the view command', () => {
@@ -210,8 +218,8 @@ describe('the RTC Twilio-CLI Plugin', () => {
         stdout.start();
         await ViewCommand.run([]);
         stdout.stop();
-        expect(stdout.output).toMatch(/Passcode: \d{10}\nExpires: .+/);
-        expect(stdout.output).not.toMatch(/Web App URL:/)
+        expect(stdout.output).toMatch(/Passcode: \d{6} \d{4} \d{4}\nExpires: .+/);
+        expect(stdout.output).not.toMatch(/Web App URL:/);
       });
     });
 
@@ -240,17 +248,13 @@ describe('the RTC Twilio-CLI Plugin', () => {
 
       it('should redeploy the token server when --override flag is passed', async () => {
         stdout.start();
-        await DeployCommand.run([
-          '--authentication',
-          'passcode',
-          '--override',
-        ]);
+        await DeployCommand.run(['--authentication', 'passcode', '--override']);
         stdout.stop();
 
         const updatedPasscode = getPasscode(stdout.output);
         const testURL = getURL(stdout.output);
-        expect(updatedPasscode).not.toEqual(passcode)
-        expect(testURL).toEqual(URL)
+        expect(updatedPasscode).not.toEqual(passcode);
+        expect(testURL).toEqual(URL);
 
         const { body } = await superagent
           .post(`${testURL}/token`)
