@@ -13,12 +13,8 @@ function getRandomInt(length) {
 }
 
 function getPasscode(domain, passcode) {
-  const [, appID, serverlessID] = domain.match(/(?:-(\d+))?-(\d+)(?:-\w+)?.twil.io$/);
-  if (appID) {
-    return `${passcode}${appID}${serverlessID}`;
-  } else {
-    return `${passcode}${serverlessID}`;
-  }
+  const [, appID, serverlessID] = domain.match(/-?(\d*)-(\d+)(?:-\w+)?.twil.io$/);
+  return `${passcode}${appID}${serverlessID}`;
 }
 
 function verifyAppDirectory(dirpath) {
@@ -92,7 +88,7 @@ async function getAppInfo() {
   const fullPasscode = getPasscode(environment.domainName, passcode);
 
   return {
-    url: `https://${environment.domainName}?passcode=${fullPasscode.replace(/\s+/g, '')}`,
+    url: `https://${environment.domainName}?passcode=${fullPasscode}`,
     expiry: moment(Number(expiry)).toString(),
     sid: app.sid,
     passcode: fullPasscode,
