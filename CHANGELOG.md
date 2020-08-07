@@ -1,10 +1,10 @@
 # Changelog
 
-## 1.0.0
+## 0.2.0
 
 ### Breaking Change
 
-- This version adds extra random digits to the URL used by the Twilio Video Apps. The format of the URL has changed from `https://video-app-xxxx-dev.twil.io` to `https://video-app-xxxx-yyyy-dev.twil.io`. The iOS and Android video apps must be upgraded in order to work with this new format. The React app does not need to be upgraded.
+- This version adds extra random digits to the URL used by the Twilio Video Apps. The format of the URL has changed from `https://video-app-xxxx-dev.twil.io` to `https://video-app-xxxx-yyyy-dev.twil.io`. The [iOS Video App](https://github.com/twilio/twilio-video-app-ios) and [Android Video App](https://github.com/twilio/twilio-video-app-android) must be upgraded in order to work with this new format. The [React Video App](https://github.com/twilio/twilio-video-app-react) does not need to be upgraded. This change is being made to increase the number of available domains (from ten thousand to ten million) which will greatly reduce the number of 409 (conflict) errors experienced by users.
 
 ## 0.1.6
 
