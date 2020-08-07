@@ -34,7 +34,7 @@ module.exports.handler = (context, event, callback) => {
     return;
   }
 
-  if (API_PASSCODE + appID + serverlessID !== passcode.replace(/\s+/g, '')) {
+  if (API_PASSCODE + appID + serverlessID !== passcode) {
     response.setStatusCode(401);
     response.setBody({
       error: {
