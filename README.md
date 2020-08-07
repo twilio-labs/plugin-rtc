@@ -196,7 +196,7 @@ OPTIONS
 
 EXAMPLE
   $ twilio rtc:apps:video:delete
-  Removed app with Passcode: xxxxxxxxxxxxxx
+  Successfully deleted app.
 ```
 
 ## `twilio rtc:apps:video:deploy --authentication <auth>`
@@ -232,21 +232,21 @@ EXAMPLES
   # Deploy an application token server with passcode authentication
   $ twilio rtc:apps:video:deploy --authentication passcode
   deploying app... done
-  Passcode: xxxxxxxxxxxxxx
+  Passcode: xxx xxx xxxx xxxx
 
   # Deploy an application token server with the React app
   $ twilio rtc:apps:video:deploy --authentication passcode --app-directory /path/to/app
   deploying app... done
   Web App URL: https://video-app-xxxx-xxxx-dev.twil.io?passcode=xxxxxxxxxxxxxx
-  Passcode: xxxxxxxxxxxxxx
+  Passcode: xxx xxx xxxx xxxx
 
   # Override an existing app with a fresh deployment
   # Please note that this will remove a previously deployed web application if no
   # app directory is provided
   $ twilio rtc:apps:video:deploy --authentication passcode --override
-  Removed app with Passcode: xxxxxxxxxxxxxx
+  Removed app with Passcode: xxx xxx xxxx xxxx
   deploying app... done
-  Passcode: xxxxxxxxxxxxxx
+  Passcode: xxx xxx xxxx xxxx
   Expires: Mon Mar 09 2020 16:36:23 GMT-0600
 ```
 
@@ -265,7 +265,7 @@ OPTIONS
 EXAMPLE
   $ twilio rtc:apps:video:view
   Web App URL: https://video-app-1111-dev.twil.io?passcode=xxxxxxxxxxxxxx
-  Passcode: xxxxxxxxxxxxxx
+  Passcode: xxx xxx xxxx xxxx
 ```
 
 <!-- commandsstop -->
