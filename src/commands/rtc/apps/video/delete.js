@@ -21,7 +21,7 @@ DeleteCommand.description = 'Delete a Programmable Video app';
 
 DeleteCommand.examples = [
   `$ twilio rtc:apps:video:delete
-Removed app with Passcode: 1111111111`,
+Successfully deleted app.`,
 ];
 
 module.exports = DeleteCommand;

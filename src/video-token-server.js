@@ -16,7 +16,7 @@ module.exports.handler = (context, event, callback) => {
   } = context;
 
   const { user_identity, room_name, passcode } = event;
-  const appID = DOMAIN_NAME.match(/-(\d+)(?:-\w+)?.twil.io$/)[1];
+  const [, appID, serverlessID] = DOMAIN_NAME.match(/-?(\d*)-(\d+)(?:-\w+)?.twil.io$/);
 
   let response = new Twilio.Response();
   response.appendHeader('Content-Type', 'application/json');
@@ -34,7 +34,7 @@ module.exports.handler = (context, event, callback) => {
     return;
   }
 
-  if (API_PASSCODE + appID !== passcode) {
+  if (API_PASSCODE + appID + serverlessID !== passcode) {
     response.setStatusCode(401);
     response.setBody({
       error: {

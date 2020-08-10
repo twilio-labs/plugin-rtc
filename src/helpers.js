@@ -1,19 +1,20 @@
 const { APP_NAME, EXPIRY_PERIOD } = require('./constants');
 const { cli } = require('cli-ux');
 const { CLIError } = require('@oclif/errors');
+const { customAlphabet } = require('nanoid');
 const fs = require('fs');
 const { getListOfFunctionsAndAssets } = require('@twilio-labs/serverless-api/dist/utils/fs');
 const moment = require('moment');
 const path = require('path');
 const { TwilioServerlessApiClient } = require('@twilio-labs/serverless-api');
 
-function getPin() {
-  return Math.floor(Math.random() * 900000) + 100000;
+function getRandomInt(length) {
+  return customAlphabet('1234567890', length)();
 }
 
 function getPasscode(domain, passcode) {
-  const appID = domain.match(/-(\d+)(?:-\w+)?.twil.io$/)[1];
-  return `${passcode}${appID}`;
+  const [, appID, serverlessID] = domain.match(/-?(\d*)-(\d+)(?:-\w+)?.twil.io$/);
+  return `${passcode}${appID}${serverlessID}`;
 }
 
 function verifyAppDirectory(dirpath) {
@@ -62,7 +63,7 @@ async function getAssets(folder) {
 
 async function findApp() {
   const services = await this.twilioClient.serverless.services.list();
-  return services.find(service => service.friendlyName === APP_NAME);
+  return services.find(service => service.friendlyName.includes(APP_NAME));
 }
 
 async function getAppInfo() {
@@ -106,7 +107,7 @@ async function displayAppInfo() {
   if (appInfo.hasAssets) {
     console.log(`Web App URL: ${appInfo.url}`);
   }
-  console.log(`Passcode: ${appInfo.passcode}`);
+  console.log(`Passcode: ${appInfo.passcode.replace(/(\d{3})(\d{3})(\d{4})(\d{4})/, '$1 $2 $3 $4')}`);
   console.log(`Expires: ${appInfo.expiry}`);
 }
 
@@ -133,11 +134,11 @@ TWILIO_API_SECRET = the secret for the API Key`);
   }
 
   const serverlessClient = new TwilioServerlessApiClient({
-    accountSid: this.twilioClient.username,
-    authToken: this.twilioClient.password,
+    username: this.twilioClient.username,
+    password: this.twilioClient.password,
   });
 
-  const pin = getPin();
+  const pin = getRandomInt(6);
   const expiryTime = Date.now() + EXPIRY_PERIOD;
 
   const fn = fs.readFileSync(path.join(__dirname, './video-token-server.js'));
@@ -167,7 +168,7 @@ TWILIO_API_SECRET = the secret for the API Key`);
   if (this.appInfo && this.appInfo.sid) {
     deployOptions.serviceSid = this.appInfo.sid;
   } else {
-    deployOptions.serviceName = APP_NAME;
+    deployOptions.serviceName = `${APP_NAME}-${getRandomInt(4)}`;
   }
 
   try {
@@ -185,6 +186,6 @@ module.exports = {
   getAssets,
   getAppInfo,
   getPasscode,
-  getPin,
+  getRandomInt,
   verifyAppDirectory,
 };
