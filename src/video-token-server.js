@@ -61,8 +61,9 @@ module.exports.handler = async (context, event, callback) => {
   try {
     await client.video.rooms.create({ uniqueName: room_name, type: ROOM_TYPE });
   } catch (e) {
+    // Ignore 53113 error (room already exists). See: https://www.twilio.com/docs/api/errors/53113
     if (e.code !== 53113) {
-      response.setStatusCode(401);
+      response.setStatusCode(500);
       response.setBody({
         error: {
           message: 'error creating room',
