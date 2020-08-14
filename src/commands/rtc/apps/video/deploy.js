@@ -42,6 +42,12 @@ DeployCommand.flags = Object.assign(
       default: false,
       description: 'Override an existing App deployment',
     }),
+    'room-type': flags.enum({
+      options: ['group', 'group-small', 'peer-to-peer'],
+      description: 'Type of room to use',
+      required: false,
+      default: 'group',
+    }),
   },
   TwilioClientCommand.flags
 );

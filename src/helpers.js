@@ -81,9 +81,11 @@ async function getAppInfo() {
 
   const passcodeVar = variables.find(v => v.key === 'API_PASSCODE');
   const expiryVar = variables.find(v => v.key === 'API_PASSCODE_EXPIRY');
+  const roomTypeVar = variables.find(v => v.key === 'ROOM_TYPE');
 
   const passcode = passcodeVar ? passcodeVar.value : '';
   const expiry = expiryVar ? expiryVar.value : '';
+  const roomType = roomTypeVar ? roomTypeVar.value : '';
 
   const fullPasscode = getPasscode(environment.domainName, passcode);
 
@@ -93,6 +95,7 @@ async function getAppInfo() {
     sid: app.sid,
     passcode: fullPasscode,
     hasAssets: Boolean(assets.length),
+    roomType,
   };
 }
 
@@ -107,8 +110,13 @@ async function displayAppInfo() {
   if (appInfo.hasAssets) {
     console.log(`Web App URL: ${appInfo.url}`);
   }
+
   console.log(`Passcode: ${appInfo.passcode.replace(/(\d{3})(\d{3})(\d{4})(\d{4})/, '$1 $2 $3 $4')}`);
   console.log(`Expires: ${appInfo.expiry}`);
+
+  if (appInfo.roomType) {
+    console.log(`Room Type: ${appInfo.roomType}`);
+  }
 }
 
 async function deploy() {
@@ -151,6 +159,7 @@ TWILIO_API_SECRET = the secret for the API Key`);
       TWILIO_API_KEY_SECRET: this.twilioClient.password,
       API_PASSCODE: pin,
       API_PASSCODE_EXPIRY: expiryTime,
+      ROOM_TYPE: this.flags['room-type'],
     },
     pkgJson: {},
     functionsEnv: 'dev',
