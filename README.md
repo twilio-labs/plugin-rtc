@@ -241,7 +241,7 @@ EXAMPLES
   # Deploy an application token server with the React app
   $ twilio rtc:apps:video:deploy --authentication passcode --app-directory /path/to/app
   deploying app... done
-  Web App URL: https://video-app-1111-dev.twil.io?passcode=xxxxxxxxxxxxxx
+  Web App URL: https://video-app-xxxx-xxxx-dev.twil.io?passcode=xxxxxxxxxxxxxx
   Passcode: xxx xxx xxxx xxxx
   Expires: Mon Mar 09 2020 16:36:23 GMT-0600
   Room Type: group
