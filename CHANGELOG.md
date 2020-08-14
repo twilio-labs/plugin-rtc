@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0
+
+### New Feature
+
+- This version adds the ability to specify the room type when deploying a video application token server. Use the `--room-type` flag when deploying the app. For example: `twilio rtc:apps:video:deploy --authentication passcode --room-type group-small`. The payload returned by the token server will also include the room type (see the [readme](README.md) for details).
+
 ## 0.2.0
 
 ### Breaking Change
