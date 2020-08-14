@@ -36,7 +36,8 @@
     "jest": "^25.1.0",
     "lint-staged": "^10.0.8",
     "prettier": "^1.19.1",
-    "superagent": "^5.2.2"
+    "superagent": "^5.2.2",
+    "twilio": "^3.48.2"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",

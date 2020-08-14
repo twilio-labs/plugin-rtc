@@ -4,9 +4,14 @@ const DeployCommand = require('../../src/commands/rtc/apps/video/deploy');
 const ViewCommand = require('../../src/commands/rtc/apps/video/view');
 
 const jwt = require('jsonwebtoken');
+const { nanoid } = require('nanoid');
 const path = require('path');
 const { stdout } = require('stdout-stderr');
 const superagent = require('superagent');
+
+const twilioClient = require('twilio')(process.env.TWILIO_API_KEY, process.env.TWILIO_API_SECRET, {
+  accountSid: process.env.TWILIO_ACCOUNT_SID,
+});
 
 // Uncomment to see output from CLI
 // stdout.print = true;
@@ -116,16 +121,23 @@ describe('the RTC Twilio-CLI Plugin', () => {
         stdout.start();
         await ViewCommand.run([]);
         stdout.stop();
-        expect(stdout.output).toMatch(/Web App URL: .+\nPasscode: \d{3} \d{3} \d{4} \d{4}\nExpires: .+/);
+        expect(stdout.output).toMatch(
+          /Web App URL: .+\nPasscode: \d{3} \d{3} \d{4} \d{4}\nExpires: .+\nRoom Type: group/
+        );
       });
     });
 
-    describe('the deploy command', () => {
-      it('should return a video token when the correct passcode is provided', async () => {
+    describe('the serverless deployment', () => {
+      it('should create a group room and return a video token when the correct passcode is provided', async () => {
+        const ROOM_NAME = nanoid();
         const { body } = await superagent
           .post(`${URL}/token`)
-          .send({ passcode, room_name: 'test-room', user_identity: 'test user' });
-        expect(jwt.decode(body.token).grants).toEqual({ identity: 'test user', video: { room: 'test-room' } });
+          .send({ passcode, room_name: ROOM_NAME, user_identity: 'test user' });
+        expect(jwt.decode(body.token).grants).toEqual({ identity: 'test user', video: { room: ROOM_NAME } });
+        expect(body.room_type).toEqual('group');
+
+        const room = await twilioClient.video.rooms(ROOM_NAME).fetch();
+        expect(room.type).toEqual('group');
       });
 
       it('should return a 401 error when an incorrect passcode is provided', () => {
@@ -145,7 +157,9 @@ describe('the RTC Twilio-CLI Plugin', () => {
         const { text } = await superagent.get(webAppURL + '/login');
         expect(text).toEqual('<html>test</html>');
       });
+    });
 
+    describe('the deploy command', () => {
       it('should not redeploy the app when no --override flag is passed', async () => {
         stdout.start();
         await DeployCommand.run([
@@ -193,14 +207,14 @@ describe('the RTC Twilio-CLI Plugin', () => {
     });
   });
 
-  describe('after deploying a token server', () => {
+  describe('after deploying a token server (with peer-to-peer rooms)', () => {
     let URL;
     let passcode;
     let webAppURL;
 
     beforeAll(async done => {
       stdout.start();
-      await DeployCommand.run(['--authentication', 'passcode']);
+      await DeployCommand.run(['--authentication', 'passcode', '--room-type', 'peer-to-peer']);
       stdout.stop();
       passcode = getPasscode(stdout.output);
       URL = getURL(stdout.output);
@@ -218,17 +232,22 @@ describe('the RTC Twilio-CLI Plugin', () => {
         stdout.start();
         await ViewCommand.run([]);
         stdout.stop();
-        expect(stdout.output).toMatch(/Passcode: \d{3} \d{3} \d{4} \d{4}\nExpires: .+/);
+        expect(stdout.output).toMatch(/Passcode: \d{3} \d{3} \d{4} \d{4}\nExpires: .+\nRoom Type: peer-to-peer/);
         expect(stdout.output).not.toMatch(/Web App URL:/);
       });
     });
 
-    describe('the deploy command', () => {
-      it('should return a video token when the correct passcode is provided', async () => {
+    describe('the serverless deployment', () => {
+      it('should create a peer-to-peer room and return a video token when the correct passcode is provided', async () => {
+        const ROOM_NAME = nanoid();
         const { body } = await superagent
           .post(`${URL}/token`)
-          .send({ passcode, room_name: 'test-room', user_identity: 'test user' });
-        expect(jwt.decode(body.token).grants).toEqual({ identity: 'test user', video: { room: 'test-room' } });
+          .send({ passcode, room_name: ROOM_NAME, user_identity: 'test user' });
+        expect(jwt.decode(body.token).grants).toEqual({ identity: 'test user', video: { room: ROOM_NAME } });
+        expect(body.room_type).toEqual('peer-to-peer');
+
+        const room = await twilioClient.video.rooms(ROOM_NAME).fetch();
+        expect(room.type).toEqual('peer-to-peer');
       });
 
       it('should return a 401 error when an incorrect passcode is provided', () => {
@@ -245,7 +264,9 @@ describe('the RTC Twilio-CLI Plugin', () => {
       it('should return a 404 from "/"', () => {
         superagent.get(`${URL}`).catch(e => expect(e.status).toBe(404));
       });
+    });
 
+    describe('the deploy command', () => {
       it('should redeploy the token server when --override flag is passed', async () => {
         stdout.start();
         await DeployCommand.run(['--authentication', 'passcode', '--override']);
