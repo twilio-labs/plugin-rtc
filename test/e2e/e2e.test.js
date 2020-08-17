@@ -140,6 +140,22 @@ describe('the RTC Twilio-CLI Plugin', () => {
         expect(room.type).toEqual('group');
       });
 
+      it('should return a video token without creating a room when the "create_room" flag is false', async () => {
+        expect.assertions(3);
+        const ROOM_NAME = nanoid();
+        const { body } = await superagent
+          .post(`${URL}/token`)
+          .send({ passcode, room_name: ROOM_NAME, user_identity: 'test user', create_room: false });
+        expect(jwt.decode(body.token).grants).toEqual({ identity: 'test user', video: { room: ROOM_NAME } });
+        expect(body.room_type).toEqual(null);
+
+        try {
+          await twilioClient.video.rooms(ROOM_NAME).fetch();
+        } catch (e) {
+          expect(e).toMatchObject({ status: 404 });
+        }
+      });
+
       it('should return a 401 error when an incorrect passcode is provided', () => {
         superagent
           .post(`${URL}/token`)
