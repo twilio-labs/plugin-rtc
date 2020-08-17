@@ -174,13 +174,6 @@ POST /token
 </td>
 </tr>
 
-</table>
-
-<table>
-<tr>
-<td> <b>Status</b> </td> <td> <b>Response</b> </td>
-</tr>
-
 <tr>
 <td> 400 </td>
 <td>
@@ -193,6 +186,8 @@ POST /token
   }
 }
 ```
+
+</table>
 
 ## Commands
 
