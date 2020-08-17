@@ -90,11 +90,12 @@ POST /token
 
 ###### Parameters
 
-| Name            | Type     | Description                                                                            |
-| --------------- | -------- | -------------------------------------------------------------------------------------- |
-| `passcode`      | `string` | **Required**. The application passcode.                                                |
-| `user_identity` | `string` | **Required**. The user's identity.                                                     |
-| `room_name`     | `string` | A room name that will be used to create a token scoped to connecting to only one room. |
+| Name            | Type      | Description                                                                            |
+| --------------- | --------- | -------------------------------------------------------------------------------------- |
+| `passcode`      | `string`  | **Required**. The application passcode.                                                |
+| `user_identity` | `string`  | **Required**. The user's identity.                                                     |
+| `room_name`     | `string`  | A room name that will be used to create a token scoped to connecting to only one room. |
+| `create_room`   | `boolean` | (default: `true`) When false, a room will not be created when a token is requested.    |
 
 ###### Success Responses
 
@@ -109,7 +110,7 @@ POST /token
 ```json
 {
   "token": "0000000000000000.0000000000000000000000.00000000000000000",
-  "room_type": "group" | "group-small" | "peer-to-peer"
+  "room_type": "group" | "group-small" | "peer-to-peer" | null
 }
 ```
 
@@ -174,6 +175,24 @@ POST /token
 </tr>
 
 </table>
+
+<table>
+<tr>
+<td> <b>Status</b> </td> <td> <b>Response</b> </td>
+</tr>
+
+<tr>
+<td> 400 </td>
+<td>
+
+```json
+{
+  "error": {
+    "message": "invalid parameter",
+    "explanation": "A boolean value must be provided for the create_room parameter"
+  }
+}
+```
 
 ## Commands
 
