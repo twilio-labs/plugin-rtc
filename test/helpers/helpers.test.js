@@ -50,6 +50,7 @@ function getMockTwilioInstance(options) {
         Promise.resolve([
           { key: 'API_PASSCODE', value: '123456' },
           { key: 'API_PASSCODE_EXPIRY', value: '1590000000000' },
+          { key: 'ROOM_TYPE', value: 'group' },
         ]),
     },
   }));
@@ -181,6 +182,7 @@ describe('the getAppInfo function', () => {
       passcode: '12345612345678',
       sid: 'appSid',
       url: `https://${APP_NAME}-1234-5678-dev.twil.io?passcode=12345612345678`,
+      roomType: 'group',
     });
   });
 
@@ -194,6 +196,7 @@ describe('the getAppInfo function', () => {
       passcode: '12345612345678',
       sid: 'appSid',
       url: `https://${APP_NAME}-1234-5678-dev.twil.io?passcode=12345612345678`,
+      roomType: 'group',
     });
   });
 
@@ -216,6 +219,7 @@ describe('the displayAppInfo function', () => {
     expect(stdout.output).toMatchInlineSnapshot(`
       "Passcode: 123 456 1234 5678
       Expires: Wed May 20 2020 18:40:00 GMT+0000
+      Room Type: group
       "
     `);
   });
@@ -228,6 +232,7 @@ describe('the displayAppInfo function', () => {
       "Web App URL: https://${APP_NAME}-1234-5678-dev.twil.io?passcode=12345612345678
       Passcode: 123 456 1234 5678
       Expires: Wed May 20 2020 18:40:00 GMT+0000
+      Room Type: group
       "
     `);
   });

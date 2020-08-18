@@ -90,11 +90,12 @@ POST /token
 
 ###### Parameters
 
-| Name            | Type     | Description                                                                            |
-| --------------- | -------- | -------------------------------------------------------------------------------------- |
-| `passcode`      | `string` | **Required**. The application passcode.                                                |
-| `user_identity` | `string` | **Required**. The user's identity.                                                     |
-| `room_name`     | `string` | A room name that will be used to create a token scoped to connecting to only one room. |
+| Name            | Type      | Description                                                                            |
+| --------------- | --------- | -------------------------------------------------------------------------------------- |
+| `passcode`      | `string`  | **Required**. The application passcode.                                                |
+| `user_identity` | `string`  | **Required**. The user's identity.                                                     |
+| `room_name`     | `string`  | A room name that will be used to create a token scoped to connecting to only one room. |
+| `create_room`   | `boolean` | (default: `true`) When false, a room will not be created when a token is requested.    |
 
 ###### Success Responses
 
@@ -108,7 +109,8 @@ POST /token
 
 ```json
 {
-  "token": "0000000000000000.0000000000000000000000.00000000000000000"
+  "token": "0000000000000000.0000000000000000000000.00000000000000000",
+  "room_type": "group" | "group-small" | "peer-to-peer" | null
 }
 ```
 
@@ -172,6 +174,19 @@ POST /token
 </td>
 </tr>
 
+<tr>
+<td> 400 </td>
+<td>
+
+```json
+{
+  "error": {
+    "message": "invalid parameter",
+    "explanation": "A boolean value must be provided for the create_room parameter"
+  }
+}
+```
+
 </table>
 
 ## Commands
@@ -208,11 +223,12 @@ USAGE
   $ twilio rtc:apps:video:deploy --authentication <auth>
 
 OPTIONS
-  -l=(debug|info|warn|error|none)  [default: info] Level of logging messages.
-  -p, --profile=profile            Shorthand identifier for your profile.
-  --app-directory=app-directory    Name of app directory to use
-  --authentication=(passcode)      (required) Type of authentication to use
-  --override                       Override an existing App deployment
+  -l=(debug|info|warn|error|none)               [default: info] Level of logging messages.
+  -p, --profile=profile                         Shorthand identifier for your profile.
+  --app-directory=app-directory                 Name of app directory to use
+  --authentication=(passcode)                   (required) Type of authentication to use
+  --override                                    Override an existing App deployment
+  --room-type=(group|group-small|peer-to-peer)  [default: group] Set room type
 
 DESCRIPTION
   This command publishes two components as a Twilio Function: an application token
@@ -233,12 +249,16 @@ EXAMPLES
   $ twilio rtc:apps:video:deploy --authentication passcode
   deploying app... done
   Passcode: xxx xxx xxxx xxxx
+  Expires: Mon Mar 09 2020 16:36:23 GMT-0600
+  Room Type: group
 
   # Deploy an application token server with the React app
   $ twilio rtc:apps:video:deploy --authentication passcode --app-directory /path/to/app
   deploying app... done
   Web App URL: https://video-app-xxxx-xxxx-dev.twil.io?passcode=xxxxxxxxxxxxxx
   Passcode: xxx xxx xxxx xxxx
+  Expires: Mon Mar 09 2020 16:36:23 GMT-0600
+  Room Type: group
 
   # Override an existing app with a fresh deployment
   # Please note that this will remove a previously deployed web application if no
@@ -246,8 +266,16 @@ EXAMPLES
   $ twilio rtc:apps:video:deploy --authentication passcode --override
   Removed app with Passcode: xxx xxx xxxx xxxx
   deploying app... done
+  Passcode: yyy yyy yyyy yyyy
+  Expires: Mon Mar 09 2020 16:36:23 GMT-0600
+  Room Type: group
+
+  # Deploy an application token server with a specific room type
+  $ twilio rtc:apps:video:deploy --authentication passcode --room-type peer-to-peer
+  deploying app... done
   Passcode: xxx xxx xxxx xxxx
   Expires: Mon Mar 09 2020 16:36:23 GMT-0600
+  Room Type: peer-to-peer
 ```
 
 ## `twilio rtc:apps:video:view`
@@ -266,6 +294,7 @@ EXAMPLE
   $ twilio rtc:apps:video:view
   Web App URL: https://video-app-1111-dev.twil.io?passcode=xxxxxxxxxxxxxx
   Passcode: xxx xxx xxxx xxxx
+  Room Type: group
 ```
 
 <!-- commandsstop -->
