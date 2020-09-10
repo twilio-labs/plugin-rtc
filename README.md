@@ -110,7 +110,7 @@ POST /token
 ```json
 {
   "token": "0000000000000000.0000000000000000000000.00000000000000000",
-  "room_type": "group" | "group-small" | "peer-to-peer" | null
+  "room_type": "group" | "group-small" | "peer-to-peer"
 }
 ```
 

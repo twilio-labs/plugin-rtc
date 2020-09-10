@@ -147,7 +147,7 @@ describe('the RTC Twilio-CLI Plugin', () => {
           .post(`${URL}/token`)
           .send({ passcode, room_name: ROOM_NAME, user_identity: 'test user', create_room: false });
         expect(jwt.decode(body.token).grants).toEqual({ identity: 'test user', video: { room: ROOM_NAME } });
-        expect(body.room_type).toEqual(null);
+        expect(body.room_type).toEqual('group');
 
         try {
           await twilioClient.video.rooms(ROOM_NAME).fetch();
