@@ -223,14 +223,14 @@ describe('the RTC Twilio-CLI Plugin', () => {
     });
   });
 
-  describe('after deploying a token server (with peer-to-peer rooms)', () => {
+  describe('after deploying a token server (with peer-to-peer-basic rooms)', () => {
     let URL;
     let passcode;
     let webAppURL;
 
     beforeAll(async done => {
       stdout.start();
-      await DeployCommand.run(['--authentication', 'passcode', '--room-type', 'peer-to-peer']);
+      await DeployCommand.run(['--authentication', 'passcode', '--room-type', 'peer-to-peer-basic']);
       stdout.stop();
       passcode = getPasscode(stdout.output);
       URL = getURL(stdout.output);
@@ -248,22 +248,22 @@ describe('the RTC Twilio-CLI Plugin', () => {
         stdout.start();
         await ViewCommand.run([]);
         stdout.stop();
-        expect(stdout.output).toMatch(/Passcode: \d{3} \d{3} \d{4} \d{4}\nExpires: .+\nRoom Type: peer-to-peer/);
+        expect(stdout.output).toMatch(/Passcode: \d{3} \d{3} \d{4} \d{4}\nExpires: .+\nRoom Type: peer-to-peer-basic/);
         expect(stdout.output).not.toMatch(/Web App URL:/);
       });
     });
 
     describe('the serverless deployment', () => {
-      it('should create a peer-to-peer room and return a video token when the correct passcode is provided', async () => {
+      it('should create a peer-to-peer-basic room and return a video token when the correct passcode is provided', async () => {
         const ROOM_NAME = nanoid();
         const { body } = await superagent
           .post(`${URL}/token`)
           .send({ passcode, room_name: ROOM_NAME, user_identity: 'test user' });
         expect(jwt.decode(body.token).grants).toEqual({ identity: 'test user', video: { room: ROOM_NAME } });
-        expect(body.room_type).toEqual('peer-to-peer');
+        expect(body.room_type).toEqual('peer-to-peer-basic');
 
         const room = await twilioClient.video.rooms(ROOM_NAME).fetch();
-        expect(room.type).toEqual('peer-to-peer');
+        expect(room.type).toEqual('peer-to-peer-basic');
       });
 
       it('should return a 401 error when an incorrect passcode is provided', () => {
