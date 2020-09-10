@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.0
+
+### Maintenence
+
+- Updated the logic in the video token server so that it always returns the `room_type` parameter.
+- Upgraded @twilio/cli-core from 5.8.1 to 5.9.0
+
 ## 0.3.0
 
 ### Enhancements
