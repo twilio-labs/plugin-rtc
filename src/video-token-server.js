@@ -94,6 +94,6 @@ module.exports.handler = async (context, event, callback) => {
   const videoGrant = new VideoGrant({ room: room_name });
   token.addGrant(videoGrant);
   response.setStatusCode(200);
-  response.setBody({ token: token.toJwt(), room_type: create_room ? ROOM_TYPE : null });
+  response.setBody({ token: token.toJwt(), room_type: ROOM_TYPE });
   return callback(null, response);
 };
