@@ -20,7 +20,7 @@
     "@oclif/command": "^1.5.19",
     "@oclif/config": "^1.14.0",
     "@oclif/plugin-help": "^2",
-    "@twilio-labs/serverless-api": "^4.0.1",
+    "@twilio-labs/serverless-api": "^4.0.2",
     "@twilio/cli-core": "^5.9.0",
     "lodash": "^4.17.20",
     "moment": "^2.24.0",
