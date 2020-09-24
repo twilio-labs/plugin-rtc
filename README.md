@@ -228,7 +228,7 @@ OPTIONS
   --app-directory=app-directory                 Name of app directory to use
   --authentication=(passcode)                   (required) Type of authentication to use
   --override                                    Override an existing App deployment
-  --room-type=(group|group-small|peer-to-peer|peer-to-peer-basic)  [default: group] Set room type
+  --room-type=(group|group-small|peer-to-peer|go)  [default: go] Set room type
 
 DESCRIPTION
   This command publishes two components as a Twilio Function: an application token
