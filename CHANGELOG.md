@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0
+
+### Enhancements
+
+- Updated the `--room-type` flag to add new 'go' room type.
+
 ## 0.4.0
 
 ### Maintenence

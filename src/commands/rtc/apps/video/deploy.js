@@ -43,7 +43,7 @@ DeployCommand.flags = Object.assign(
       description: 'Override an existing App deployment',
     }),
     'room-type': flags.enum({
-      options: ['group', 'group-small', 'peer-to-peer'],
+      options: ['group', 'group-small', 'peer-to-peer', 'go'],
       description: 'Type of room to use',
       required: false,
       default: 'group',

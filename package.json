@@ -1,6 +1,6 @@
 {
   "name": "@twilio-labs/plugin-rtc",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "A Twilio-CLI plugin for real-time communication apps",
   "main": "index.js",
   "publishConfig": {
