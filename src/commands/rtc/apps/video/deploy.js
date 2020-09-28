@@ -46,7 +46,7 @@ DeployCommand.flags = Object.assign(
       options: ['group', 'group-small', 'peer-to-peer', 'go'],
       description: 'Type of room to use',
       required: false,
-      default: 'go',
+      default: 'group',
     }),
   },
   TwilioClientCommand.flags
