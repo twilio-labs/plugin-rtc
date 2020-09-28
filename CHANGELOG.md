@@ -4,7 +4,7 @@
 
 ### Enhancements
 
-- Update the `--room-type` flag to add new 'go' room type.
+- Updated the `--room-type` flag to add new 'go' room type.
 
 ## 0.4.0
 
