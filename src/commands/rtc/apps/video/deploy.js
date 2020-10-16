@@ -48,6 +48,11 @@ DeployCommand.flags = Object.assign(
       required: false,
       default: 'group',
     }),
+    'ui-editable': flags.boolean({
+      required: false,
+      default: true,
+      description: "Whether the app's files and variables can be edited in the Twilio console.",
+    }),
   },
   TwilioClientCommand.flags
 );
