@@ -23,7 +23,7 @@
     "@twilio-labs/serverless-api": "^4.0.1",
     "@twilio/cli-core": "^5.9.0",
     "lodash": "^4.17.20",
-    "moment": "^2.24.0",
+    "moment": "^2.28.0",
     "nanoid": "^3.1.12"
   },
   "devDependencies": {
