@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.6.0
+
+### Enhancements
+
+- This version will print a URL to the terminal where the user can view and edit the deployed token server function in the Twilio console. By default, the token server is editable in the Twilio console, but this can be disabled with the `--ui-ediable false` flag.
+- Upgraded @twilio/cli-core from 5.9.0 to 5.9.1
+- Upgraded moment from 2.27.0 to 2.28.0
+- Upgraded @twilio-labs/serverless-api from 4.0.1 to 4.0.2
+
 ## 0.5.0
 
 ### Enhancements
