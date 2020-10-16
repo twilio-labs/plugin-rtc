@@ -191,7 +191,9 @@ TWILIO_API_SECRET = the secret for the API Key`);
 
   try {
     const { serviceSid } = await serverlessClient.deployProject(deployOptions);
-    this.twilioClient.serverless.services(serviceSid).update({ uiEditable: true });
+    await this.twilioClient.serverless
+      .services(serviceSid)
+      .update({ includeCredentials: true, uiEditable: this.flags['ui-editable'] });
     cli.action.stop();
   } catch (e) {
     console.error('Something went wrong', e);
