@@ -13,7 +13,7 @@ const { getListOfFunctionsAndAssets } = require('@twilio-labs/serverless-api/dis
 const path = require('path');
 const { stdout } = require('stdout-stderr');
 
-const mockDeployProject = jest.fn(() => Promise.resolve());
+const mockDeployProject = jest.fn(() => Promise.resolve({ serviceSid: 'mockServiceSid' }));
 
 jest.mock('@twilio-labs/serverless-api', () => ({
   TwilioServerlessApiClient: function() {
@@ -38,10 +38,14 @@ jest.mock('@twilio-labs/serverless-api/dist/utils/fs', () => ({
 function getMockTwilioInstance(options) {
   const mockTwilioClient = {
     serverless: {},
+    username: options.username,
+    password: options.password,
   };
 
   const mockAppInstance = {
     assets: { list: () => Promise.resolve(options.hasAssets ? [{}] : []) },
+    functions: {},
+    update: jest.fn(() => Promise.resolve()),
   };
 
   mockAppInstance.environments = jest.fn(() => ({
@@ -55,8 +59,9 @@ function getMockTwilioInstance(options) {
     },
   }));
   mockAppInstance.environments.list = () =>
-    Promise.resolve([{ sid: 'env', domainName: `${APP_NAME}-1234-5678-dev.twil.io` }]);
-  mockTwilioClient.serverless.services = jest.fn(() => Promise.resolve(mockAppInstance));
+    Promise.resolve([{ sid: 'environmentSid', domainName: `${APP_NAME}-1234-5678-dev.twil.io` }]);
+  mockAppInstance.functions.list = () => Promise.resolve([{ sid: 'tokenFunctionSid', friendlyName: 'token' }]);
+  mockTwilioClient.serverless.services = jest.fn(() => mockAppInstance);
   mockTwilioClient.serverless.services.list = () =>
     Promise.resolve([
       {
@@ -178,6 +183,8 @@ describe('the getAppInfo function', () => {
     });
     expect(result).toEqual({
       expiry: 'Wed May 20 2020 18:40:00 GMT+0000',
+      environmentSid: 'environmentSid',
+      functionSid: 'tokenFunctionSid',
       hasAssets: false,
       passcode: '12345612345678',
       sid: 'appSid',
@@ -192,6 +199,8 @@ describe('the getAppInfo function', () => {
     });
     expect(result).toEqual({
       expiry: 'Wed May 20 2020 18:40:00 GMT+0000',
+      environmentSid: 'environmentSid',
+      functionSid: 'tokenFunctionSid',
       hasAssets: true,
       passcode: '12345612345678',
       sid: 'appSid',
@@ -220,6 +229,7 @@ describe('the displayAppInfo function', () => {
       "Passcode: 123 456 1234 5678
       Expires: Wed May 20 2020 18:40:00 GMT+0000
       Room Type: group
+      Edit your token server at: https://www.twilio.com/console/functions/editor/appSid/environment/environmentSid/function/tokenFunctionSid
       "
     `);
   });
@@ -233,6 +243,7 @@ describe('the displayAppInfo function', () => {
       Passcode: 123 456 1234 5678
       Expires: Wed May 20 2020 18:40:00 GMT+0000
       Room Type: group
+      Edit your token server at: https://www.twilio.com/console/functions/editor/appSid/environment/environmentSid/function/tokenFunctionSid
       "
     `);
   });
@@ -242,19 +253,16 @@ describe('the displayAppInfo function', () => {
       twilioClient: getMockTwilioInstance({ exists: false }),
     });
     expect(stdout.output).toMatchInlineSnapshot(`
-"There is no deployed app
-"
-`);
+      "There is no deployed app
+      "
+    `);
   });
 });
 
 describe('the deploy function', () => {
   it('should set serviceSid when appInfo exists', async () => {
     await deploy.call({
-      twilioClient: {
-        username: '',
-        password: '',
-      },
+      twilioClient: getMockTwilioInstance({ username: '', password: '' }),
       appInfo: {
         sid: '1234',
       },
@@ -267,14 +275,39 @@ describe('the deploy function', () => {
 
   it('should set serviceName when appInfo doesnt exist', async () => {
     await deploy.call({
-      twilioClient: {
-        username: '',
-        password: '',
-      },
+      twilioClient: getMockTwilioInstance({ username: '', password: '' }),
       flags: {},
     });
     expect(mockDeployProject.mock.calls[0][0].serviceSid).toBe(undefined);
     expect(mockDeployProject.mock.calls[0][0].serviceName).toMatch(new RegExp(`${APP_NAME}-(\\d{4})`));
+  });
+
+  it('should set ui-editable to false when the flag is false', async () => {
+    const mockTwilioClient = getMockTwilioInstance({ username: '', password: '' });
+    await deploy.call({
+      twilioClient: mockTwilioClient,
+      flags: {
+        'ui-editable': false,
+      },
+    });
+    expect(mockTwilioClient.serverless.services().update).toHaveBeenCalledWith({
+      includeCredentials: true,
+      uiEditable: false,
+    });
+  });
+
+  it('should set ui-editable to true when the flag is true', async () => {
+    const mockTwilioClient = getMockTwilioInstance({ username: '', password: '' });
+    await deploy.call({
+      twilioClient: mockTwilioClient,
+      flags: {
+        'ui-editable': true,
+      },
+    });
+    expect(mockTwilioClient.serverless.services().update).toHaveBeenCalledWith({
+      includeCredentials: true,
+      uiEditable: true,
+    });
   });
 
   it('should display an error when the API key is not provided', () => {
@@ -288,17 +321,17 @@ describe('the deploy function', () => {
         flags: {},
       })
     ).rejects.toMatchInlineSnapshot(`
-[Error: No API Key found.
+              [Error: No API Key found.
 
-Please login to the Twilio CLI to create an API key:
+              Please login to the Twilio CLI to create an API key:
 
-twilio login
+              twilio login
 
-Alternatively, the Twilio CLI can use credentials stored in these environment variables:
+              Alternatively, the Twilio CLI can use credentials stored in these environment variables:
 
-TWILIO_ACCOUNT_SID = your Account SID from twil.io/console
-TWILIO_API_KEY = an API Key created at twil.io/get-api-key
-TWILIO_API_SECRET = the secret for the API Key]
-`);
+              TWILIO_ACCOUNT_SID = your Account SID from twil.io/console
+              TWILIO_API_KEY = an API Key created at twil.io/get-api-key
+              TWILIO_API_SECRET = the secret for the API Key]
+            `);
   });
 });

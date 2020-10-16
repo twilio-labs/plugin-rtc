@@ -122,7 +122,7 @@ describe('the RTC Twilio-CLI Plugin', () => {
         await ViewCommand.run([]);
         stdout.stop();
         expect(stdout.output).toMatch(
-          /Web App URL: .+\nPasscode: \d{3} \d{3} \d{4} \d{4}\nExpires: .+\nRoom Type: group/
+          /Web App URL: .+\nPasscode: \d{3} \d{3} \d{4} \d{4}\nExpires: .+\nRoom Type: group\nEdit your token server at: https:\/\/www.twilio.com\/console\/functions\/editor\/ZS\w{32}\/environment\/ZE\w{32}\/function\/ZH\w{32}/
         );
       });
     });
@@ -248,7 +248,9 @@ describe('the RTC Twilio-CLI Plugin', () => {
         stdout.start();
         await ViewCommand.run([]);
         stdout.stop();
-        expect(stdout.output).toMatch(/Passcode: \d{3} \d{3} \d{4} \d{4}\nExpires: .+\nRoom Type: go/);
+        expect(stdout.output).toMatch(
+          /Passcode: \d{3} \d{3} \d{4} \d{4}\nExpires: .+\nRoom Type: go\nEdit your token server at: https:\/\/www.twilio.com\/console\/functions\/editor\/ZS\w{32}\/environment\/ZE\w{32}\/function\/ZH\w{32}/
+        );
         expect(stdout.output).not.toMatch(/Web App URL:/);
       });
     });
