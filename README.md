@@ -229,6 +229,7 @@ OPTIONS
   --authentication=(passcode)                   (required) Type of authentication to use
   --override                                    Override an existing App deployment
   --room-type=(group|group-small|peer-to-peer|go)  [default: group] Set room type
+  --[no-]ui-editable                               Specifies whether the app's files and variables can be edited in the Twilio console.
 
 DESCRIPTION
   This command publishes two components as a Twilio Function: an application token
@@ -251,6 +252,7 @@ EXAMPLES
   Passcode: xxx xxx xxxx xxxx
   Expires: Mon Mar 09 2020 16:36:23 GMT-0600
   Room Type: group
+  Edit your token server at: https://www.twilio.com/console/functions/editor/...
 
   # Deploy an application token server with the React app
   $ twilio rtc:apps:video:deploy --authentication passcode --app-directory /path/to/app
@@ -259,6 +261,7 @@ EXAMPLES
   Passcode: xxx xxx xxxx xxxx
   Expires: Mon Mar 09 2020 16:36:23 GMT-0600
   Room Type: group
+  Edit your token server at: https://www.twilio.com/console/functions/editor/...
 
   # Override an existing app with a fresh deployment
   # Please note that this will remove a previously deployed web application if no
@@ -269,6 +272,7 @@ EXAMPLES
   Passcode: yyy yyy yyyy yyyy
   Expires: Mon Mar 09 2020 16:36:23 GMT-0600
   Room Type: group
+  Edit your token server at: https://www.twilio.com/console/functions/editor/...
 
   # Deploy an application token server with a specific room type
   $ twilio rtc:apps:video:deploy --authentication passcode --room-type peer-to-peer
@@ -276,6 +280,7 @@ EXAMPLES
   Passcode: xxx xxx xxxx xxxx
   Expires: Mon Mar 09 2020 16:36:23 GMT-0600
   Room Type: peer-to-peer
+  Edit your token server at: https://www.twilio.com/console/functions/editor/...
 ```
 
 ## `twilio rtc:apps:video:view`
@@ -295,6 +300,7 @@ EXAMPLE
   Web App URL: https://video-app-1111-dev.twil.io?passcode=xxxxxxxxxxxxxx
   Passcode: xxx xxx xxxx xxxx
   Room Type: group
+  Edit your token server at: https://www.twilio.com/console/functions/editor/...
 ```
 
 <!-- commandsstop -->

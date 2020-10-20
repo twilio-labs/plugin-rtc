@@ -48,6 +48,12 @@ DeployCommand.flags = Object.assign(
       required: false,
       default: 'group',
     }),
+    'ui-editable': flags.boolean({
+      required: false,
+      default: true,
+      description: "Specifies whether the app's files and variables can be edited in the Twilio console.",
+      allowNo: true,
+    }),
   },
   TwilioClientCommand.flags
 );
@@ -76,7 +82,8 @@ $ twilio rtc:apps:video:deploy --authentication passcode
 deploying app... done
 Passcode: xxx xxx xxxx xxxx
 Expires: Mon Mar 09 2020 16:36:23 GMT-0600
-Room Type: group`,
+Room Type: group
+Edit your token server at: https://www.twilio.com/console/functions/editor/...`,
   `
 # Deploy an application token server with the React app
 $ twilio rtc:apps:video:deploy --authentication passcode --app-directory /path/to/app
@@ -84,7 +91,8 @@ deploying app... done
 Web App URL: https://video-app-xxxx-xxxx-dev.twil.io?passcode=xxxxxxxxxxxxxx
 Passcode: xxx xxx xxxx xxxx
 Expires: Mon Mar 09 2020 16:36:23 GMT-0600
-Room Type: group`,
+Room Type: group
+Edit your token server at: https://www.twilio.com/console/functions/editor/...`,
   `
 # Override an existing app with a fresh deployment
 # Please note that this will remove a previously deployed web application if no
@@ -94,14 +102,16 @@ Removed app with Passcode: xxx xxx xxxx xxxx
 deploying app... done
 Passcode: yyy yyy yyyy yyyy
 Expires: Mon Mar 09 2020 16:36:23 GMT-0600
-Room Type: group`,
+Room Type: group
+Edit your token server at: https://www.twilio.com/console/functions/editor/...`,
   `
 # Deploy an application token server with a specific room type
 $ twilio rtc:apps:video:deploy --authentication passcode --room-type peer-to-peer
 deploying app... done
 Passcode: xxx xxx xxxx xxxx
 Expires: Mon Mar 09 2020 16:36:23 GMT-0600
-Room Type: peer-to-peer`,
+Room Type: peer-to-peer
+Edit your token server at: https://www.twilio.com/console/functions/editor/...`,
 ];
 
 module.exports = DeployCommand;

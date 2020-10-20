@@ -79,6 +79,9 @@ async function getAppInfo() {
 
   const assets = await appInstance.assets.list();
 
+  const functions = await appInstance.functions.list();
+  const tokenServerFunction = functions.find(fn => fn.friendlyName === 'token');
+
   const passcodeVar = variables.find(v => v.key === 'API_PASSCODE');
   const expiryVar = variables.find(v => v.key === 'API_PASSCODE_EXPIRY');
   const roomTypeVar = variables.find(v => v.key === 'ROOM_TYPE');
@@ -96,6 +99,8 @@ async function getAppInfo() {
     passcode: fullPasscode,
     hasAssets: Boolean(assets.length),
     roomType,
+    environmentSid: environment.sid,
+    functionSid: tokenServerFunction.sid,
   };
 }
 
@@ -117,6 +122,10 @@ async function displayAppInfo() {
   if (appInfo.roomType) {
     console.log(`Room Type: ${appInfo.roomType}`);
   }
+
+  console.log(
+    `Edit your token server at: https://www.twilio.com/console/functions/editor/${appInfo.sid}/environment/${appInfo.environmentSid}/function/${appInfo.functionSid}`
+  );
 }
 
 async function deploy() {
@@ -181,7 +190,10 @@ TWILIO_API_SECRET = the secret for the API Key`);
   }
 
   try {
-    await serverlessClient.deployProject(deployOptions);
+    const { serviceSid } = await serverlessClient.deployProject(deployOptions);
+    await this.twilioClient.serverless
+      .services(serviceSid)
+      .update({ includeCredentials: true, uiEditable: this.flags['ui-editable'] });
     cli.action.stop();
   } catch (e) {
     console.error('Something went wrong', e);
