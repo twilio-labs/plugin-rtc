@@ -32,4 +32,4 @@ global.Runtime = {
 };
 
 // Mocking this as a no-op since this function is tested in 'tests/serverless/assets/verify_passcode.ts'.
-jest.mock(`${__dirname}/../src/serverless/assets/verify_passcode.js`, () => () => {});
+jest.doMock(verifyPasscodePath, () => () => {});
