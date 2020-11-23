@@ -114,23 +114,38 @@ describe('the verifyAppDirectory function', () => {
 
 describe('the getAssets function', () => {
   it('should add index.html at "/" and "/login" paths', async () => {
-    expect(await getAssets('mockFolder')).toEqual([
-      {
-        name: 'index.html',
-        path: 'index.html',
-        content: 'mockHTMLcontent',
-      },
-      {
-        name: '/',
-        path: '/',
-        content: 'mockHTMLcontent',
-      },
-      {
-        name: '/login',
-        path: '/login',
-        content: 'mockHTMLcontent',
-      },
-    ]);
+    expect(await getAssets('mockFolder')).toEqual(
+      expect.arrayContaining([
+        {
+          name: 'index.html',
+          path: 'index.html',
+          content: 'mockHTMLcontent',
+        },
+        {
+          name: '/',
+          path: '/',
+          content: 'mockHTMLcontent',
+        },
+        {
+          name: '/login',
+          path: '/login',
+          content: 'mockHTMLcontent',
+        },
+      ])
+    );
+  });
+
+  it('should add the auth-handler.js as a private asset', async () => {
+    expect(await getAssets('mockFolder')).toEqual(
+      expect.arrayContaining([
+        {
+          name: 'auth-handler',
+          path: '/auth-handler.js',
+          content: expect.any(Buffer),
+          access: 'private',
+        },
+      ])
+    );
   });
 
   it('should use the CWD when provided with a relative path', async () => {
