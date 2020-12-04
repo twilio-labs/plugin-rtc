@@ -46,7 +46,7 @@ async function getAssets(folder) {
   });
 
   const indexHTML = assets.find(asset => asset.name.includes('index.html'));
-  const authHandlerFn = fs.readFileSync(path.join(__dirname, './serverless/assets/verify_passcode.js'));
+  const authHandlerFn = fs.readFileSync(path.join(__dirname, './serverless/middleware/auth.js'));
 
   const allAssets = assets.concat([
     {

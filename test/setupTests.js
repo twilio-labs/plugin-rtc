@@ -21,7 +21,7 @@ class Response {
 global.Twilio = require('twilio');
 global.Twilio.Response = Response;
 
-const verifyPasscodePath = `${__dirname}/../src/serverless/assets/verify_passcode.js`;
+const verifyPasscodePath = `${__dirname}/../src/serverless/middleware/auth.js`;
 
 global.Runtime = {
   getAssets: () => ({
@@ -31,5 +31,5 @@ global.Runtime = {
   }),
 };
 
-// Mocking this as a no-op since this function is tested in 'tests/serverless/assets/verify_passcode.ts'.
+// Mocking this as a no-op since this function is tested in 'tests/serverless/middleware/auth.ts'.
 jest.doMock(verifyPasscodePath, () => () => {});

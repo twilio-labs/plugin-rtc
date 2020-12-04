@@ -1,6 +1,6 @@
-const verifyPasscode = jest.requireActual('../../../src/serverless/assets/verify_passcode');
+const verifyPasscode = jest.requireActual('../../../src/serverless/middleware/auth');
 
-describe('the verify_passcode asset', () => {
+describe('the auth middleware', () => {
   it('should return an "unauthorized" error when the passcode is incorrect', () => {
     Date.now = () => 5;
     const mockCallback = jest.fn();
