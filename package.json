@@ -21,10 +21,10 @@
     "@oclif/config": "^1.14.0",
     "@oclif/plugin-help": "^2",
     "@twilio-labs/serverless-api": "^4.0.3",
-    "@twilio/cli-core": "^5.9.1",
+    "@twilio/cli-core": "^5.9.3",
     "lodash": "^4.17.20",
-    "moment": "^2.28.0",
-    "nanoid": "^3.1.13"
+    "moment": "^2.29.0",
+    "nanoid": "^3.1.16"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1",
