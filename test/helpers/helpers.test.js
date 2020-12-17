@@ -8,6 +8,7 @@ const {
   getPasscode,
   getRandomInt,
   verifyAppDirectory,
+  getMiddleware,
 } = require('../../src/helpers');
 const { getListOfFunctionsAndAssets } = require('@twilio-labs/serverless-api/dist/utils/fs');
 const path = require('path');
@@ -43,7 +44,7 @@ function getMockTwilioInstance(options) {
   };
 
   const mockAppInstance = {
-    assets: { list: () => Promise.resolve(options.hasAssets ? [{}] : []) },
+    assets: { list: () => Promise.resolve(options.hasWebAssets ? [{ friendlyName: 'index.html' }] : []) },
     functions: {},
     update: jest.fn(() => Promise.resolve()),
   };
@@ -134,9 +135,11 @@ describe('the getAssets function', () => {
       ])
     );
   });
+});
 
+describe('the getMiddleware function', () => {
   it('should add the auth-handler.js as a private asset', async () => {
-    expect(await getAssets('mockFolder')).toEqual(
+    expect(await getMiddleware('mockFolder')).toEqual(
       expect.arrayContaining([
         {
           name: 'auth-handler',
@@ -200,7 +203,7 @@ describe('the getAppInfo function', () => {
       expiry: 'Wed May 20 2020 18:40:00 GMT+0000',
       environmentSid: 'environmentSid',
       functionSid: 'tokenFunctionSid',
-      hasAssets: false,
+      hasWebAssets: false,
       passcode: '12345612345678',
       sid: 'appSid',
       url: `https://${APP_NAME}-1234-5678-dev.twil.io?passcode=12345612345678`,
@@ -208,15 +211,15 @@ describe('the getAppInfo function', () => {
     });
   });
 
-  it('should return the correct information when there are assets', async () => {
+  it('should return the correct information when there are web assets', async () => {
     const result = await getAppInfo.call({
-      twilioClient: getMockTwilioInstance({ exists: true, hasAssets: true }),
+      twilioClient: getMockTwilioInstance({ exists: true, hasWebAssets: true }),
     });
     expect(result).toEqual({
       expiry: 'Wed May 20 2020 18:40:00 GMT+0000',
       environmentSid: 'environmentSid',
       functionSid: 'tokenFunctionSid',
-      hasAssets: true,
+      hasWebAssets: true,
       passcode: '12345612345678',
       sid: 'appSid',
       url: `https://${APP_NAME}-1234-5678-dev.twil.io?passcode=12345612345678`,
@@ -251,7 +254,7 @@ describe('the displayAppInfo function', () => {
 
   it('should display the correct information when there are assets', async () => {
     await displayAppInfo.call({
-      twilioClient: getMockTwilioInstance({ exists: true, hasAssets: true }),
+      twilioClient: getMockTwilioInstance({ exists: true, hasWebAssets: true }),
     });
     expect(stdout.output).toMatchInlineSnapshot(`
       "Web App URL: https://${APP_NAME}-1234-5678-dev.twil.io?passcode=12345612345678

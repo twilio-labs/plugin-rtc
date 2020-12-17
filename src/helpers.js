@@ -46,7 +46,6 @@ async function getAssets(folder) {
   });
 
   const indexHTML = assets.find(asset => asset.name.includes('index.html'));
-  const authHandlerFn = fs.readFileSync(path.join(__dirname, './serverless/middleware/auth.js'));
 
   const allAssets = assets.concat([
     {
@@ -59,15 +58,22 @@ async function getAssets(folder) {
       path: '/login',
       name: '/login',
     },
+  ]);
+
+  return allAssets;
+}
+
+function getMiddleware() {
+  const authHandlerFn = fs.readFileSync(path.join(__dirname, './serverless/middleware/auth.js'));
+
+  return [
     {
       name: 'auth-handler',
       path: '/auth-handler.js',
       content: authHandlerFn,
       access: 'private',
     },
-  ]);
-
-  return allAssets;
+  ];
 }
 
 async function findApp() {
@@ -106,7 +112,7 @@ async function getAppInfo() {
     expiry: moment(Number(expiry)).toString(),
     sid: app.sid,
     passcode: fullPasscode,
-    hasAssets: Boolean(assets.length),
+    hasWebAssets: Boolean(assets.find(asset => asset.friendlyName.includes('index.html'))),
     roomType,
     environmentSid: environment.sid,
     functionSid: tokenServerFunction.sid,
@@ -121,7 +127,7 @@ async function displayAppInfo() {
     return;
   }
 
-  if (appInfo.hasAssets) {
+  if (appInfo.hasWebAssets) {
     console.log(`Web App URL: ${appInfo.url}`);
   }
 
@@ -143,6 +149,8 @@ async function deploy() {
     functionsFolderNames: ['serverless/functions'],
     assetsFolderNames: [],
   });
+
+  assets.push(...getMiddleware());
 
   if (this.twilioClient.username === this.twilioClient.accountSid) {
     // When twilioClient.username equals twilioClient.accountSid, it means that the user
@@ -213,6 +221,7 @@ module.exports = {
   displayAppInfo,
   findApp,
   getAssets,
+  getMiddleware,
   getAppInfo,
   getPasscode,
   getRandomInt,
