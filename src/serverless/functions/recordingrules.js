@@ -1,4 +1,4 @@
-/* global Twilio */
+/* global Twilio Runtime */
 'use strict';
 
 // We need to use a newer twilio client than the one provided by context.getTwilioClient(),

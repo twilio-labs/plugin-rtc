@@ -1,4 +1,4 @@
-/* global Twilio */
+/* global Twilio Runtime */
 'use strict';
 
 const AccessToken = Twilio.jwt.AccessToken;
