@@ -3,6 +3,7 @@
 
 // We need to use a newer twilio client than the one provided by context.getTwilioClient(),
 // so we require it here. The version is specified in helpers.js in the 'deployOptions' object.
+// TODO: replace with context.getTwilioClient() when https://issues.corp.twilio.com/browse/RUN-3731 is complete
 const twilio = require('twilio');
 
 module.exports.handler = async (context, event, callback) => {
