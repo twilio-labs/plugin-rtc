@@ -47,18 +47,33 @@ async function getAssets(folder) {
 
   const indexHTML = assets.find(asset => asset.name.includes('index.html'));
 
-  assets.push({
-    ...indexHTML,
-    path: '/',
-    name: '/',
-  });
-  assets.push({
-    ...indexHTML,
-    path: '/login',
-    name: '/login',
-  });
+  const allAssets = assets.concat([
+    {
+      ...indexHTML,
+      path: '/',
+      name: '/',
+    },
+    {
+      ...indexHTML,
+      path: '/login',
+      name: '/login',
+    },
+  ]);
 
-  return assets;
+  return allAssets;
+}
+
+function getMiddleware() {
+  const authHandlerFn = fs.readFileSync(path.join(__dirname, './serverless/middleware/auth.js'));
+
+  return [
+    {
+      name: 'auth-handler',
+      path: '/auth-handler.js',
+      content: authHandlerFn,
+      access: 'private',
+    },
+  ];
 }
 
 async function findApp() {
@@ -80,7 +95,7 @@ async function getAppInfo() {
   const assets = await appInstance.assets.list();
 
   const functions = await appInstance.functions.list();
-  const tokenServerFunction = functions.find(fn => fn.friendlyName === 'token');
+  const tokenServerFunction = functions.find(fn => fn.friendlyName.includes('token'));
 
   const passcodeVar = variables.find(v => v.key === 'API_PASSCODE');
   const expiryVar = variables.find(v => v.key === 'API_PASSCODE_EXPIRY');
@@ -97,7 +112,7 @@ async function getAppInfo() {
     expiry: moment(Number(expiry)).toString(),
     sid: app.sid,
     passcode: fullPasscode,
-    hasAssets: Boolean(assets.length),
+    hasWebAssets: Boolean(assets.find(asset => asset.friendlyName.includes('index.html'))),
     roomType,
     environmentSid: environment.sid,
     functionSid: tokenServerFunction.sid,
@@ -112,7 +127,7 @@ async function displayAppInfo() {
     return;
   }
 
-  if (appInfo.hasAssets) {
+  if (appInfo.hasWebAssets) {
     console.log(`Web App URL: ${appInfo.url}`);
   }
 
@@ -130,6 +145,12 @@ async function displayAppInfo() {
 
 async function deploy() {
   const assets = this.flags['app-directory'] ? await getAssets(this.flags['app-directory']) : [];
+  const { functions } = await getListOfFunctionsAndAssets(__dirname, {
+    functionsFolderNames: ['serverless/functions'],
+    assetsFolderNames: [],
+  });
+
+  assets.push(...getMiddleware());
 
   if (this.twilioClient.username === this.twilioClient.accountSid) {
     // When twilioClient.username equals twilioClient.accountSid, it means that the user
@@ -158,8 +179,6 @@ TWILIO_API_SECRET = the secret for the API Key`);
   const pin = getRandomInt(6);
   const expiryTime = Date.now() + EXPIRY_PERIOD;
 
-  const fn = fs.readFileSync(path.join(__dirname, './video-token-server.js'));
-
   cli.action.start('deploying app');
 
   const deployOptions = {
@@ -170,17 +189,14 @@ TWILIO_API_SECRET = the secret for the API Key`);
       API_PASSCODE_EXPIRY: expiryTime,
       ROOM_TYPE: this.flags['room-type'],
     },
-    pkgJson: {},
-    functionsEnv: 'dev',
-    functions: [
-      {
-        name: 'token',
-        path: '/token',
-        content: fn,
-        access: 'public',
+    pkgJson: {
+      dependencies: {
+        twilio: '^3.51.0',
       },
-    ],
-    assets: assets,
+    },
+    functionsEnv: 'dev',
+    functions,
+    assets,
   };
 
   if (this.appInfo && this.appInfo.sid) {
@@ -205,6 +221,7 @@ module.exports = {
   displayAppInfo,
   findApp,
   getAssets,
+  getMiddleware,
   getAppInfo,
   getPasscode,
   getRandomInt,
