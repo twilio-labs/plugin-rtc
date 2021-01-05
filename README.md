@@ -66,7 +66,7 @@ The following section documents the application [token server](/src/video-token-
 
 ##### Authentication
 
-The application token server requires an [authentication mechanism](#twilio-rtcappsvideodeploy---authentication-auth) to be specified when deploying. The following section documents each support authentication mechanism.
+The application token server requires an [authentication mechanism](#twilio-rtcappsvideodeploy---authentication-auth) to be specified when deploying. The following section documents each supported authentication mechanism.
 
 ###### Passcode
 
@@ -186,6 +186,108 @@ POST /token
   }
 }
 ```
+
+</table>
+
+##### Recording Rules
+
+Changes the Recording Rules for a given room SID.
+
+```shell
+POST /recordingrules
+```
+
+###### Parameters
+
+| Name       | Type     | Description                                                         |
+| ---------- | -------- | ------------------------------------------------------------------- |
+| `passcode` | `string` | **Required**. The application passcode.                             |
+| `room_sid` | `string` | **Required**. The SID of the room to change the recording rules of. |
+| `rules`    | `array`  | **Required**. An array of recording rules to apply to the room.     |
+
+###### Success Responses
+
+<table>
+<tr>
+<td> <b>Status</b> </td> <td> <b>Response</b> </td>
+</tr>
+<tr>
+<td> 200 </td>
+<td>
+
+```json
+{
+  "roomSid": "RM00000000000000000000000000000000",
+  "rules": [
+    {
+      "all": true,
+      "type": "exclude"
+    }
+  ],
+  "dateCreated": "2020-11-18T02:58:20.000Z",
+  "dateUpdated": "2020-11-18T03:21:18.000Z"
+}
+```
+
+</td>
+</tr>
+
+</table>
+
+###### Error Responses
+
+<table>
+<tr>
+<td> <b>Status</b> </td> <td> <b>Response</b> </td>
+</tr>
+
+<tr>
+<td> 400 </td>
+<td>
+
+```json
+{
+  "error": {
+    "message": "missing room_sid",
+    "explanation": "The room_sid parameter is missing."
+  }
+}
+```
+
+</td>
+</tr>
+
+<tr>
+<td> 400 </td>
+<td>
+
+```json
+{
+  "error": {
+    "message": "missing rules",
+    "explanation": "The rules parameter is missing."
+  }
+}
+```
+
+</td>
+</tr>
+
+<tr>
+<td> 401 </td>
+<td>
+
+```json
+{
+  "error": {
+    "message": "passcode incorrect",
+    "explanation": "The passcode used to validate application users is incorrect."
+  }
+}
+```
+
+</td>
+</tr>
 
 </table>
 
