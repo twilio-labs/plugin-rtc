@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.7.0
+
+### Enhancements
+
+- This version adds a new endpoint which allows users to update the recording rules for a given room. See the [README](README.md#recording-rules) for more details.
+- Upgraded @twilio/cli-core from 5.9.1 to 5.9.3
+- Upgraded moment from 2.28.0 to 2.29.0
+- Upgraded nanoid from 3.1.13 to 3.1.16
+- Upgraded @twilio-labs/serverless-api from 4.0.2 to 4.0.3
+
 ## 0.6.0
 
 ### Enhancements

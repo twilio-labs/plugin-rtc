@@ -1,4 +1,4 @@
-/* global Twilio */
+/* global Twilio Runtime */
 'use strict';
 
 const AccessToken = Twilio.jwt.AccessToken;
@@ -6,18 +6,12 @@ const VideoGrant = AccessToken.VideoGrant;
 const MAX_ALLOWED_SESSION_DURATION = 14400;
 
 module.exports.handler = async (context, event, callback) => {
-  const {
-    ACCOUNT_SID,
-    TWILIO_API_KEY_SID,
-    TWILIO_API_KEY_SECRET,
-    API_PASSCODE,
-    API_PASSCODE_EXPIRY,
-    DOMAIN_NAME,
-    ROOM_TYPE,
-  } = context;
+  const { ACCOUNT_SID, TWILIO_API_KEY_SID, TWILIO_API_KEY_SECRET, ROOM_TYPE } = context;
 
-  const { user_identity, room_name, passcode, create_room = true } = event;
-  const [, appID, serverlessID] = DOMAIN_NAME.match(/-?(\d*)-(\d+)(?:-\w+)?.twil.io$/);
+  const authHandler = require(Runtime.getAssets()['/auth-handler.js'].path);
+  authHandler(context, event, callback);
+
+  const { user_identity, room_name, create_room = true } = event;
 
   let response = new Twilio.Response();
   response.appendHeader('Content-Type', 'application/json');
@@ -28,29 +22,6 @@ module.exports.handler = async (context, event, callback) => {
       error: {
         message: 'invalid parameter',
         explanation: 'A boolean value must be provided for the create_room parameter',
-      },
-    });
-    return callback(null, response);
-  }
-
-  if (Date.now() > API_PASSCODE_EXPIRY) {
-    response.setStatusCode(401);
-    response.setBody({
-      error: {
-        message: 'passcode expired',
-        explanation:
-          'The passcode used to validate application users has expired. Re-deploy the application to refresh the passcode.',
-      },
-    });
-    return callback(null, response);
-  }
-
-  if (API_PASSCODE + appID + serverlessID !== passcode) {
-    response.setStatusCode(401);
-    response.setBody({
-      error: {
-        message: 'passcode incorrect',
-        explanation: 'The passcode used to validate application users is incorrect.',
       },
     });
     return callback(null, response);

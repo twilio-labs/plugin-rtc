@@ -56,7 +56,7 @@ A mobile and web collaboration application built with Twilio Programmable Video.
 - [iOS App](https://github.com/twilio/twilio-video-app-ios)
 - [Android App](https://github.com/twilio/twilio-video-app-android)
 
-#### Token Server API Documentation
+## Token Server API Documentation
 
 The following section documents the application [token server](/src/video-token-server.js) used to provide [Programable Video access tokens](https://www.twilio.com/docs/video/tutorials/user-identity-access-tokens) to supported Twilio Video applications. The token server is deployed as a [Twilio Function](https://www.twilio.com/docs/runtime/functions).
 
@@ -64,11 +64,11 @@ The following section documents the application [token server](/src/video-token-
 | ------ | ------------------ |
 | POST   | [`/token`](#token) |
 
-##### Authentication
+### Authentication
 
-The application token server requires an [authentication mechanism](#twilio-rtcappsvideodeploy---authentication-auth) to be specified when deploying. The following section documents each support authentication mechanism.
+The application token server requires an [authentication mechanism](#twilio-rtcappsvideodeploy---authentication-auth) to be specified when deploying. The following section documents each supported authentication mechanism.
 
-###### Passcode
+#### Passcode
 
 Each request is verified using a passcode generated at deploy time. Passcodes remain valid for one week. After the passcode expires, users can redeploy an application and a new passcode will be generated. The snippet below provides an example request body used by a supported application.
 
@@ -80,7 +80,7 @@ Each request is verified using a passcode generated at deploy time. Passcodes re
 }
 ```
 
-##### Token
+### Token
 
 Returns a Programmable Video Access token.
 
@@ -88,7 +88,7 @@ Returns a Programmable Video Access token.
 POST /token
 ```
 
-###### Parameters
+#### Parameters
 
 | Name            | Type      | Description                                                                            |
 | --------------- | --------- | -------------------------------------------------------------------------------------- |
@@ -97,7 +97,7 @@ POST /token
 | `room_name`     | `string`  | A room name that will be used to create a token scoped to connecting to only one room. |
 | `create_room`   | `boolean` | (default: `true`) When false, a room will not be created when a token is requested.    |
 
-###### Success Responses
+#### Success Responses
 
 <table>
 <tr>
@@ -119,7 +119,7 @@ POST /token
 
 </table>
 
-###### Error Responses
+#### Error Responses
 
 <table>
 <tr>
@@ -186,6 +186,108 @@ POST /token
   }
 }
 ```
+
+</table>
+
+### Recording Rules
+
+Changes the Recording Rules for a given room SID.
+
+```shell
+POST /recordingrules
+```
+
+#### Parameters
+
+| Name       | Type     | Description                                                         |
+| ---------- | -------- | ------------------------------------------------------------------- |
+| `passcode` | `string` | **Required**. The application passcode.                             |
+| `room_sid` | `string` | **Required**. The SID of the room to change the recording rules of. |
+| `rules`    | `array`  | **Required**. An array of recording rules to apply to the room.     |
+
+#### Success Responses
+
+<table>
+<tr>
+<td> <b>Status</b> </td> <td> <b>Response</b> </td>
+</tr>
+<tr>
+<td> 200 </td>
+<td>
+
+```json
+{
+  "roomSid": "RM00000000000000000000000000000000",
+  "rules": [
+    {
+      "all": true,
+      "type": "exclude"
+    }
+  ],
+  "dateCreated": "2020-11-18T02:58:20.000Z",
+  "dateUpdated": "2020-11-18T03:21:18.000Z"
+}
+```
+
+</td>
+</tr>
+
+</table>
+
+#### Error Responses
+
+<table>
+<tr>
+<td> <b>Status</b> </td> <td> <b>Response</b> </td>
+</tr>
+
+<tr>
+<td> 400 </td>
+<td>
+
+```json
+{
+  "error": {
+    "message": "missing room_sid",
+    "explanation": "The room_sid parameter is missing."
+  }
+}
+```
+
+</td>
+</tr>
+
+<tr>
+<td> 400 </td>
+<td>
+
+```json
+{
+  "error": {
+    "message": "missing rules",
+    "explanation": "The rules parameter is missing."
+  }
+}
+```
+
+</td>
+</tr>
+
+<tr>
+<td> 401 </td>
+<td>
+
+```json
+{
+  "error": {
+    "message": "passcode incorrect",
+    "explanation": "The passcode used to validate application users is incorrect."
+  }
+}
+```
+
+</td>
+</tr>
 
 </table>
 

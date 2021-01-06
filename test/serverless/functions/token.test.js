@@ -1,4 +1,4 @@
-const { handler } = require('../src/video-token-server');
+const { handler } = require('../../../src/serverless/functions/token');
 const jwt = require('jsonwebtoken');
 const { set } = require('lodash');
 
@@ -8,64 +8,23 @@ const mockCreateFunction = jest.fn();
 
 const mockTwilioClient = set({}, 'video.rooms.create', mockCreateFunction);
 
+Date.now = () => 5;
+
 const mockContext = {
   ACCOUNT_SID: 'AC1234',
   TWILIO_API_KEY_SID: 'SK1234',
   TWILIO_API_KEY_SECRET: 'api_secret',
-  API_PASSCODE: '123456',
-  API_PASSCODE_EXPIRY: '10',
-  DOMAIN_NAME: 'video-app-1234-5678-dev.twil.io',
   ROOM_TYPE: 'group',
   getTwilioClient: () => mockTwilioClient,
 };
 
 describe('the video-token-server', () => {
   beforeEach(() => {
-    Date.now = () => 5;
     mockCreateFunction.mockImplementation(() => Promise.resolve());
   });
 
-  it('should return an "unauthorized" error when the passcode is incorrect', () => {
-    handler(mockContext, { passcode: '9876543210', user_identity: 'test identity' }, callback);
-
-    expect(callback).toHaveBeenCalledWith(null, {
-      body: {
-        error: {
-          message: 'passcode incorrect',
-          explanation: 'The passcode used to validate application users is incorrect.',
-        },
-      },
-      headers: { 'Content-Type': 'application/json' },
-      statusCode: 401,
-    });
-  });
-
-  it('should return an "expired" error when the current time is past the API_PASSCODE_EXPIRY time', () => {
-    Date.now = () => 15;
-
-    handler(mockContext, { passcode: '12345612345678', user_identity: 'test identity' }, callback);
-
-    expect(callback).toHaveBeenCalledWith(null, {
-      body: {
-        error: {
-          message: 'passcode expired',
-          explanation:
-            'The passcode used to validate application users has expired. Re-deploy the application to refresh the passcode.',
-        },
-      },
-      headers: { 'Content-Type': 'application/json' },
-      statusCode: 401,
-    });
-  });
-
   it('should return an "invalid parameter" error when the create_room parameter is not a boolean', async () => {
-    Date.now = () => 5;
-
-    await handler(
-      mockContext,
-      { passcode: '12345612345678', user_identity: 'test identity', create_room: 'no thanks' },
-      callback
-    );
+    await handler(mockContext, { user_identity: 'test identity', create_room: 'no thanks' }, callback);
 
     expect(callback).toHaveBeenCalledWith(null, {
       body: {
@@ -80,7 +39,7 @@ describe('the video-token-server', () => {
   });
 
   it('should return a "missing user_identity" error when the "user_identity" parameter is not supplied', () => {
-    handler(mockContext, { passcode: '12345612345678' }, callback);
+    handler(mockContext, {}, callback);
 
     expect(callback).toHaveBeenCalledWith(null, {
       body: {
@@ -95,7 +54,7 @@ describe('the video-token-server', () => {
   });
 
   it('should return a token when no room_name is supplied', async () => {
-    await handler(mockContext, { passcode: '12345612345678', user_identity: 'test identity' }, callback);
+    await handler(mockContext, { user_identity: 'test identity' }, callback);
 
     expect(callback).toHaveBeenCalledWith(null, {
       body: { token: expect.any(String), room_type: 'group' },
@@ -118,11 +77,7 @@ describe('the video-token-server', () => {
 
   describe('when passcode, room_name, and user_identity parameters are supplied', () => {
     it('should return a valid token', async () => {
-      await handler(
-        mockContext,
-        { passcode: '12345612345678', room_name: 'test-room', user_identity: 'test-user' },
-        callback
-      );
+      await handler(mockContext, { room_name: 'test-room', user_identity: 'test-user' }, callback);
 
       expect(callback).toHaveBeenCalledWith(null, {
         body: { token: expect.any(String), room_type: 'group' },
