@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.1
+
+### Maintenence
+
+- This version upgrades dependencies in order to resolve this [security advisory](https://github.com/advisories/GHSA-4w2v-q235-vp99) regarding the axios library.
+- Upgraded @twilio/cli-core from 5.9.3 to 5.15.1
+- Upgraded twilio from 3.48.2 to 3.54.2
+
 ## 0.7.0
 
 ### Enhancements
