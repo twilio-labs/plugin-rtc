@@ -21,7 +21,7 @@
     "@oclif/config": "^1.14.0",
     "@oclif/plugin-help": "^2",
     "@twilio-labs/serverless-api": "^4.0.3",
-    "@twilio/cli-core": "^5.15.0",
+    "@twilio/cli-core": "^5.15.1",
     "lodash": "^4.17.20",
     "moment": "^2.29.0",
     "nanoid": "^3.1.16"
@@ -37,7 +37,7 @@
     "lint-staged": "^10.0.8",
     "prettier": "^1.19.1",
     "superagent": "^5.2.2",
-    "twilio": "^3.48.2"
+    "twilio": "^3.54.2"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",

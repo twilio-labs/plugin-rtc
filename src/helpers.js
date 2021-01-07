@@ -191,7 +191,7 @@ TWILIO_API_SECRET = the secret for the API Key`);
     },
     pkgJson: {
       dependencies: {
-        twilio: '^3.51.0',
+        twilio: '^3.54.2',
       },
     },
     functionsEnv: 'dev',
