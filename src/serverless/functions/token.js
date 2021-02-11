@@ -3,10 +3,11 @@
 
 const AccessToken = Twilio.jwt.AccessToken;
 const VideoGrant = AccessToken.VideoGrant;
+const ChatGrant = AccessToken.ChatGrant;
 const MAX_ALLOWED_SESSION_DURATION = 14400;
 
 module.exports.handler = async (context, event, callback) => {
-  const { ACCOUNT_SID, TWILIO_API_KEY_SID, TWILIO_API_KEY_SECRET, ROOM_TYPE } = context;
+  const { ACCOUNT_SID, TWILIO_API_KEY_SID, TWILIO_API_KEY_SECRET, ROOM_TYPE, CHAT_SERVICE_SID } = context;
 
   const authHandler = require(Runtime.getAssets()['/auth-handler.js'].path);
   authHandler(context, event, callback);
@@ -63,7 +64,9 @@ module.exports.handler = async (context, event, callback) => {
   });
   token.identity = user_identity;
   const videoGrant = new VideoGrant({ room: room_name });
+  const chatGrant = new ChatGrant({ serviceSid: CHAT_SERVICE_SID });
   token.addGrant(videoGrant);
+  token.addGrant(chatGrant);
   response.setStatusCode(200);
   response.setBody({ token: token.toJwt(), room_type: ROOM_TYPE });
   return callback(null, response);

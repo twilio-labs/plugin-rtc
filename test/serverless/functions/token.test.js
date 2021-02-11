@@ -14,6 +14,7 @@ const mockContext = {
   ACCOUNT_SID: 'AC1234',
   TWILIO_API_KEY_SID: 'SK1234',
   TWILIO_API_KEY_SECRET: 'api_secret',
+  CHAT_SERVICE_SID: 'MockServiceSid',
   ROOM_TYPE: 'group',
   getTwilioClient: () => mockTwilioClient,
 };
@@ -67,6 +68,9 @@ describe('the video-token-server', () => {
       grants: {
         identity: 'test identity',
         video: {},
+        chat: {
+          service_sid: 'MockServiceSid',
+        },
       },
       iat: 0,
       iss: 'SK1234',
@@ -91,6 +95,9 @@ describe('the video-token-server', () => {
           identity: 'test-user',
           video: {
             room: 'test-room',
+          },
+          chat: {
+            service_sid: 'MockServiceSid',
           },
         },
         iat: 0,
