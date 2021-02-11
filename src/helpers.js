@@ -143,6 +143,24 @@ async function displayAppInfo() {
   );
 }
 
+async function findConversationsService() {
+  const services = await this.twilioClient.conversations.services.list();
+  return services.find(service => service.friendlyName.includes(APP_NAME));
+}
+
+async function getConversationsServiceSID() {
+  const exisitingConversationsService = await findConversationsService.call(this);
+
+  if (exisitingConversationsService) {
+    return exisitingConversationsService.sid;
+  }
+
+  const service = await this.twilioClient.conversations.services.create({
+    friendlyName: `${APP_NAME}-conversation-service`,
+  });
+  return service.sid;
+}
+
 async function deploy() {
   const assets = this.flags['app-directory'] ? await getAssets(this.flags['app-directory']) : [];
   const { functions } = await getListOfFunctionsAndAssets(__dirname, {
@@ -181,6 +199,8 @@ TWILIO_API_SECRET = the secret for the API Key`);
 
   cli.action.start('deploying app');
 
+  const conversationServiceSid = await getConversationsServiceSID.call(this);
+
   const deployOptions = {
     env: {
       TWILIO_API_KEY_SID: this.twilioClient.username,
@@ -188,6 +208,7 @@ TWILIO_API_SECRET = the secret for the API Key`);
       API_PASSCODE: pin,
       API_PASSCODE_EXPIRY: expiryTime,
       ROOM_TYPE: this.flags['room-type'],
+      CHAT_SERVICE_SID: conversationServiceSid,
     },
     pkgJson: {
       dependencies: {
@@ -220,6 +241,7 @@ module.exports = {
   deploy,
   displayAppInfo,
   findApp,
+  findConversationsService,
   getAssets,
   getMiddleware,
   getAppInfo,

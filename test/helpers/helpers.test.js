@@ -3,6 +3,7 @@ const {
   deploy,
   displayAppInfo,
   findApp,
+  findConversationsService,
   getAppInfo,
   getAssets,
   getPasscode,
@@ -39,6 +40,9 @@ jest.mock('@twilio-labs/serverless-api/dist/utils/fs', () => ({
 function getMockTwilioInstance(options) {
   const mockTwilioClient = {
     serverless: {},
+    conversations: {
+      services: {},
+    },
     username: options.username,
     password: options.password,
   };
@@ -70,6 +74,20 @@ function getMockTwilioInstance(options) {
         sid: 'appSid',
       },
     ]);
+
+  mockTwilioClient.conversations.services.list = () =>
+    Promise.resolve([
+      {
+        friendlyName: options.conversationsServiceExists
+          ? APP_NAME + ' conversations-service'
+          : 'other-conversations-service',
+        sid: 'mockConversationsServiceSID',
+      },
+    ]);
+
+  mockTwilioClient.conversations.services.create = jest.fn(() =>
+    Promise.resolve({ sid: 'newMockConversationsServiceSid' })
+  );
 
   return mockTwilioClient;
 }
@@ -300,6 +318,24 @@ describe('the deploy function', () => {
     expect(mockDeployProject.mock.calls[0][0].serviceName).toMatch(new RegExp(`${APP_NAME}-(\\d{4})`));
   });
 
+  it('should create a new conversations service when one does not already exist', async () => {
+    await deploy.call({
+      twilioClient: getMockTwilioInstance({ username: '', password: '' }),
+      flags: {},
+    });
+
+    expect(mockDeployProject.mock.calls[0][0].env.CHAT_SERVICE_SID).toBe('newMockConversationsServiceSid');
+  });
+
+  it('should create a new conversations service when one does not already exist', async () => {
+    await deploy.call({
+      twilioClient: getMockTwilioInstance({ username: '', password: '', conversationsServiceExists: true }),
+      flags: {},
+    });
+
+    expect(mockDeployProject.mock.calls[0][0].env.CHAT_SERVICE_SID).toBe('mockConversationsServiceSID');
+  });
+
   it('should set ui-editable to false when the flag is false', async () => {
     const mockTwilioClient = getMockTwilioInstance({ username: '', password: '' });
     await deploy.call({
@@ -351,5 +387,23 @@ describe('the deploy function', () => {
               TWILIO_API_KEY = an API Key created at twil.io/get-api-key
               TWILIO_API_SECRET = the secret for the API Key]
             `);
+  });
+
+  describe('the findConversationsService function', () => {
+    it('should return the correct conversations service when it exists', async () => {
+      const service = await findConversationsService.call({
+        twilioClient: getMockTwilioInstance({ conversationsServiceExists: true }),
+      });
+
+      expect(service.sid).toEqual('mockConversationsServiceSID');
+    });
+
+    it("should return undefined when the conversations service doesn't exist", async () => {
+      const service = await findConversationsService.call({
+        twilioClient: getMockTwilioInstance({ conversationsServiceExists: false }),
+      });
+
+      expect(service).toEqual(undefined);
+    });
   });
 });
