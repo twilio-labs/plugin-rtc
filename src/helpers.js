@@ -156,7 +156,7 @@ async function getConversationsServiceSID() {
   }
 
   const service = await this.twilioClient.conversations.services.create({
-    friendlyName: `${APP_NAME}-conversation-service`,
+    friendlyName: `${APP_NAME}-conversations-service`,
   });
   return service.sid;
 }
@@ -208,7 +208,7 @@ TWILIO_API_SECRET = the secret for the API Key`);
       API_PASSCODE: pin,
       API_PASSCODE_EXPIRY: expiryTime,
       ROOM_TYPE: this.flags['room-type'],
-      CHAT_SERVICE_SID: conversationServiceSid,
+      CONVERSATIONS_SERVICE_SID: conversationServiceSid,
     },
     pkgJson: {
       dependencies: {

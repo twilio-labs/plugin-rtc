@@ -14,7 +14,7 @@ const mockContext = {
   ACCOUNT_SID: 'AC1234',
   TWILIO_API_KEY_SID: 'SK1234',
   TWILIO_API_KEY_SECRET: 'api_secret',
-  CHAT_SERVICE_SID: 'MockServiceSid',
+  CONVERSATIONS_SERVICE_SID: 'MockServiceSid',
   ROOM_TYPE: 'group',
   getTwilioClient: () => mockTwilioClient,
 };

@@ -324,7 +324,7 @@ describe('the deploy function', () => {
       flags: {},
     });
 
-    expect(mockDeployProject.mock.calls[0][0].env.CHAT_SERVICE_SID).toBe('newMockConversationsServiceSid');
+    expect(mockDeployProject.mock.calls[0][0].env.CONVERSATIONS_SERVICE_SID).toBe('newMockConversationsServiceSid');
   });
 
   it('should use an existing conversations service when one already exists', async () => {
@@ -333,7 +333,7 @@ describe('the deploy function', () => {
       flags: {},
     });
 
-    expect(mockDeployProject.mock.calls[0][0].env.CHAT_SERVICE_SID).toBe('mockConversationsServiceSID');
+    expect(mockDeployProject.mock.calls[0][0].env.CONVERSATIONS_SERVICE_SID).toBe('mockConversationsServiceSID');
   });
 
   it('should set ui-editable to false when the flag is false', async () => {
