@@ -327,7 +327,7 @@ describe('the deploy function', () => {
     expect(mockDeployProject.mock.calls[0][0].env.CHAT_SERVICE_SID).toBe('newMockConversationsServiceSid');
   });
 
-  it('should create a new conversations service when one does not already exist', async () => {
+  it('should use an existing conversations service when one already exists', async () => {
     await deploy.call({
       twilioClient: getMockTwilioInstance({ username: '', password: '', conversationsServiceExists: true }),
       flags: {},
