@@ -150,20 +150,30 @@ describe('the RTC Twilio-CLI Plugin', () => {
 
         const conversationServiceSid = jwt.decode(body.token).grants.chat.service_sid;
 
+        const room = await twilioClient.video.rooms(ROOM_NAME).fetch();
+
+        // Find the deployed conversations service
         const deployedConversationsServices = await twilioClient.conversations.services.list();
         const deployedConversationsService = deployedConversationsServices.find(
           service => (service.sid = conversationServiceSid)
         );
 
-        const conversationParticipants = await twilioClient.conversations
-          .conversations(conversationServiceSid)
-          .participants.list();
+        // Find the conversation
+        const conversation = await twilioClient.conversations
+          .services(deployedConversationsService.sid)
+          .conversations(room.sid)
+          .fetch();
 
+        // Find the participant that has been added to the conversation
+        const conversationParticipants = await twilioClient.conversations
+          .conversations(conversation.sid)
+          .participants.list();
         const conversationParticipant = conversationParticipants.find(
           participant => participant.identity === 'test user'
         );
 
         expect(deployedConversationsService).toBeDefined();
+        expect(conversation).toBeDefined();
         expect(conversationParticipant).toBeDefined();
       });
 
