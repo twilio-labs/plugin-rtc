@@ -39,14 +39,30 @@ module.exports.handler = async (context, event, callback) => {
     return callback(null, response);
   }
 
+  if (!room_name && create_room) {
+    response.setStatusCode(400);
+    response.setBody({
+      error: {
+        message: 'missing room_name',
+        explanation: 'The room_name parameter is missing. room_name is required when create_room is true.',
+      },
+    });
+    return callback(null, response);
+  }
+
   if (create_room) {
     const client = context.getTwilioClient();
+    const conversationsClient = client.conversations.services(CONVERSATIONS_SERVICE_SID);
+    let room, conversation;
 
     try {
-      await client.video.rooms.create({ uniqueName: room_name, type: ROOM_TYPE });
+      // See if a room already exists
+      room = await client.video.rooms(room_name).fetch();
     } catch (e) {
-      // Ignore 53113 error (room already exists). See: https://www.twilio.com/docs/api/errors/53113
-      if (e.code !== 53113) {
+      try {
+        // If room doesn't exist, create it
+        room = await client.video.rooms.create({ uniqueName: room_name, type: ROOM_TYPE });
+      } catch (e) {
         response.setStatusCode(500);
         response.setBody({
           error: {
@@ -57,16 +73,61 @@ module.exports.handler = async (context, event, callback) => {
         return callback(null, response);
       }
     }
+
+    try {
+      // See if conversation already exists
+      conversation = await conversationsClient.conversations(room.sid).fetch();
+    } catch (e) {
+      try {
+        // If conversation doesn't exist, create it.
+        conversation = await conversationsClient.conversations.create({ uniqueName: room.sid });
+      } catch (e) {
+        response.setStatusCode(500);
+        response.setBody({
+          error: {
+            message: 'error creating conversation',
+            explanation: 'Something went wrong when creating a conversation.',
+          },
+        });
+        return callback(null, response);
+      }
+    }
+
+    try {
+      // Add participant to conversation
+      await conversationsClient.conversations(room.sid).participants.create({ identity: user_identity });
+    } catch (e) {
+      // Ignore "Participant already exists" error (50433)
+      if (e.code !== 50433) {
+        response.setStatusCode(500);
+        response.setBody({
+          error: {
+            message: 'error creating conversation participant',
+            explanation: 'Something went wrong when creating a conversation participant.',
+          },
+        });
+        return callback(null, response);
+      }
+    }
   }
 
+  // Create token
   const token = new AccessToken(ACCOUNT_SID, TWILIO_API_KEY_SID, TWILIO_API_KEY_SECRET, {
     ttl: MAX_ALLOWED_SESSION_DURATION,
   });
+
+  // Add participant's identity to token
   token.identity = user_identity;
+
+  // Add video grant to token
   const videoGrant = new VideoGrant({ room: room_name });
-  const chatGrant = new ChatGrant({ serviceSid: CONVERSATIONS_SERVICE_SID });
   token.addGrant(videoGrant);
+
+  // Add chat grant to token
+  const chatGrant = new ChatGrant({ serviceSid: CONVERSATIONS_SERVICE_SID });
   token.addGrant(chatGrant);
+
+  // Return token
   response.setStatusCode(200);
   response.setBody({ token: token.toJwt(), room_type: ROOM_TYPE });
   return callback(null, response);

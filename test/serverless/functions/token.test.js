@@ -1,12 +1,35 @@
 const { handler } = require('../../../src/serverless/functions/token');
 const jwt = require('jsonwebtoken');
-const { set } = require('lodash');
 
 const callback = jest.fn();
 
-const mockCreateFunction = jest.fn();
+const mockFns = {
+  fetchConversation: jest.fn(() => Promise.resolve({ sid: 'mockConversationSid' })),
+  createConversation: jest.fn(() => Promise.resolve({ sid: 'newMockConversationSid' })),
+  createParticipant: jest.fn(() => Promise.resolve({ sid: 'mockParticipantSid' })),
+  createRoom: jest.fn(() => Promise.resolve({ sid: 'mockNewRoomSid' })),
+  fetchRoom: jest.fn(() => Promise.resolve({ sid: 'mockRoomSid' })),
+};
 
-const mockTwilioClient = set({}, 'video.rooms.create', mockCreateFunction);
+const mockConversationsClient = {
+  conversations: jest.fn(() => ({
+    fetch: mockFns.fetchConversation,
+    participants: {
+      create: mockFns.createParticipant,
+    },
+  })),
+};
+
+mockConversationsClient.conversations.create = mockFns.createConversation;
+
+const mockTwilioClient = {
+  video: {
+    rooms: jest.fn(() => ({ fetch: mockFns.fetchRoom })),
+  },
+  conversations: jest.fn(),
+};
+mockTwilioClient.video.rooms.create = mockFns.createRoom;
+mockTwilioClient.conversations.services = jest.fn(() => mockConversationsClient);
 
 Date.now = () => 5;
 
@@ -20,8 +43,138 @@ const mockContext = {
 };
 
 describe('the video-token-server', () => {
-  beforeEach(() => {
-    mockCreateFunction.mockImplementation(() => Promise.resolve());
+  beforeEach(jest.clearAllMocks);
+
+  describe("when a room and conversation doesn't already exist", () => {
+    beforeEach(() => {
+      mockFns.fetchRoom.mockImplementationOnce(() => Promise.reject());
+      mockFns.fetchConversation.mockImplementationOnce(() => Promise.reject());
+    });
+
+    it('should create a new room and conversation, then return a valid token', async () => {
+      await handler(
+        mockContext,
+        { passcode: '12345612345678', room_name: 'test-room', user_identity: 'test-user' },
+        callback
+      );
+
+      expect(mockFns.createRoom).toHaveBeenCalledWith({ type: 'group', uniqueName: 'test-room' });
+      expect(mockFns.createConversation).toHaveBeenCalledWith({ uniqueName: 'mockNewRoomSid' });
+      expect(callback).toHaveBeenCalledWith(null, {
+        body: { token: expect.any(String), room_type: 'group' },
+        headers: { 'Content-Type': 'application/json' },
+        statusCode: 200,
+      });
+    });
+
+    it('should return an error when there is a problem creating the room', async () => {
+      mockFns.createRoom.mockImplementationOnce(() => Promise.reject({ code: 12345 }));
+
+      await handler(
+        mockContext,
+        { passcode: '12345612345678', room_name: 'test-room', user_identity: 'test-user' },
+        callback
+      );
+
+      expect(callback).toHaveBeenCalledWith(null, {
+        body: {
+          error: {
+            explanation: 'Something went wrong when creating a room.',
+            message: 'error creating room',
+          },
+        },
+        headers: { 'Content-Type': 'application/json' },
+        statusCode: 500,
+      });
+    });
+
+    it('should return an error when there is a problem creating the conversation', async () => {
+      mockFns.createConversation.mockImplementationOnce(() => Promise.reject({ code: 12345 }));
+
+      await handler(
+        mockContext,
+        { passcode: '12345612345678', room_name: 'test-room', user_identity: 'test-user' },
+        callback
+      );
+
+      expect(callback).toHaveBeenCalledWith(null, {
+        body: {
+          error: {
+            explanation: 'Something went wrong when creating a conversation.',
+            message: 'error creating conversation',
+          },
+        },
+        headers: { 'Content-Type': 'application/json' },
+        statusCode: 500,
+      });
+    });
+  });
+
+  describe('when a room and conversation already exist', () => {
+    it('should fetch the existing room and conversation, then return a valid token', async () => {
+      await handler(
+        mockContext,
+        { passcode: '12345612345678', room_name: 'test-room', user_identity: 'test-user' },
+        callback
+      );
+
+      expect(mockTwilioClient.video.rooms).toHaveBeenCalledWith('test-room');
+      expect(mockFns.fetchRoom).toHaveBeenCalled();
+      expect(mockConversationsClient.conversations).toHaveBeenCalledWith('mockRoomSid');
+      expect(mockFns.fetchConversation).toHaveBeenCalled();
+      expect(callback).toHaveBeenCalledWith(null, {
+        body: { token: expect.any(String), room_type: 'group' },
+        headers: { 'Content-Type': 'application/json' },
+        statusCode: 200,
+      });
+    });
+  });
+
+  it('should return an error when there is a problem adding a participant to the conversation', async () => {
+    mockFns.createParticipant.mockImplementationOnce(() => Promise.reject({ code: 12345 }));
+
+    await handler(
+      mockContext,
+      { passcode: '12345612345678', room_name: 'test-room', user_identity: 'test-user' },
+      callback
+    );
+
+    expect(callback).toHaveBeenCalledWith(null, {
+      body: {
+        error: {
+          explanation: 'Something went wrong when creating a conversation participant.',
+          message: 'error creating conversation participant',
+        },
+      },
+      headers: { 'Content-Type': 'application/json' },
+      statusCode: 500,
+    });
+  });
+
+  it('should ignore 50433 errors when adding a participant to the conversation', async () => {
+    mockFns.createParticipant.mockImplementationOnce(() => Promise.reject({ code: 50433 }));
+
+    await handler(
+      mockContext,
+      { passcode: '12345612345678', room_name: 'test-room', user_identity: 'test-user' },
+      callback
+    );
+
+    expect(callback).toHaveBeenCalledWith(null, {
+      body: { token: expect.any(String), room_type: 'group' },
+      headers: { 'Content-Type': 'application/json' },
+      statusCode: 200,
+    });
+  });
+
+  it('should create a conversations client with the correct conversations service', async () => {
+    await handler(
+      mockContext,
+      { passcode: '12345612345678', room_name: 'test-room', user_identity: 'test-user' },
+      callback
+    );
+
+    expect(mockTwilioClient.conversations.services).toHaveBeenCalledWith('MockServiceSid');
   });
 
   it('should return an "invalid parameter" error when the create_room parameter is not a boolean', async () => {
@@ -54,8 +207,23 @@ describe('the video-token-server', () => {
     });
   });
 
-  it('should return a token when no room_name is supplied', async () => {
-    await handler(mockContext, { user_identity: 'test identity' }, callback);
+  it('should return a "missing room_name" error when the "room_name" parameter is not supplied when "create_room" is true', () => {
+    handler(mockContext, { user_identity: 'mockIdentity' }, callback);
+
+    expect(callback).toHaveBeenCalledWith(null, {
+      body: {
+        error: {
+          message: 'missing room_name',
+          explanation: 'The room_name parameter is missing. room_name is required when create_room is true.',
+        },
+      },
+      headers: { 'Content-Type': 'application/json' },
+      statusCode: 400,
+    });
+  });
+
+  it('should return a token when no room_name is supplied and "create_room" is false', async () => {
+    await handler(mockContext, { user_identity: 'test identity', create_room: false }, callback);
 
     expect(callback).toHaveBeenCalledWith(null, {
       body: { token: expect.any(String), room_type: 'group' },
@@ -123,21 +291,6 @@ describe('the video-token-server', () => {
       expect(jwt.verify(callback.mock.calls[0][1].body.token, 'api_secret')).toBeTruthy();
     });
 
-    it('should create a new room and return a valid token', async () => {
-      await handler(
-        mockContext,
-        { passcode: '12345612345678', room_name: 'test-room', user_identity: 'test-user' },
-        callback
-      );
-
-      expect(mockCreateFunction).toHaveBeenCalledWith({ type: 'group', uniqueName: 'test-room' });
-      expect(callback).toHaveBeenCalledWith(null, {
-        body: { token: expect.any(String), room_type: 'group' },
-        headers: { 'Content-Type': 'application/json' },
-        statusCode: 200,
-      });
-    });
-
     it('should return a valid token without creating a room when "create_room" is false', async () => {
       await handler(
         mockContext,
@@ -145,7 +298,7 @@ describe('the video-token-server', () => {
         callback
       );
 
-      expect(mockCreateFunction).not.toHaveBeenCalled();
+      expect(mockFns.createRoom).not.toHaveBeenCalled();
       expect(callback).toHaveBeenCalledWith(null, {
         body: { token: expect.any(String), room_type: 'group' },
         headers: { 'Content-Type': 'application/json' },
@@ -154,7 +307,7 @@ describe('the video-token-server', () => {
     });
 
     it('should return a valid token when passcode when the room already exists', async () => {
-      mockCreateFunction.mockImplementation(() => Promise.reject({ code: 53113 }));
+      mockFns.createRoom.mockImplementation(() => Promise.reject({ code: 53113 }));
 
       await handler(
         mockContext,
@@ -166,27 +319,6 @@ describe('the video-token-server', () => {
         body: { token: expect.any(String), room_type: 'group' },
         headers: { 'Content-Type': 'application/json' },
         statusCode: 200,
-      });
-    });
-
-    it('should return an error when there is a problem creating the room', async () => {
-      mockCreateFunction.mockImplementationOnce(() => Promise.reject({ code: 12345 }));
-
-      await handler(
-        mockContext,
-        { passcode: '12345612345678', room_name: 'test-room', user_identity: 'test-user' },
-        callback
-      );
-
-      expect(callback).toHaveBeenCalledWith(null, {
-        body: {
-          error: {
-            explanation: 'Something went wrong when creating a room.',
-            message: 'error creating room',
-          },
-        },
-        headers: { 'Content-Type': 'application/json' },
-        statusCode: 500,
       });
     });
   });
