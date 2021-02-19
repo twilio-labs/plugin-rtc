@@ -82,7 +82,7 @@ Each request is verified using a passcode generated at deploy time. Passcodes re
 
 ### Token
 
-Returns a Programmable Video Access token.
+This endpoint returns a Programmable Video Access token. When `create_room` is true, it will create a room and [Twilio conversation](https://www.twilio.com/docs/conversations/api/conversation-resource) associated with the room. This token is used by the above mentioned Video Apps to connect to a video room and a conversation.
 
 ```shell
 POST /token
@@ -94,7 +94,7 @@ POST /token
 | --------------- | --------- | -------------------------------------------------------------------------------------- |
 | `passcode`      | `string`  | **Required**. The application passcode.                                                |
 | `user_identity` | `string`  | **Required**. The user's identity.                                                     |
-| `room_name`     | `string`  | A room name that will be used to create a token scoped to connecting to only one room. |
+| `room_name`     | `string`  | **Required when `create_room` is `true`** A room name that will be used to create a token scoped to connecting to only one room. |
 | `create_room`   | `boolean` | (default: `true`) When false, a room will not be created when a token is requested.    |
 
 #### Success Responses
