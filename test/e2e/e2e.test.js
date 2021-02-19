@@ -142,7 +142,7 @@ describe('the RTC Twilio-CLI Plugin', () => {
         expect(room.type).toEqual('group');
       });
 
-      it('should return a video token with a valid Chat Grant', async () => {
+      it('should return a video token with a valid Chat Grant and add the participant to the conversation', async () => {
         const ROOM_NAME = nanoid();
         const { body } = await superagent
           .post(`${URL}/token`)
@@ -155,7 +155,16 @@ describe('the RTC Twilio-CLI Plugin', () => {
           service => (service.sid = conversationServiceSid)
         );
 
+        const conversationParticipants = await twilioClient.conversations
+          .conversations(conversationServiceSid)
+          .participants.list();
+
+        const conversationParticipant = conversationParticipants.find(
+          participant => participant.identity === 'test user'
+        );
+
         expect(deployedConversationsService).toBeDefined();
+        expect(conversationParticipant).toBeDefined();
       });
 
       it('should return a video token without creating a room when the "create_room" flag is false', async () => {
