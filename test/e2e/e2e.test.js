@@ -158,22 +158,16 @@ describe('the RTC Twilio-CLI Plugin', () => {
           service => (service.sid = conversationServiceSid)
         );
 
-        // Find the conversation
-        const conversation = await twilioClient.conversations
+        // Find the conversation participant
+        const conversationParticipants = await twilioClient.conversations
           .services(deployedConversationsService.sid)
           .conversations(room.sid)
-          .fetch();
-
-        // Find the participant that has been added to the conversation
-        const conversationParticipants = await twilioClient.conversations
-          .conversations(conversation.sid)
           .participants.list();
         const conversationParticipant = conversationParticipants.find(
           participant => participant.identity === 'test user'
         );
 
         expect(deployedConversationsService).toBeDefined();
-        expect(conversation).toBeDefined();
         expect(conversationParticipant).toBeDefined();
       });
 
