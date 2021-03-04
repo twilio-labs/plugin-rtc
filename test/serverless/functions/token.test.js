@@ -54,7 +54,7 @@ describe('the video-token-server', () => {
     it('should create a new room and conversation, then return a valid token', async () => {
       await handler(
         mockContext,
-        { passcode: '12345612345678', room_name: 'test-room', user_identity: 'test-user' },
+        { passcode: '12345612345678', room_name: 'test-room', user_identity: 'test-user', create_conversation: true },
         callback
       );
 
@@ -93,7 +93,7 @@ describe('the video-token-server', () => {
 
       await handler(
         mockContext,
-        { passcode: '12345612345678', room_name: 'test-room', user_identity: 'test-user' },
+        { passcode: '12345612345678', room_name: 'test-room', user_identity: 'test-user', create_conversation: true },
         callback
       );
 
@@ -114,7 +114,7 @@ describe('the video-token-server', () => {
     it('should fetch the existing room and conversation, then return a valid token', async () => {
       await handler(
         mockContext,
-        { passcode: '12345612345678', room_name: 'test-room', user_identity: 'test-user' },
+        { passcode: '12345612345678', room_name: 'test-room', user_identity: 'test-user', create_conversation: true },
         callback
       );
 
@@ -135,7 +135,7 @@ describe('the video-token-server', () => {
 
     await handler(
       mockContext,
-      { passcode: '12345612345678', room_name: 'test-room', user_identity: 'test-user' },
+      { passcode: '12345612345678', room_name: 'test-room', user_identity: 'test-user', create_conversation: true },
       callback
     );
 
@@ -156,7 +156,7 @@ describe('the video-token-server', () => {
 
     await handler(
       mockContext,
-      { passcode: '12345612345678', room_name: 'test-room', user_identity: 'test-user' },
+      { passcode: '12345612345678', room_name: 'test-room', user_identity: 'test-user', create_conversation: true },
       callback
     );
 
@@ -185,6 +185,21 @@ describe('the video-token-server', () => {
         error: {
           message: 'invalid parameter',
           explanation: 'A boolean value must be provided for the create_room parameter',
+        },
+      },
+      headers: { 'Content-Type': 'application/json' },
+      statusCode: 400,
+    });
+  });
+
+  it('should return an "invalid parameter" error when the create_conversation parameter is not a boolean', async () => {
+    await handler(mockContext, { user_identity: 'test identity', create_conversation: 'no thanks' }, callback);
+
+    expect(callback).toHaveBeenCalledWith(null, {
+      body: {
+        error: {
+          message: 'invalid parameter',
+          explanation: 'A boolean value must be provided for the create_conversation parameter',
         },
       },
       headers: { 'Content-Type': 'application/json' },
@@ -299,6 +314,23 @@ describe('the video-token-server', () => {
       );
 
       expect(mockFns.createRoom).not.toHaveBeenCalled();
+      expect(callback).toHaveBeenCalledWith(null, {
+        body: { token: expect.any(String), room_type: 'group' },
+        headers: { 'Content-Type': 'application/json' },
+        statusCode: 200,
+      });
+    });
+
+    it('should return a valid token without creating a conversation when "create_conversation" is false', async () => {
+      await handler(
+        mockContext,
+        { passcode: '12345612345678', room_name: 'test-room', user_identity: 'test-user', create_conversation: false },
+        callback
+      );
+
+      expect(mockFns.fetchConversation).not.toHaveBeenCalled();
+      expect(mockFns.createConversation).not.toHaveBeenCalled();
+      expect(mockFns.createParticipant).not.toHaveBeenCalled();
       expect(callback).toHaveBeenCalledWith(null, {
         body: { token: expect.any(String), room_type: 'group' },
         headers: { 'Content-Type': 'application/json' },

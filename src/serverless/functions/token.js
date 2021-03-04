@@ -12,7 +12,7 @@ module.exports.handler = async (context, event, callback) => {
   const authHandler = require(Runtime.getAssets()['/auth-handler.js'].path);
   authHandler(context, event, callback);
 
-  const { user_identity, room_name, create_room = true } = event;
+  const { user_identity, room_name, create_room = true, create_conversation = false } = event;
 
   let response = new Twilio.Response();
   response.appendHeader('Content-Type', 'application/json');
@@ -23,6 +23,17 @@ module.exports.handler = async (context, event, callback) => {
       error: {
         message: 'invalid parameter',
         explanation: 'A boolean value must be provided for the create_room parameter',
+      },
+    });
+    return callback(null, response);
+  }
+
+  if (typeof create_conversation !== 'boolean') {
+    response.setStatusCode(400);
+    response.setBody({
+      error: {
+        message: 'invalid parameter',
+        explanation: 'A boolean value must be provided for the create_conversation parameter',
       },
     });
     return callback(null, response);
@@ -74,39 +85,41 @@ module.exports.handler = async (context, event, callback) => {
       }
     }
 
-    try {
-      // See if conversation already exists
-      await conversationsClient.conversations(room.sid).fetch();
-    } catch (e) {
+    if (create_conversation) {
       try {
-        // If conversation doesn't exist, create it.
-        await conversationsClient.conversations.create({ uniqueName: room.sid });
+        // See if conversation already exists
+        await conversationsClient.conversations(room.sid).fetch();
       } catch (e) {
-        response.setStatusCode(500);
-        response.setBody({
-          error: {
-            message: 'error creating conversation',
-            explanation: 'Something went wrong when creating a conversation.',
-          },
-        });
-        return callback(null, response);
+        try {
+          // If conversation doesn't exist, create it.
+          await conversationsClient.conversations.create({ uniqueName: room.sid });
+        } catch (e) {
+          response.setStatusCode(500);
+          response.setBody({
+            error: {
+              message: 'error creating conversation',
+              explanation: 'Something went wrong when creating a conversation.',
+            },
+          });
+          return callback(null, response);
+        }
       }
-    }
 
-    try {
-      // Add participant to conversation
-      await conversationsClient.conversations(room.sid).participants.create({ identity: user_identity });
-    } catch (e) {
-      // Ignore "Participant already exists" error (50433)
-      if (e.code !== 50433) {
-        response.setStatusCode(500);
-        response.setBody({
-          error: {
-            message: 'error creating conversation participant',
-            explanation: 'Something went wrong when creating a conversation participant.',
-          },
-        });
-        return callback(null, response);
+      try {
+        // Add participant to conversation
+        await conversationsClient.conversations(room.sid).participants.create({ identity: user_identity });
+      } catch (e) {
+        // Ignore "Participant already exists" error (50433)
+        if (e.code !== 50433) {
+          response.setStatusCode(500);
+          response.setBody({
+            error: {
+              message: 'error creating conversation participant',
+              explanation: 'Something went wrong when creating a conversation participant.',
+            },
+          });
+          return callback(null, response);
+        }
       }
     }
   }

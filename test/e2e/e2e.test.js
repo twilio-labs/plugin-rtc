@@ -146,7 +146,7 @@ describe('the RTC Twilio-CLI Plugin', () => {
         const ROOM_NAME = nanoid();
         const { body } = await superagent
           .post(`${URL}/token`)
-          .send({ passcode, room_name: ROOM_NAME, user_identity: 'test user' });
+          .send({ passcode, room_name: ROOM_NAME, user_identity: 'test user', create_conversation: true });
 
         const conversationServiceSid = jwt.decode(body.token).grants.chat.service_sid;
 
@@ -187,6 +187,30 @@ describe('the RTC Twilio-CLI Plugin', () => {
         } catch (e) {
           expect(e).toMatchObject({ status: 404 });
         }
+      });
+
+      it('should return a video token without creating a conversation when the "create_conversation" flag is false', async () => {
+        const ROOM_NAME = nanoid();
+        const { body } = await superagent
+          .post(`${URL}/token`)
+          .send({ passcode, room_name: ROOM_NAME, user_identity: 'test user', create_conversation: false });
+
+        const conversationServiceSid = jwt.decode(body.token).grants.chat.service_sid;
+
+        const room = await twilioClient.video.rooms(ROOM_NAME).fetch();
+
+        // Find the deployed conversations service
+        const deployedConversationsServices = await twilioClient.conversations.services.list();
+        const deployedConversationsService = deployedConversationsServices.find(
+          service => (service.sid = conversationServiceSid)
+        );
+
+        const conversationPromise = twilioClient.conversations
+          .services(deployedConversationsService.sid)
+          .conversations(room.sid)
+          .fetch();
+
+        expect(conversationPromise).rejects.toEqual(expect.objectContaining({ code: 20404 }));
       });
 
       it('should return a 401 error when an incorrect passcode is provided', () => {
