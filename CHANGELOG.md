@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.8.0
+
+### New Features
+
+- Added support for Twilio Conversations. When an application requests a token from the `/token` endpoint, a `create_conversation=true` parameter can now be specified. When this parameter is present, the `/token` endpoint will create a conversation that is associated with the room and add the participant to it. This allows video application to use Twilio Conversations for in-room chat.
+
+### Maintenence
+
+- Upgraded @twilio/cli-core from 5.15.1 to 5.17.0
+- Upgraded lodash from 4.17.20 to 4.17.21
+
 ## 0.7.1
 
 ### Maintenence
