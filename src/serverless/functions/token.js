@@ -63,7 +63,6 @@ module.exports.handler = async (context, event, callback) => {
 
   if (create_room) {
     const client = context.getTwilioClient();
-    const conversationsClient = client.conversations.services(CONVERSATIONS_SERVICE_SID);
     let room;
 
     try {
@@ -86,6 +85,8 @@ module.exports.handler = async (context, event, callback) => {
     }
 
     if (create_conversation) {
+      const conversationsClient = client.conversations.services(CONVERSATIONS_SERVICE_SID);
+
       try {
         // See if conversation already exists
         await conversationsClient.conversations(room.sid).fetch();
