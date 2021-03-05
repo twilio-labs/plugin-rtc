@@ -133,11 +133,42 @@ describe('the RTC Twilio-CLI Plugin', () => {
         const { body } = await superagent
           .post(`${URL}/token`)
           .send({ passcode, room_name: ROOM_NAME, user_identity: 'test user' });
-        expect(jwt.decode(body.token).grants).toEqual({ identity: 'test user', video: { room: ROOM_NAME } });
+        expect(jwt.decode(body.token).grants).toEqual(
+          expect.objectContaining({ identity: 'test user', video: { room: ROOM_NAME } })
+        );
         expect(body.room_type).toEqual('group');
 
         const room = await twilioClient.video.rooms(ROOM_NAME).fetch();
         expect(room.type).toEqual('group');
+      });
+
+      it('should return a video token with a valid Chat Grant and add the participant to the conversation', async () => {
+        const ROOM_NAME = nanoid();
+        const { body } = await superagent
+          .post(`${URL}/token`)
+          .send({ passcode, room_name: ROOM_NAME, user_identity: 'test user', create_conversation: true });
+
+        const conversationServiceSid = jwt.decode(body.token).grants.chat.service_sid;
+
+        const room = await twilioClient.video.rooms(ROOM_NAME).fetch();
+
+        // Find the deployed conversations service
+        const deployedConversationsServices = await twilioClient.conversations.services.list();
+        const deployedConversationsService = deployedConversationsServices.find(
+          service => (service.sid = conversationServiceSid)
+        );
+
+        // Find the conversation participant
+        const conversationParticipants = await twilioClient.conversations
+          .services(deployedConversationsService.sid)
+          .conversations(room.sid)
+          .participants.list();
+        const conversationParticipant = conversationParticipants.find(
+          participant => participant.identity === 'test user'
+        );
+
+        expect(deployedConversationsService).toBeDefined();
+        expect(conversationParticipant).toBeDefined();
       });
 
       it('should return a video token without creating a room when the "create_room" flag is false', async () => {
@@ -146,7 +177,9 @@ describe('the RTC Twilio-CLI Plugin', () => {
         const { body } = await superagent
           .post(`${URL}/token`)
           .send({ passcode, room_name: ROOM_NAME, user_identity: 'test user', create_room: false });
-        expect(jwt.decode(body.token).grants).toEqual({ identity: 'test user', video: { room: ROOM_NAME } });
+        expect(jwt.decode(body.token).grants).toEqual(
+          expect.objectContaining({ identity: 'test user', video: { room: ROOM_NAME } })
+        );
         expect(body.room_type).toEqual('group');
 
         try {
@@ -154,6 +187,30 @@ describe('the RTC Twilio-CLI Plugin', () => {
         } catch (e) {
           expect(e).toMatchObject({ status: 404 });
         }
+      });
+
+      it('should return a video token without creating a conversation when the "create_conversation" flag is false', async () => {
+        const ROOM_NAME = nanoid();
+        const { body } = await superagent
+          .post(`${URL}/token`)
+          .send({ passcode, room_name: ROOM_NAME, user_identity: 'test user', create_conversation: false });
+
+        const conversationServiceSid = jwt.decode(body.token).grants.chat.service_sid;
+
+        const room = await twilioClient.video.rooms(ROOM_NAME).fetch();
+
+        // Find the deployed conversations service
+        const deployedConversationsServices = await twilioClient.conversations.services.list();
+        const deployedConversationsService = deployedConversationsServices.find(
+          service => (service.sid = conversationServiceSid)
+        );
+
+        const conversationPromise = twilioClient.conversations
+          .services(deployedConversationsService.sid)
+          .conversations(room.sid)
+          .fetch();
+
+        expect(conversationPromise).rejects.toEqual(expect.objectContaining({ code: 20404 }));
       });
 
       it('should return a 401 error when an incorrect passcode is provided', () => {
@@ -261,7 +318,9 @@ describe('the RTC Twilio-CLI Plugin', () => {
         const { body } = await superagent
           .post(`${URL}/token`)
           .send({ passcode, room_name: ROOM_NAME, user_identity: 'test user' });
-        expect(jwt.decode(body.token).grants).toEqual({ identity: 'test user', video: { room: ROOM_NAME } });
+        expect(jwt.decode(body.token).grants).toEqual(
+          expect.objectContaining({ identity: 'test user', video: { room: ROOM_NAME } })
+        );
         expect(body.room_type).toEqual('go');
 
         const room = await twilioClient.video.rooms(ROOM_NAME).fetch();
@@ -298,7 +357,9 @@ describe('the RTC Twilio-CLI Plugin', () => {
         const { body } = await superagent
           .post(`${testURL}/token`)
           .send({ passcode: updatedPasscode, room_name: 'test-room', user_identity: 'test user' });
-        expect(jwt.decode(body.token).grants).toEqual({ identity: 'test user', video: { room: 'test-room' } });
+        expect(jwt.decode(body.token).grants).toEqual(
+          expect.objectContaining({ identity: 'test user', video: { room: 'test-room' } })
+        );
       });
     });
   });

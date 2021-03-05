@@ -1,13 +1,17 @@
-const { findApp } = require('../../../../helpers');
+const { findApp, findConversationsService } = require('../../../../helpers');
 const { TwilioClientCommand } = require('@twilio/cli-core').baseCommands;
 
 class DeleteCommand extends TwilioClientCommand {
   async run() {
     await super.run();
     const appInfo = await findApp.call(this);
+    const conversatsionsServiceInfo = await findConversationsService.call(this);
 
     if (appInfo) {
       await this.twilioClient.serverless.services(appInfo.sid).remove();
+      if (conversatsionsServiceInfo) {
+        await this.twilioClient.conversations.services(conversatsionsServiceInfo.sid).remove();
+      }
       console.log('Successfully deleted app.');
     } else {
       console.log('There is no app to delete.');

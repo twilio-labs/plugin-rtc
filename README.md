@@ -82,7 +82,7 @@ Each request is verified using a passcode generated at deploy time. Passcodes re
 
 ### Token
 
-Returns a Programmable Video Access token.
+This endpoint returns a Programmable Video Access token. When `create_room` is true, it will create a room, and when `create_conversation` is true, it will create a [Twilio Conversation](https://www.twilio.com/docs/conversations/api/conversation-resource) associated with the room. This token is used by the above mentioned Video Apps to connect to a video room and a conversation.
 
 ```shell
 POST /token
@@ -90,12 +90,13 @@ POST /token
 
 #### Parameters
 
-| Name            | Type      | Description                                                                            |
-| --------------- | --------- | -------------------------------------------------------------------------------------- |
-| `passcode`      | `string`  | **Required**. The application passcode.                                                |
-| `user_identity` | `string`  | **Required**. The user's identity.                                                     |
-| `room_name`     | `string`  | A room name that will be used to create a token scoped to connecting to only one room. |
-| `create_room`   | `boolean` | (default: `true`) When false, a room will not be created when a token is requested.    |
+| Name                  | Type      | Description                                                                            |
+| --------------------- | --------- | -------------------------------------------------------------------------------------- |
+| `passcode`            | `string`  | **Required**. The application passcode.                                                |
+| `user_identity`       | `string`  | **Required**. The user's identity.                                                     |
+| `room_name`           | `string`  | **Required when `create_room` is `true`** A room name that will be used to create a token scoped to connecting to only one room. |
+| `create_room`         | `boolean` | (default: `true`) When false, a room will not be created when a token is requested.    |
+| `create_conversation` | `boolean` | (default: `false`) When true, a [Twilio Conversation](https://www.twilio.com/docs/conversations/api/conversation-resource) will be created (if it doesn't already exist) and a participant will be added to it when a token is requested. `create_room` must also be `true`.   |
 
 #### Success Responses
 
