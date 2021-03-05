@@ -4,7 +4,7 @@
 
 ### New Features
 
-- Added support for Twilio Conversations. When an application requests a token from the `/token` endpoint, a `create_conversation=true` parameter can now be specified. When this parameter is present, the `/token` endpoint will create a conversation that is associated with the room and add the participant to it. This allows video application to use Twilio Conversations for in-room chat.
+- Added support for Twilio Conversations. When an application requests a token from the `/token` endpoint, a `create_conversation=true` parameter can now be specified. When this parameter is present, the `/token` endpoint will create a conversation that is associated with the room and add the participant to it. This allows video application to use [Twilio Conversations](https://www.twilio.com/conversations-api) for in-room chat.
 
 ### Maintenence
 
