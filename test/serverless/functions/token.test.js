@@ -170,7 +170,7 @@ describe('the video-token-server', () => {
   it('should create a conversations client with the correct conversations service', async () => {
     await handler(
       mockContext,
-      { passcode: '12345612345678', room_name: 'test-room', user_identity: 'test-user' },
+      { passcode: '12345612345678', room_name: 'test-room', user_identity: 'test-user', create_conversation: true },
       callback
     );
 
