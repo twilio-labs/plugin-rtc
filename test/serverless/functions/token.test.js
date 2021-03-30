@@ -59,7 +59,7 @@ describe('the video-token-server', () => {
       );
 
       expect(mockFns.createRoom).toHaveBeenCalledWith({ type: 'group', uniqueName: 'test-room' });
-      expect(mockFns.createConversation).toHaveBeenCalledWith({ uniqueName: 'mockNewRoomSid' });
+      expect(mockFns.createConversation).toHaveBeenCalledWith({ uniqueName: 'mockNewRoomSid', 'timers.closed': 'P1D' });
       expect(callback).toHaveBeenCalledWith(null, {
         body: { token: expect.any(String), room_type: 'group' },
         headers: { 'Content-Type': 'application/json' },
