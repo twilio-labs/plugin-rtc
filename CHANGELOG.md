@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.1
+
+### Enhancement
+
+- Specified a timer when creating a Twilio Conversation. This will automatically close the conversation after 24 hours, which is equal to the maximum duration of a video room. This helps to clean up old conversations since there is a limit that a single participant can not be added to more than 1,000 open conversations.
+
 ## 0.8.0
 
 ### New Features

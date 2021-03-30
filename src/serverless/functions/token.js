@@ -96,7 +96,7 @@ module.exports.handler = async (context, event, callback) => {
           // Here we add a timer to close the conversation after the maximum length of a room (24 hours).
           // This helps to clean up old conversations since there is a limit that a single participant
           // can not be added to more than 1,000 open conversations.
-          await conversationsClient.conversations.create({ uniqueName: room.sid, 'timers.close': 'P1D' });
+          await conversationsClient.conversations.create({ uniqueName: room.sid, 'timers.closed': 'P1D' });
         } catch (e) {
           response.setStatusCode(500);
           response.setBody({
