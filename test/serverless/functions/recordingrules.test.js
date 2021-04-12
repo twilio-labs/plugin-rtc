@@ -13,6 +13,12 @@ const mockClient = jest.fn(() => ({
   },
 }));
 
+const mockContext = {
+  ACCOUNT_SID: '1234',
+  AUTH_TOKEN: '2345',
+  getTwilioClient: () => mockClient(),
+};
+
 jest.mock('twilio');
 twilio.mockImplementation(mockClient);
 
@@ -20,13 +26,8 @@ describe('the recordingrules function', () => {
   it('should correctly respond when a room update is successful', async () => {
     const mockCallback = jest.fn();
 
-    await handler(
-      { ACCOUNT_SID: '1234', AUTH_TOKEN: '2345' },
-      { room_sid: 'mockRoomSid', rules: 'mockRules' },
-      mockCallback
-    );
+    await handler(mockContext, { room_sid: 'mockRoomSid', rules: 'mockRules' }, mockCallback);
 
-    expect(mockClient).toHaveBeenCalledWith('1234', '2345');
     expect(mockCallback).toHaveBeenCalledWith(null, {
       body: 'mockSuccessResponse',
       headers: { 'Content-Type': 'application/json' },
@@ -39,11 +40,7 @@ describe('the recordingrules function', () => {
     const mockError = { message: 'mockErrorMesage', code: 123 };
     mockUpdateFn.mockImplementationOnce(() => Promise.reject(mockError));
 
-    await handler(
-      { ACCOUNT_SID: '1234', AUTH_TOKEN: '2345' },
-      { room_sid: 'mockRoomSid', rules: 'mockRules' },
-      mockCallback
-    );
+    await handler(mockContext, { room_sid: 'mockRoomSid', rules: 'mockRules' }, mockCallback);
 
     expect(mockCallback).toHaveBeenCalledWith(null, {
       body: { error: mockError },
@@ -55,7 +52,7 @@ describe('the recordingrules function', () => {
   it('should return a "missing room_sid" error when the room_sid is absent', async () => {
     const mockCallback = jest.fn();
 
-    await handler({ ACCOUNT_SID: '1234', AUTH_TOKEN: '2345' }, { rules: 'mockRules' }, mockCallback);
+    await handler(mockContext, { rules: 'mockRules' }, mockCallback);
 
     expect(mockCallback).toHaveBeenCalledWith(null, {
       body: {
@@ -72,7 +69,7 @@ describe('the recordingrules function', () => {
   it('should return a "missing rules" error when the rules array is absent', async () => {
     const mockCallback = jest.fn();
 
-    await handler({ ACCOUNT_SID: '1234', AUTH_TOKEN: '2345' }, { room_sid: 'mockSid' }, mockCallback);
+    await handler(mockContext, { room_sid: 'mockSid' }, mockCallback);
 
     expect(mockCallback).toHaveBeenCalledWith(null, {
       body: {
