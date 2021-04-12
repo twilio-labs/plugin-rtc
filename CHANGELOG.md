@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.2
+
+### Maintenence
+
+- The [recording rules function](https://github.com/twilio-labs/plugin-rtc/blob/master/src/serverless/functions/recordingrules.js) now uses the Twilio client returned by `context.getTwilioClient()`.
+
 ## 0.8.1
 
 ### Enhancement
