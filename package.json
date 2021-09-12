@@ -19,7 +19,7 @@
   "dependencies": {
     "@oclif/command": "^1.5.19",
     "@oclif/config": "^1.14.0",
-    "@oclif/plugin-help": "^2",
+    "@oclif/plugin-help": "^3.3.0",
     "@twilio-labs/serverless-api": "^4.0.3",
     "@twilio/cli-core": "^5.17.0",
     "lodash": "^4.17.21",
