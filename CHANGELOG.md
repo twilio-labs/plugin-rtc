@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.3
+
+### Maintenence
+
+- Upgraded @twilio/cli-core from 5.17.0 to 6.1.0 to ensure compatibility with version 3.x of the twilio-cli
+- Upgraded @oclif/plugin-help from 2 to 5.1.11
+
 ## 0.8.2
 
 ### Maintenence
