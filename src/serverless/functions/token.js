@@ -7,7 +7,14 @@ const ChatGrant = AccessToken.ChatGrant;
 const MAX_ALLOWED_SESSION_DURATION = 14400;
 
 module.exports.handler = async (context, event, callback) => {
-  const { ACCOUNT_SID, TWILIO_API_KEY_SID, TWILIO_API_KEY_SECRET, ROOM_TYPE, CONVERSATIONS_SERVICE_SID } = context;
+  const {
+    ACCOUNT_SID,
+    TWILIO_API_KEY_SID,
+    TWILIO_API_KEY_SECRET,
+    ROOM_TYPE,
+    CONVERSATIONS_SERVICE_SID,
+    DOMAIN_NAME,
+  } = context;
 
   const authHandler = require(Runtime.getAssets()['/auth-handler.js'].path);
   authHandler(context, event, callback);
@@ -63,7 +70,7 @@ module.exports.handler = async (context, event, callback) => {
 
   if (create_room) {
     const client = context.getTwilioClient();
-    let room;
+    let room, playerStreamer, mediaProcessor;
 
     try {
       // See if a room already exists
@@ -71,8 +78,27 @@ module.exports.handler = async (context, event, callback) => {
     } catch (e) {
       try {
         // If room doesn't exist, create it
-        room = await client.video.rooms.create({ uniqueName: room_name, type: ROOM_TYPE });
+        room = await client.video.rooms.create({
+          uniqueName: room_name,
+          type: ROOM_TYPE,
+          statusCallback: 'https://' + DOMAIN_NAME + '/rooms-webhook',
+        });
+
+        playerStreamer = await client.media.playerStreamer.create();
+        mediaProcessor = await client.media.mediaProcessor.create({
+          extension: 'media-transcriber',
+          maxDuration: 30 * 60, // 30 minutes
+          extensionContext: JSON.stringify({
+            room: {
+              name: room.sid,
+            },
+            identity: 'media-transcriber',
+            outputs: [playerStreamer.sid],
+            video: true,
+          }),
+        });
       } catch (e) {
+        console.log(e);
         response.setStatusCode(500);
         response.setBody({
           error: {
@@ -96,8 +122,16 @@ module.exports.handler = async (context, event, callback) => {
           // Here we add a timer to close the conversation after the maximum length of a room (24 hours).
           // This helps to clean up old conversations since there is a limit that a single participant
           // can not be added to more than 1,000 open conversations.
-          await conversationsClient.conversations.create({ uniqueName: room.sid, 'timers.closed': 'P1D' });
+          await conversationsClient.conversations.create({
+            uniqueName: room.sid,
+            'timers.closed': 'P1D',
+            attributes: JSON.stringify({
+              playerStreamerSid: playerStreamer.sid,
+              mediaProcessorSid: mediaProcessor.sid,
+            }),
+          });
         } catch (e) {
+          console.log(e);
           response.setStatusCode(500);
           response.setBody({
             error: {
