@@ -1,6 +1,9 @@
 /* global Twilio Runtime */
 'use strict';
 
+const axios = require('axios');
+const querystring = require('querystring');
+
 const AccessToken = Twilio.jwt.AccessToken;
 const VideoGrant = AccessToken.VideoGrant;
 const ChatGrant = AccessToken.ChatGrant;
@@ -63,6 +66,21 @@ module.exports.handler = async (context, event, callback) => {
 
   if (create_room) {
     const client = context.getTwilioClient();
+
+    const region = client.region;
+
+    const axiosClient = axios.create({
+      headers: {
+        Authorization:
+          'Basic ' + Buffer.from(`${TWILIO_API_KEY_SID}:${TWILIO_API_KEY_SECRET}`, 'utf8').toString('base64'),
+        'content-type': 'application/x-www-form-urlencoded;charset=utf-8',
+      },
+      baseURL:
+        region === 'dev' || region === 'stage'
+          ? `https://video.${region}.twilio.com/v1`
+          : 'https://video.twilio.com/v1',
+    });
+
     let room;
 
     try {
@@ -71,8 +89,21 @@ module.exports.handler = async (context, event, callback) => {
     } catch (e) {
       try {
         // If room doesn't exist, create it
-        room = await client.video.rooms.create({ uniqueName: room_name, type: ROOM_TYPE });
+        const roomData = await axiosClient('Rooms', {
+          method: 'post',
+          data: querystring.stringify({
+            UniqueName: room_name,
+            Type: 'group',
+            LargeRoom: 'true',
+            VideoCodecs: 'VP8',
+            MediaRegion: region === 'dev' ? 'us2' : 'us1',
+            MaxParticipants: 100,
+          }),
+        });
+        room = roomData.data;
+        console.log('created room', room);
       } catch (e) {
+        console.log(e);
         response.setStatusCode(500);
         response.setBody({
           error: {
