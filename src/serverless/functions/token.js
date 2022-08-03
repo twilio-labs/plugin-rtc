@@ -94,7 +94,6 @@ module.exports.handler = async (context, event, callback) => {
             },
             identity: 'media-transcriber',
             outputs: [playerStreamer.sid],
-            video: true,
           }),
         });
       } catch (e) {
