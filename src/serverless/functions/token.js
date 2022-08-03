@@ -86,7 +86,7 @@ module.exports.handler = async (context, event, callback) => {
 
         playerStreamer = await client.media.playerStreamer.create();
         mediaProcessor = await client.media.mediaProcessor.create({
-          extension: 'media-transcriber',
+          extension: 'media-transcriber-v1',
           maxDuration: 30 * 60, // 30 minutes
           extensionContext: JSON.stringify({
             room: {
