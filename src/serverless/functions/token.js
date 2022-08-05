@@ -73,6 +73,7 @@ module.exports.handler = async (context, event, callback) => {
         // If room doesn't exist, create it
         room = await client.video.rooms.create({ uniqueName: room_name, type: ROOM_TYPE });
       } catch (e) {
+        console.error(e);
         response.setStatusCode(500);
         response.setBody({
           error: {
@@ -98,6 +99,7 @@ module.exports.handler = async (context, event, callback) => {
           // can not be added to more than 1,000 open conversations.
           await conversationsClient.conversations.create({ uniqueName: room.sid, 'timers.closed': 'P1D' });
         } catch (e) {
+          console.error(e);
           response.setStatusCode(500);
           response.setBody({
             error: {
@@ -115,6 +117,7 @@ module.exports.handler = async (context, event, callback) => {
       } catch (e) {
         // Ignore "Participant already exists" error (50433)
         if (e.code !== 50433) {
+          console.error(e);
           response.setStatusCode(500);
           response.setBody({
             error: {

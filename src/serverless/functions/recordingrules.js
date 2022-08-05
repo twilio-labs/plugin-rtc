@@ -39,6 +39,7 @@ module.exports.handler = async (context, event, callback) => {
     response.setStatusCode(200);
     response.setBody(recordingRulesResponse);
   } catch (err) {
+    console.error(e);
     response.setStatusCode(500);
     response.setBody({ error: { message: err.message, code: err.code } });
   }
