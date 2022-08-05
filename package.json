@@ -1,6 +1,6 @@
 {
   "name": "@twilio-labs/plugin-rtc",
-  "version": "0.8.3",
+  "version": "0.8.4",
   "description": "A Twilio-CLI plugin for real-time communication apps",
   "main": "index.js",
   "publishConfig": {
@@ -21,10 +21,10 @@
     "@oclif/config": "^1.14.0",
     "@oclif/plugin-help": "^5.1.11",
     "@twilio-labs/serverless-api": "^4.0.3",
-    "@twilio/cli-core": "^6.1.0",
+    "@twilio/cli-core": "^6.7.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
-    "nanoid": "^3.1.16"
+    "nanoid": "^3.3.4"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1",
@@ -37,7 +37,7 @@
     "lint-staged": "^10.0.8",
     "prettier": "^1.19.1",
     "superagent": "^5.2.2",
-    "twilio": "^3.74.0"
+    "twilio": "^3.80.0"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",

@@ -212,7 +212,7 @@ TWILIO_API_SECRET = the secret for the API Key`);
     },
     pkgJson: {
       dependencies: {
-        twilio: '^3.60.0', // This determines the version of the Twilio client returned by context.getTwilioClient()
+        twilio: '^3.80.0', // This determines the version of the Twilio client returned by context.getTwilioClient()
       },
     },
     functionsEnv: 'dev',
