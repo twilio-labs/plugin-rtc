@@ -70,7 +70,7 @@ module.exports.handler = async (context, event, callback) => {
 
   if (create_room) {
     const client = context.getTwilioClient();
-    let room, playerStreamer, mediaProcessor;
+    let room, mediaProcessor;
 
     try {
       // See if a room already exists
@@ -84,16 +84,13 @@ module.exports.handler = async (context, event, callback) => {
           statusCallback: 'https://' + DOMAIN_NAME + '/rooms-webhook',
         });
 
-        playerStreamer = await client.media.playerStreamer.create();
         mediaProcessor = await client.media.mediaProcessor.create({
           extension: 'media-transcriber-v1',
-          maxDuration: 30 * 60, // 30 minutes
           extensionContext: JSON.stringify({
             room: {
               name: room.sid,
             },
             identity: 'media-transcriber',
-            outputs: [playerStreamer.sid],
           }),
         });
       } catch (e) {
@@ -125,7 +122,6 @@ module.exports.handler = async (context, event, callback) => {
             uniqueName: room.sid,
             'timers.closed': 'P1D',
             attributes: JSON.stringify({
-              playerStreamerSid: playerStreamer.sid,
               mediaProcessorSid: mediaProcessor.sid,
             }),
           });
