@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.8.4
+
+### Enhancement
+
+- Added error logging to the /token and /recording-rules endpoints.
+
+### Maintenence
+
+- Upgraded a number of dependencies.
+
 ## 0.8.3
 
 ### Maintenence
