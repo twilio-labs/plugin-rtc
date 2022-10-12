@@ -10,8 +10,9 @@ const { stdout } = require('stdout-stderr');
 const superagent = require('superagent');
 
 const twilioClient = require('twilio')(process.env.TWILIO_API_KEY, process.env.TWILIO_API_SECRET, {
-  accountSid: process.env.TWILIO_ACCOUNT_SID,
+  accountSid: process.env.TWILIO_ACCOUNT_SID, 
 });
+
 
 // Uncomment to see output from CLI
 // stdout.print = true;

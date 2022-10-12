@@ -8,7 +8,7 @@
   },
   "repository": "https://github.com/twilio-labs/plugin-rtc",
   "scripts": {
-    "test": "TZ=utc jest -i",
+    "test": "TZ=utc jest -i --coverage",
     "postpack": "rm -f oclif.manifest.json",
     "prepack": "oclif-dev manifest && oclif-dev readme",
     "lint": "eslint .",
