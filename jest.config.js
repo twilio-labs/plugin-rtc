@@ -12,5 +12,5 @@ module.exports = {
   setupFiles: ['./test/setupTests.js'],
 
   // The test environment that will be used for testing
-  testEnvironment: 'node'
+  testEnvironment: 'node',
 };
