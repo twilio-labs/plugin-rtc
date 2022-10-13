@@ -13,9 +13,8 @@ const twilioClient = require('twilio')(process.env.TWILIO_API_KEY, process.env.T
   accountSid: process.env.TWILIO_ACCOUNT_SID, 
 });
 
-
 // Uncomment to see output from CLI
-// stdout.print = true;
+ stdout.print = true;
 
 jest.setTimeout(80000);
 
