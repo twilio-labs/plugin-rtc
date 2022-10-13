@@ -91,276 +91,276 @@ describe('the RTC Twilio-CLI Plugin', () => {
     });
   });
 
-  describe('after deploying a video app', () => {
-    let URL;
-    let webAppURL;
-    let passcode;
+  // describe('after deploying a video app', () => {
+  //   let URL;
+  //   let webAppURL;
+  //   let passcode;
 
-    beforeAll(async done => {
-      stdout.start();
-      await DeployCommand.run([
-        '--authentication',
-        'passcode',
-        '--app-directory',
-        path.join(__dirname, '../test-assets'),
-      ]);
-      stdout.stop();
-      passcode = getPasscode(stdout.output);
-      URL = getURL(stdout.output);
-      webAppURL = getWebAppURL(stdout.output);
-      done();
-    });
+  //   beforeAll(async done => {
+  //     stdout.start();
+  //     await DeployCommand.run([
+  //       '--authentication',
+  //       'passcode',
+  //       '--app-directory',
+  //       path.join(__dirname, '../test-assets'),
+  //     ]);
+  //     stdout.stop();
+  //     passcode = getPasscode(stdout.output);
+  //     URL = getURL(stdout.output);
+  //     webAppURL = getWebAppURL(stdout.output);
+  //     done();
+  //   });
 
-    afterAll(async () => {
-      await delay(60000);
-      return await DeleteCommand.run([]);
-    });
+  //   afterAll(async () => {
+  //     await delay(60000);
+  //     return await DeleteCommand.run([]);
+  //   });
 
-    describe('the view command', () => {
-      it('should correctly display the deployment details', async () => {
-        stdout.start();
-        await ViewCommand.run([]);
-        stdout.stop();
-        expect(stdout.output).toMatch(
-          /Web App URL: .+\nPasscode: \d{3} \d{3} \d{4} \d{4}\nExpires: .+\nRoom Type: group\nEdit your token server at: https:\/\/www.twilio.com\/console\/functions\/editor\/ZS\w{32}\/environment\/ZE\w{32}\/function\/ZH\w{32}/
-        );
-      });
-    });
+  //   describe('the view command', () => {
+  //     it('should correctly display the deployment details', async () => {
+  //       stdout.start();
+  //       await ViewCommand.run([]);
+  //       stdout.stop();
+  //       expect(stdout.output).toMatch(
+  //         /Web App URL: .+\nPasscode: \d{3} \d{3} \d{4} \d{4}\nExpires: .+\nRoom Type: group\nEdit your token server at: https:\/\/www.twilio.com\/console\/functions\/editor\/ZS\w{32}\/environment\/ZE\w{32}\/function\/ZH\w{32}/
+  //       );
+  //     });
+  //   });
 
-    describe('the serverless deployment', () => {
-      it('should create a group room and return a video token when the correct passcode is provided', async () => {
-        const ROOM_NAME = nanoid();
-        const { body } = await superagent
-          .post(`${URL}/token`)
-          .send({ passcode, room_name: ROOM_NAME, user_identity: 'test user' });
-        expect(jwt.decode(body.token).grants).toEqual(
-          expect.objectContaining({ identity: 'test user', video: { room: ROOM_NAME } })
-        );
-        expect(body.room_type).toEqual('group');
+  //   describe('the serverless deployment', () => {
+  //     it('should create a group room and return a video token when the correct passcode is provided', async () => {
+  //       const ROOM_NAME = nanoid();
+  //       const { body } = await superagent
+  //         .post(`${URL}/token`)
+  //         .send({ passcode, room_name: ROOM_NAME, user_identity: 'test user' });
+  //       expect(jwt.decode(body.token).grants).toEqual(
+  //         expect.objectContaining({ identity: 'test user', video: { room: ROOM_NAME } })
+  //       );
+  //       expect(body.room_type).toEqual('group');
 
-        const room = await twilioClient.video.rooms(ROOM_NAME).fetch();
-        expect(room.type).toEqual('group');
-      });
+  //       const room = await twilioClient.video.rooms(ROOM_NAME).fetch();
+  //       expect(room.type).toEqual('group');
+  //     });
 
-      it('should return a video token with a valid Chat Grant and add the participant to the conversation', async () => {
-        const ROOM_NAME = nanoid();
-        const { body } = await superagent
-          .post(`${URL}/token`)
-          .send({ passcode, room_name: ROOM_NAME, user_identity: 'test user', create_conversation: true });
+  //     it('should return a video token with a valid Chat Grant and add the participant to the conversation', async () => {
+  //       const ROOM_NAME = nanoid();
+  //       const { body } = await superagent
+  //         .post(`${URL}/token`)
+  //         .send({ passcode, room_name: ROOM_NAME, user_identity: 'test user', create_conversation: true });
 
-        const conversationServiceSid = jwt.decode(body.token).grants.chat.service_sid;
+  //       const conversationServiceSid = jwt.decode(body.token).grants.chat.service_sid;
 
-        const room = await twilioClient.video.rooms(ROOM_NAME).fetch();
+  //       const room = await twilioClient.video.rooms(ROOM_NAME).fetch();
 
-        // Find the deployed conversations service
-        const deployedConversationsServices = await twilioClient.conversations.services.list();
-        const deployedConversationsService = deployedConversationsServices.find(
-          service => (service.sid = conversationServiceSid)
-        );
+  //       // Find the deployed conversations service
+  //       const deployedConversationsServices = await twilioClient.conversations.services.list();
+  //       const deployedConversationsService = deployedConversationsServices.find(
+  //         service => (service.sid = conversationServiceSid)
+  //       );
 
-        // Find the conversation participant
-        const conversationParticipants = await twilioClient.conversations
-          .services(deployedConversationsService.sid)
-          .conversations(room.sid)
-          .participants.list();
-        const conversationParticipant = conversationParticipants.find(
-          participant => participant.identity === 'test user'
-        );
+  //       // Find the conversation participant
+  //       const conversationParticipants = await twilioClient.conversations
+  //         .services(deployedConversationsService.sid)
+  //         .conversations(room.sid)
+  //         .participants.list();
+  //       const conversationParticipant = conversationParticipants.find(
+  //         participant => participant.identity === 'test user'
+  //       );
 
-        expect(deployedConversationsService).toBeDefined();
-        expect(conversationParticipant).toBeDefined();
-      });
+  //       expect(deployedConversationsService).toBeDefined();
+  //       expect(conversationParticipant).toBeDefined();
+  //     });
 
-      it('should return a video token without creating a room when the "create_room" flag is false', async () => {
-        expect.assertions(3);
-        const ROOM_NAME = nanoid();
-        const { body } = await superagent
-          .post(`${URL}/token`)
-          .send({ passcode, room_name: ROOM_NAME, user_identity: 'test user', create_room: false });
-        expect(jwt.decode(body.token).grants).toEqual(
-          expect.objectContaining({ identity: 'test user', video: { room: ROOM_NAME } })
-        );
-        expect(body.room_type).toEqual('group');
+  //     it('should return a video token without creating a room when the "create_room" flag is false', async () => {
+  //       expect.assertions(3);
+  //       const ROOM_NAME = nanoid();
+  //       const { body } = await superagent
+  //         .post(`${URL}/token`)
+  //         .send({ passcode, room_name: ROOM_NAME, user_identity: 'test user', create_room: false });
+  //       expect(jwt.decode(body.token).grants).toEqual(
+  //         expect.objectContaining({ identity: 'test user', video: { room: ROOM_NAME } })
+  //       );
+  //       expect(body.room_type).toEqual('group');
 
-        try {
-          await twilioClient.video.rooms(ROOM_NAME).fetch();
-        } catch (e) {
-          expect(e).toMatchObject({ status: 404 });
-        }
-      });
+  //       try {
+  //         await twilioClient.video.rooms(ROOM_NAME).fetch();
+  //       } catch (e) {
+  //         expect(e).toMatchObject({ status: 404 });
+  //       }
+  //     });
 
-      it('should return a video token without creating a conversation when the "create_conversation" flag is false', async () => {
-        const ROOM_NAME = nanoid();
-        const { body } = await superagent
-          .post(`${URL}/token`)
-          .send({ passcode, room_name: ROOM_NAME, user_identity: 'test user', create_conversation: false });
+  //     it('should return a video token without creating a conversation when the "create_conversation" flag is false', async () => {
+  //       const ROOM_NAME = nanoid();
+  //       const { body } = await superagent
+  //         .post(`${URL}/token`)
+  //         .send({ passcode, room_name: ROOM_NAME, user_identity: 'test user', create_conversation: false });
 
-        const conversationServiceSid = jwt.decode(body.token).grants.chat.service_sid;
+  //       const conversationServiceSid = jwt.decode(body.token).grants.chat.service_sid;
 
-        const room = await twilioClient.video.rooms(ROOM_NAME).fetch();
+  //       const room = await twilioClient.video.rooms(ROOM_NAME).fetch();
 
-        // Find the deployed conversations service
-        const deployedConversationsServices = await twilioClient.conversations.services.list();
-        const deployedConversationsService = deployedConversationsServices.find(
-          service => (service.sid = conversationServiceSid)
-        );
+  //       // Find the deployed conversations service
+  //       const deployedConversationsServices = await twilioClient.conversations.services.list();
+  //       const deployedConversationsService = deployedConversationsServices.find(
+  //         service => (service.sid = conversationServiceSid)
+  //       );
 
-        const conversationPromise = twilioClient.conversations
-          .services(deployedConversationsService.sid)
-          .conversations(room.sid)
-          .fetch();
+  //       const conversationPromise = twilioClient.conversations
+  //         .services(deployedConversationsService.sid)
+  //         .conversations(room.sid)
+  //         .fetch();
 
-        expect(conversationPromise).rejects.toEqual(expect.objectContaining({ code: 20404 }));
-      });
+  //       expect(conversationPromise).rejects.toEqual(expect.objectContaining({ code: 20404 }));
+  //     });
 
-      it('should return a 401 error when an incorrect passcode is provided', () => {
-        superagent
-          .post(`${URL}/token`)
-          .send({ passcode: '0000' })
-          .catch(e => expect(e.status).toBe(401));
-      });
+  //     it('should return a 401 error when an incorrect passcode is provided', () => {
+  //       superagent
+  //         .post(`${URL}/token`)
+  //         .send({ passcode: '0000' })
+  //         .catch(e => expect(e.status).toBe(401));
+  //     });
 
-      it('should display a URL which returns the web app', async () => {
-        const { text } = await superagent.get(webAppURL);
-        expect(text).toEqual('<html>test</html>');
-      });
+  //     it('should display a URL which returns the web app', async () => {
+  //       const { text } = await superagent.get(webAppURL);
+  //       expect(text).toEqual('<html>test</html>');
+  //     });
 
-      it('should return the web app from "/login"', async () => {
-        const webAppURL = URL;
-        const { text } = await superagent.get(webAppURL + '/login');
-        expect(text).toEqual('<html>test</html>');
-      });
-    });
+  //     it('should return the web app from "/login"', async () => {
+  //       const webAppURL = URL;
+  //       const { text } = await superagent.get(webAppURL + '/login');
+  //       expect(text).toEqual('<html>test</html>');
+  //     });
+  //   });
 
-    describe('the deploy command', () => {
-      it('should not redeploy the app when no --override flag is passed', async () => {
-        stdout.start();
-        await DeployCommand.run([
-          '--authentication',
-          'passcode',
-          '--app-directory',
-          path.join(__dirname, '../test-assets'),
-        ]);
-        stdout.stop();
-        expect(stdout.output).toContain(
-          'A Video app is already deployed. Use the --override flag to override the existing deployment.'
-        );
-      });
+  //   describe('the deploy command', () => {
+  //     it('should not redeploy the app when no --override flag is passed', async () => {
+  //       stdout.start();
+  //       await DeployCommand.run([
+  //         '--authentication',
+  //         'passcode',
+  //         '--app-directory',
+  //         path.join(__dirname, '../test-assets'),
+  //       ]);
+  //       stdout.stop();
+  //       expect(stdout.output).toContain(
+  //         'A Video app is already deployed. Use the --override flag to override the existing deployment.'
+  //       );
+  //     });
 
-      it('should redeploy the app when --override flag is passed', async () => {
-        stdout.start();
-        await DeployCommand.run([
-          '--authentication',
-          'passcode',
-          '--override',
-          '--app-directory',
-          path.join(__dirname, '../test-assets'),
-        ]);
-        stdout.stop();
-        const updatedPasscode = getPasscode(stdout.output);
-        const testURL = getURL(stdout.output);
-        const testWebAppURL = getWebAppURL(stdout.output);
-        expect(updatedPasscode).not.toEqual(passcode);
-        expect(testURL).toEqual(URL);
-        const { text } = await superagent.get(testWebAppURL + '/login');
-        expect(text).toEqual('<html>test</html>');
-      });
+  //     it('should redeploy the app when --override flag is passed', async () => {
+  //       stdout.start();
+  //       await DeployCommand.run([
+  //         '--authentication',
+  //         'passcode',
+  //         '--override',
+  //         '--app-directory',
+  //         path.join(__dirname, '../test-assets'),
+  //       ]);
+  //       stdout.stop();
+  //       const updatedPasscode = getPasscode(stdout.output);
+  //       const testURL = getURL(stdout.output);
+  //       const testWebAppURL = getWebAppURL(stdout.output);
+  //       expect(updatedPasscode).not.toEqual(passcode);
+  //       expect(testURL).toEqual(URL);
+  //       const { text } = await superagent.get(testWebAppURL + '/login');
+  //       expect(text).toEqual('<html>test</html>');
+  //     });
 
-      it('should redeploy the token server when no app-directory is set and when --override flag is true', async () => {
-        stdout.start();
-        await DeployCommand.run(['--authentication', 'passcode', '--override']);
-        stdout.stop();
-        const updatedPasscode = getPasscode(stdout.output);
-        const testURL = getURL(stdout.output);
-        const testWebAppURL = getWebAppURL(stdout.output);
-        expect(updatedPasscode).not.toEqual(passcode);
-        expect(testURL).toEqual(URL);
-        superagent.get(`${testWebAppURL}`).catch(e => expect(e.status).toBe(404));
-      });
-    });
-  });
+  //     it('should redeploy the token server when no app-directory is set and when --override flag is true', async () => {
+  //       stdout.start();
+  //       await DeployCommand.run(['--authentication', 'passcode', '--override']);
+  //       stdout.stop();
+  //       const updatedPasscode = getPasscode(stdout.output);
+  //       const testURL = getURL(stdout.output);
+  //       const testWebAppURL = getWebAppURL(stdout.output);
+  //       expect(updatedPasscode).not.toEqual(passcode);
+  //       expect(testURL).toEqual(URL);
+  //       superagent.get(`${testWebAppURL}`).catch(e => expect(e.status).toBe(404));
+  //     });
+  //   });
+  // });
 
-  describe('after deploying a token server (with go rooms)', () => {
-    let URL;
-    let passcode;
-    let webAppURL;
+  // describe('after deploying a token server (with go rooms)', () => {
+  //   let URL;
+  //   let passcode;
+  //   let webAppURL;
 
-    beforeAll(async done => {
-      stdout.start();
-      await DeployCommand.run(['--authentication', 'passcode', '--room-type', 'go']);
-      stdout.stop();
-      passcode = getPasscode(stdout.output);
-      URL = getURL(stdout.output);
-      webAppURL = getWebAppURL(stdout.output);
-      done();
-    });
+  //   beforeAll(async done => {
+  //     stdout.start();
+  //     await DeployCommand.run(['--authentication', 'passcode', '--room-type', 'go']);
+  //     stdout.stop();
+  //     passcode = getPasscode(stdout.output);
+  //     URL = getURL(stdout.output);
+  //     webAppURL = getWebAppURL(stdout.output);
+  //     done();
+  //   });
 
-    afterAll(async () => {
-      await delay(60000);
-      return await DeleteCommand.run([]);
-    });
+  //   afterAll(async () => {
+  //     await delay(60000);
+  //     return await DeleteCommand.run([]);
+  //   });
 
-    describe('the view command', () => {
-      it('should correctly display the deployment details', async () => {
-        stdout.start();
-        await ViewCommand.run([]);
-        stdout.stop();
-        expect(stdout.output).toMatch(
-          /Passcode: \d{3} \d{3} \d{4} \d{4}\nExpires: .+\nRoom Type: go\nEdit your token server at: https:\/\/www.twilio.com\/console\/functions\/editor\/ZS\w{32}\/environment\/ZE\w{32}\/function\/ZH\w{32}/
-        );
-        expect(stdout.output).not.toMatch(/Web App URL:/);
-      });
-    });
+  //   describe('the view command', () => {
+  //     it('should correctly display the deployment details', async () => {
+  //       stdout.start();
+  //       await ViewCommand.run([]);
+  //       stdout.stop();
+  //       expect(stdout.output).toMatch(
+  //         /Passcode: \d{3} \d{3} \d{4} \d{4}\nExpires: .+\nRoom Type: go\nEdit your token server at: https:\/\/www.twilio.com\/console\/functions\/editor\/ZS\w{32}\/environment\/ZE\w{32}\/function\/ZH\w{32}/
+  //       );
+  //       expect(stdout.output).not.toMatch(/Web App URL:/);
+  //     });
+  //   });
 
-    describe('the serverless deployment', () => {
-      it('should create a go room and return a video token when the correct passcode is provided', async () => {
-        const ROOM_NAME = nanoid();
-        const { body } = await superagent
-          .post(`${URL}/token`)
-          .send({ passcode, room_name: ROOM_NAME, user_identity: 'test user' });
-        expect(jwt.decode(body.token).grants).toEqual(
-          expect.objectContaining({ identity: 'test user', video: { room: ROOM_NAME } })
-        );
-        expect(body.room_type).toEqual('go');
+  //   describe('the serverless deployment', () => {
+  //     it('should create a go room and return a video token when the correct passcode is provided', async () => {
+  //       const ROOM_NAME = nanoid();
+  //       const { body } = await superagent
+  //         .post(`${URL}/token`)
+  //         .send({ passcode, room_name: ROOM_NAME, user_identity: 'test user' });
+  //       expect(jwt.decode(body.token).grants).toEqual(
+  //         expect.objectContaining({ identity: 'test user', video: { room: ROOM_NAME } })
+  //       );
+  //       expect(body.room_type).toEqual('go');
 
-        const room = await twilioClient.video.rooms(ROOM_NAME).fetch();
-        expect(room.type).toEqual('go');
-      });
+  //       const room = await twilioClient.video.rooms(ROOM_NAME).fetch();
+  //       expect(room.type).toEqual('go');
+  //     });
 
-      it('should return a 401 error when an incorrect passcode is provided', () => {
-        superagent
-          .post(`${URL}/token`)
-          .send({ passcode: '0000' })
-          .catch(e => expect(e.status).toBe(401));
-      });
+  //     it('should return a 401 error when an incorrect passcode is provided', () => {
+  //       superagent
+  //         .post(`${URL}/token`)
+  //         .send({ passcode: '0000' })
+  //         .catch(e => expect(e.status).toBe(401));
+  //     });
 
-      it('should not display an app URL', () => {
-        expect(webAppURL).toBeNull();
-      });
+  //     it('should not display an app URL', () => {
+  //       expect(webAppURL).toBeNull();
+  //     });
 
-      it('should return a 404 from "/"', () => {
-        superagent.get(`${URL}`).catch(e => expect(e.status).toBe(404));
-      });
-    });
+  //     it('should return a 404 from "/"', () => {
+  //       superagent.get(`${URL}`).catch(e => expect(e.status).toBe(404));
+  //     });
+  //   });
 
-    describe('the deploy command', () => {
-      it('should redeploy the token server when --override flag is passed', async () => {
-        stdout.start();
-        await DeployCommand.run(['--authentication', 'passcode', '--override']);
-        stdout.stop();
+  //   describe('the deploy command', () => {
+  //     it('should redeploy the token server when --override flag is passed', async () => {
+  //       stdout.start();
+  //       await DeployCommand.run(['--authentication', 'passcode', '--override']);
+  //       stdout.stop();
 
-        const updatedPasscode = getPasscode(stdout.output);
-        const testURL = getURL(stdout.output);
-        expect(updatedPasscode).not.toEqual(passcode);
-        expect(testURL).toEqual(URL);
+  //       const updatedPasscode = getPasscode(stdout.output);
+  //       const testURL = getURL(stdout.output);
+  //       expect(updatedPasscode).not.toEqual(passcode);
+  //       expect(testURL).toEqual(URL);
 
-        const { body } = await superagent
-          .post(`${testURL}/token`)
-          .send({ passcode: updatedPasscode, room_name: 'test-room', user_identity: 'test user' });
-        expect(jwt.decode(body.token).grants).toEqual(
-          expect.objectContaining({ identity: 'test user', video: { room: 'test-room' } })
-        );
-      });
-    });
-  });
+  //       const { body } = await superagent
+  //         .post(`${testURL}/token`)
+  //         .send({ passcode: updatedPasscode, room_name: 'test-room', user_identity: 'test user' });
+  //       expect(jwt.decode(body.token).grants).toEqual(
+  //         expect.objectContaining({ identity: 'test user', video: { room: 'test-room' } })
+  //       );
+  //     });
+  //   });
+  // });
 });
