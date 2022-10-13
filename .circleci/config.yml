@@ -6,7 +6,7 @@ node-defaults: &node-defaults
   working_directory: *workspace
   executor:
     name: node/default
-    tag: 13.10.1
+    tag: 14.0.0
 
 release-filter: &release-filter
   filters:
