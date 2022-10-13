@@ -8,7 +8,7 @@
   },
   "repository": "https://github.com/twilio-labs/plugin-rtc",
   "scripts": {
-    "test": "TZ=utc jest -i --coverage",
+    "test": "TZ=utc jest -i --coverage test/e2e/e2e.test.js",
     "postpack": "rm -f oclif.manifest.json",
     "prepack": "oclif-dev manifest && oclif-dev readme",
     "lint": "eslint .",
@@ -20,7 +20,7 @@
     "@oclif/command": "^1.5.19",
     "@oclif/config": "^1.14.0",
     "@oclif/plugin-help": "^5.1.11",
-    "@twilio-labs/serverless-api": "^4.0.3",
+    "@twilio-labs/serverless-api": "^5.4.0",
     "@twilio/cli-core": "^7.0.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
