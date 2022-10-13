@@ -7,7 +7,7 @@ const { stdout } = require('stdout-stderr');
 
 
 // Uncomment to see output from CLI
- stdout.print = true;
+// stdout.print = true;
 
 jest.setTimeout(80000);
 
