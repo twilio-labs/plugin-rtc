@@ -6,7 +6,7 @@ node-defaults: &node-defaults
   working_directory: *workspace
   executor:
     name: node/default
-    tag: 13.10.1
+    tag: 22.14.0
 
 release-filter: &release-filter
   filters:
@@ -16,7 +16,7 @@ release-filter: &release-filter
       ignore: /.*/
 
 orbs:
-  node: circleci/node@1.1.6
+  node: circleci/node@7.1.0
 
 jobs:
   build-and-test:
