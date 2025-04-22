@@ -137,10 +137,8 @@ module.exports.handler = async (context, event, callback) => {
   // Create token
   const token = new AccessToken(ACCOUNT_SID, TWILIO_API_KEY_SID, TWILIO_API_KEY_SECRET, {
     ttl: MAX_ALLOWED_SESSION_DURATION,
+    identity: user_identity,
   });
-
-  // Add participant's identity to token
-  token.identity = user_identity;
 
   // Add video grant to token
   const videoGrant = new VideoGrant({ room: room_name });

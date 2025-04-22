@@ -96,7 +96,7 @@ describe('the RTC Twilio-CLI Plugin', () => {
     let webAppURL;
     let passcode;
 
-    beforeAll(async done => {
+    beforeAll(async () => {
       stdout.start();
       await DeployCommand.run([
         '--authentication',
@@ -108,7 +108,6 @@ describe('the RTC Twilio-CLI Plugin', () => {
       passcode = getPasscode(stdout.output);
       URL = getURL(stdout.output);
       webAppURL = getWebAppURL(stdout.output);
-      done();
     });
 
     afterAll(async () => {
@@ -285,14 +284,13 @@ describe('the RTC Twilio-CLI Plugin', () => {
     let passcode;
     let webAppURL;
 
-    beforeAll(async done => {
+    beforeAll(async () => {
       stdout.start();
       await DeployCommand.run(['--authentication', 'passcode', '--room-type', 'go']);
       stdout.stop();
       passcode = getPasscode(stdout.output);
       URL = getURL(stdout.output);
       webAppURL = getWebAppURL(stdout.output);
-      done();
     });
 
     afterAll(async () => {
