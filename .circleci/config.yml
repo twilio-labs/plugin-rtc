@@ -33,6 +33,9 @@ jobs:
   publish-release:
     <<: *node-defaults
     steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:7SVF3W6ho6Rati2rOygoU2UtEH8EGZ43q8FhcHER9Bc"
       - checkout
       - attach_workspace:
           at: *workspace
@@ -52,11 +55,6 @@ jobs:
       - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > $PWD/.npmrc
       - run: npm publish
       - run: echo 'export DEFAULT_BRANCH=$(git remote show origin | grep HEAD | cut -d ":" -f2- | xargs)' >> $BASH_ENV
-      - run:
-          name: Set git information
-          command: |
-            git config --global user.email "twilio-sdk-build@twilio.com"
-            git config --global user.name "twilio-sdk-build"
       - run: git checkout $DEFAULT_BRANCH
       - run: npm --no-git-tag-version version patch
       - run: git add package.json
