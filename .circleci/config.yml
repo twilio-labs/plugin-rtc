@@ -58,6 +58,7 @@ jobs:
       - run: git checkout $DEFAULT_BRANCH
       - run: npm --no-git-tag-version version patch
       - run: git add package.json
+      - run: git add package-lock.json
       - run: git commit -m "Bump version after release [skip ci]"
       - run: git push origin $DEFAULT_BRANCH
 
