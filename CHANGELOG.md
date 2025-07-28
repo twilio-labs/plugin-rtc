@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.10.0
+
+### Enhancement
+
+- Added transcription support. When requesting a token from `/token` endpoint, specify `enable_transcription=true` to create a room with transcription enabled using these default settings:
+
+```json
+{
+  "languageCode": "en-US",
+  "profanityFilter": true,
+  "partialResults": true
+}
+```
+
 ## 0.9.0
 
 ### Enhancement

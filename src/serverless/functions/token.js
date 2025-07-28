@@ -12,31 +12,29 @@ module.exports.handler = async (context, event, callback) => {
   const authHandler = require(Runtime.getAssets()['/auth-handler.js'].path);
   authHandler(context, event, callback);
 
-  const { user_identity, room_name, create_room = true, create_conversation = false } = event;
+  const {
+    user_identity,
+    room_name,
+    create_room = true,
+    create_conversation = false,
+    enable_transcription = false,
+  } = event;
 
   let response = new Twilio.Response();
   response.appendHeader('Content-Type', 'application/json');
 
-  if (typeof create_room !== 'boolean') {
-    response.setStatusCode(400);
-    response.setBody({
-      error: {
-        message: 'invalid parameter',
-        explanation: 'A boolean value must be provided for the create_room parameter',
-      },
-    });
-    return callback(null, response);
-  }
-
-  if (typeof create_conversation !== 'boolean') {
-    response.setStatusCode(400);
-    response.setBody({
-      error: {
-        message: 'invalid parameter',
-        explanation: 'A boolean value must be provided for the create_conversation parameter',
-      },
-    });
-    return callback(null, response);
+  const booleanParams = ['create_room', 'create_conversation', 'enable_transcription'];
+  for (const param of booleanParams) {
+    if (typeof event[param] !== 'boolean') {
+      response.setStatusCode(400);
+      response.setBody({
+        error: {
+          message: 'invalid parameter',
+          explanation: `A boolean value must be provided for the ${param} parameter.`,
+        },
+      });
+      return callback(null, response);
+    }
   }
 
   if (!user_identity) {
@@ -71,7 +69,16 @@ module.exports.handler = async (context, event, callback) => {
     } catch (e) {
       try {
         // If room doesn't exist, create it
-        room = await client.video.rooms.create({ uniqueName: room_name, type: ROOM_TYPE });
+        const roomOptions = { uniqueName: room_name, type: ROOM_TYPE };
+        if (enable_transcription) {
+          roomOptions.TranscribeParticipantsOnConnect = true;
+          roomOptions.TranscriptionsConfiguration = {
+            languageCode: 'en-US',
+            profanityFilter: true,
+            partialResults: true,
+          };
+        }
+        room = await client.video.rooms.create(roomOptions);
       } catch (e) {
         console.error('Error creating room:');
         console.error(e);
